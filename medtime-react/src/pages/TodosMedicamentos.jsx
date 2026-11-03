@@ -94,7 +94,13 @@ function TodosMedicamentos({ pacienteSelecionado, aoVoltar }) {
 
                             <div className="todos-horario">
                                 <strong>
-                                    {medicamento.horario_programado.slice(11, 16)}
+                                    {new Date(medicamento.horario_programado).toLocaleTimeString(
+                                        'pt-BR',
+                                        {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }
+                                    )}
                                 </strong>
                                 <span>
                                     {medicamento.confirmado

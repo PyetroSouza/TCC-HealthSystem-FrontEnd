@@ -84,13 +84,20 @@ export async function cadastrarMedicamentoCompleto(payload) {
 }
 
 export async function buscarAgendaMedicamentos(idUsuario, data) {
+  const fuso = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+  const parametros = new URLSearchParams({
+    data,
+    fuso
+  })
+
   const resposta = await fetch(
-    `${API_URL}/agenda_medicamento/${idUsuario}?data=${data}`
+    `${API_URL}/agenda_medicamento/${idUsuario}?${parametros}`
   )
 
   const resultado = await resposta.json()
 
-  if (!resposta.ok) {
+  if (!resposta.ok || resultado.status === false) {
     throw new Error(
       resultado.message || 'Erro ao carregar a agenda'
     )

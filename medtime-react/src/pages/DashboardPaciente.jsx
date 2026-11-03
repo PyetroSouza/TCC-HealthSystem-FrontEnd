@@ -89,7 +89,12 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         horario_programado: item.horario_programado,
 
 
-        proximo_horario: item.horario_programado.slice(11, 16),
+        proximo_horario: new Date(
+            item.horario_programado
+        ).toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }),
 
 
         confirmado: item.confirmado
