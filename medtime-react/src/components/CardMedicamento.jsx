@@ -77,6 +77,12 @@ function CardMedicamento({
         <div className="tempo-remedio">
           <h1>{medicamento.proximo_horario}</h1>
           <p>Horário previsto</p>
+          {confirmado && (
+            <span className="status-tomada">
+              <Check size={14} />
+              Tomada registrada
+            </span>
+          )}
         </div>
 
         <ChevronDown size={20} />

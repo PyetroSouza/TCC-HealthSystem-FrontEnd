@@ -364,7 +364,11 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                 <label htmlFor="unidade-dose">Unidade da dose</label>
 
                 <select
-                  id="unidade-dose"
+                  id="unidadeDose"
+                  aria-invalid={!!errors.unidadeDose}
+                  aria-describedby={
+                    errors.unidadeDose ? 'erro-unidadeDose' : undefined
+                  }
                   {...register('unidadeDose')}
                 >
                   <option value="">Selecione</option>
@@ -377,7 +381,11 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                 </select>
 
                 {errors.unidadeDose && (
-                  <p className="mensagem-erro">
+                  <p
+                    id="erro-unidadeDose"
+                    className="mensagem-erro"
+                    role="alert"
+                  >
                     {errors.unidadeDose.message}
                   </p>
                 )}
@@ -385,7 +393,11 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
 
               <div className="campo-formulario">
                 <label htmlFor="tipo-dosagem">Tipo da dosagem</label>
-                <select id="tipo-dosagem" {...register('tipoDosagem')}>
+                <select id="tipo-dosagem"
+                  aria-invalid={!!errors.tipoDosagem}
+                  aria-describedby={
+                    errors.tipoDosagem ? 'erro-tipoDosagem' : undefined
+                  }{...register('tipoDosagem')}>
                   <option value="">Selecione</option>
 
                   {tiposDosagem.map((tipo) => (
@@ -397,7 +409,8 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                 {errors.tipoDosagem && (
                   <p
                     id="erro-tipoDosagem"
-                    className="mensagem-erro">
+                    className="mensagem-erro"
+                    role="alert">
                     {errors.tipoDosagem.message}
                   </p>
                 )}
@@ -411,10 +424,10 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                   type="text"
                   id="concentracao"
                   aria-invalid={!!errors.concentracao}
-                  aria-describedby={errors.concentracao ? 'concentracao' : undefined}
+                  aria-describedby={errors.concentracao ? 'erro-concentracao' : undefined}
                   className={errors.concentracao ? 'campo-invalido' : ''}
                   {...register('concentracao')}
-                  placeholder="Ex: 50 mg/mL"
+                  placeholder="Ex: 50"
                 />
                 {errors.concentracao && (
                   <p
@@ -430,6 +443,10 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
 
                   <select
                     id="unidade-concentracao"
+                    aria-invalid={!!errors.unidadeConcentracao}
+                    aria-describedby={
+                      errors.unidadeConcentracao ? 'erro-unidadeConcentracao' : undefined
+                    }
                     {...register('unidadeConcentracao')}
                   >
                     <option value="">Selecione</option>
@@ -445,7 +462,10 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                   </select>
 
                   {errors.unidadeConcentracao && (
-                    <p className="mensagem-erro">
+                    <p
+                      id='erro-unidadeConcentracao'
+                      className="mensagem-erro"
+                      role='alert'>
                       {errors.unidadeConcentracao.message}
                     </p>
                   )}
@@ -458,15 +478,20 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
 
                   <div className="input-container">
                     <span className="prefix">De</span>
-
                     <input
                       type="number"
                       id="frequencia"
                       min="1"
                       max={intervalo === '1' ? 24 : undefined}
                       placeholder="5"
+                      aria-invalid={!!errors.frequencia}
+                      aria-describedby={
+                        errors.frequencia ? 'erro-frequencia' : undefined
+                      }
+                      className={errors.frequencia ? 'campo-invalido' : ''}
                       {...register('frequencia', { valueAsNumber: true })}
                     />
+
 
                     <span className="suffix">
                       em {frequencia || '—'} {
@@ -478,6 +503,15 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                       }
                     </span>
                   </div>
+                  {errors.frequencia && (
+                    <p
+                      id="erro-frequencia"
+                      className="mensagem-erro"
+                      role="alert"
+                    >
+                      {errors.frequencia.message}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -489,7 +523,12 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                     Intervalo de dosagem
                   </label>
 
-                  <select id="intervalo" {...register('intervalo')}>
+                  <select id="intervalo"
+                    aria-invalid={!!errors.intervalo}
+                    aria-describedby={
+                      errors.intervalo ? 'erro-intervalo' : undefined
+                    }
+                    {...register('intervalo')}>
                     <option value="">Selecione</option>
 
                     {tiposIntervalo.map((tipo) => (
@@ -503,6 +542,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                     <p
                       id="erro-intervalo"
                       className="mensagem-erro"
+                      role="alert"
                     >
                       {errors.intervalo.message}
                     </p>

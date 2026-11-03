@@ -1,4 +1,5 @@
 import './DashboardPaciente.css'
+import { useRef, useState, useEffect } from 'react'
 import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
 import { useAgendaMedicamentos } from '../hooks/useAgendaMedicamentos.js'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
@@ -7,39 +8,64 @@ import { excluirMedicamentoCompleto } from '../services/api.js'
 import { toast } from 'sonner'
 
 
+
 function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
+    const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
+    const [excluindo, setExcluindo] = useState(false)
+    const botaoCancelarRef = useRef(null)
+
+
+
 
     function confirmarExclusao(medicamento) {
-        toast.warning(`Excluir ${medicamento.nome}?`, {
-            description:
-                'O medicamento e suas programações serão removidos. O histórico de tomadas será preservado.',
-            duration: 10000,
-            action: {
-                label: 'Excluir',
-                onClick: async () => {
-                    try {
-                        await excluirMedicamentoCompleto(
-                            medicamento.id_receita_medica,
-                            pacienteSelecionado.id
-                        )
-
-                        toast.success('Medicamento excluído com sucesso!')
-                        await recarregarAgenda()
-                    } catch (erro) {
-                        toast.error('Não foi possível excluir o medicamento.', {
-                            description: erro.message
-                        })
-                    }
-                }
-            },
-            cancel: {
-                label: 'Cancelar',
-                onClick: () => toast.dismiss()
-            }
-        })
+        setMedicamentoParaExcluir(medicamento)
     }
+
+    useEffect(() => {
+        if (!medicamentoParaExcluir) return
+
+        botaoCancelarRef.current?.focus()
+
+        function tratarTeclado(evento) {
+            if (evento.key === 'Escape' && !excluindo) {
+                setMedicamentoParaExcluir(null)
+            }
+        }
+
+        window.addEventListener('keydown', tratarTeclado)
+
+        return () => {
+            window.removeEventListener('keydown', tratarTeclado)
+        }
+    }, [medicamentoParaExcluir, excluindo])
+
+    async function executarExclusao() {
+        if (!medicamentoParaExcluir || excluindo) return
+
+        try {
+            setExcluindo(true)
+
+            await excluirMedicamentoCompleto(
+                medicamentoParaExcluir.id_receita_medica,
+                pacienteSelecionado.id
+            )
+
+            setMedicamentoParaExcluir(null)
+
+            toast.success('Medicamento excluído com sucesso!')
+
+            await recarregarAgenda()
+        } catch (erro) {
+            toast.error('Não foi possível excluir o medicamento.', {
+                description: erro.message
+            })
+        } finally {
+            setExcluindo(false)
+        }
+    }
+
 
 
     const {
@@ -89,6 +115,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
         return idade
     }
+
     return (
         <div className="dashboard-conteudo">
             <section className="card-boas-vindas-paciente">
@@ -135,45 +162,71 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
             </section>
 
             <div className="dashboard-inferior-grid">
+                <aside className="dashboard-lateral">
 
-                <div className="contato-de-emergencia">
-                    <div className="titulo">
-                        <img src="/assets/telefone.svg" alt="telefone" />
-                        <h1>Contato de emergência</h1>
-                    </div>
-                    <div className="nome-telefone">
-                        <span>Charles Haenke (Filho)</span>
-                        <p>(11) 97699-2487</p>
-                    </div>
-                    <div className="botoes">
-                        <div className="localizacao">
-                            <img src="/assets/localizacao.svg" alt="ícone de localização" />
-                            <h1>Localização</h1>
+
+
+                    <div className="contato-de-emergencia">
+                        <div className="titulo">
+                            <img src="/assets/telefone.svg" alt="telefone" />
+                            <h1>Contato de emergência</h1>
                         </div>
-                        <div className="historico">
-                            <img src="/assets/historico.svg" alt="ícone de histórico" />
-                            <h1>Histórico</h1>
+                        <div className="nome-telefone">
+                            <span>Charles Haenke (Filho)</span>
+                            <p>(11) 97699-2487</p>
+                        </div>
+                        <div className="botoes">
+                            <button
+                                type="button"
+                                className="localizacao"
+                                disabled
+                                title="Funcionalidade em desenvolvimento"
+                            >
+                                <img src="/assets/localizacao.svg" alt="" />
+                                <span>Localização</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                className="historico"
+                                disabled
+                                title="Funcionalidade em desenvolvimento"
+                            >
+                                <img src="/assets/historico.svg" alt="" />
+                                <span>Histórico</span>
+                            </button>
                         </div>
                     </div>
-                </div>
 
 
-                <div className="conteudo-principal-direita">
 
                     <div className="dados-pulseira">
                         <div className="temperatura">
                             <span>37°C</span>
                             <p>Temperatura Corporal</p>
                         </div>
+
                         <div className="frequencia-cardiaca">
                             <span>70 BPM</span>
                             <p>Frequência Cardíaca</p>
                         </div>
+
                         <div className="pressao-sanguinea">
                             <span>120/80</span>
                             <p>Pressão Sanguínea</p>
                         </div>
                     </div>
+
+                    <p className="aviso-dados-pulseira">
+                        Dados demonstrativos da pulseira
+                    </p>
+
+
+
+                </aside>
+
+
+                <div className="conteudo-principal-direita">
 
                     <div className="proximos-medicamentos-placeholder">
                         <div className="header-proximos-medicamentos">
@@ -207,6 +260,53 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
                 </div>
             </div>
+
+            {medicamentoParaExcluir && (
+                <div className="modal-exclusao-overlay">
+                    <div
+                        className="modal-exclusao"
+                        role="alertdialog"
+                        aria-modal="true"
+                        aria-labelledby="titulo-exclusao"
+                        aria-describedby="descricao-exclusao"
+                    >
+                        <h2 id="titulo-exclusao">
+                            Excluir medicamento?
+                        </h2>
+
+                        <p id="descricao-exclusao">
+                            Você está prestes a excluir
+                            <strong> {medicamentoParaExcluir.nome}</strong>
+                            {' '}e todas as suas programações.
+                            O histórico de tomadas será preservado.
+                        </p>
+
+                        <div className="modal-exclusao-acoes">
+                            <button
+                                ref={botaoCancelarRef}
+                                type="button"
+                                className="modal-botao-cancelar"
+                                disabled={excluindo}
+                                onClick={() => setMedicamentoParaExcluir(null)}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                className="modal-botao-excluir"
+                                disabled={excluindo}
+                                onClick={executarExclusao}
+                            >
+                                {excluindo
+                                    ? 'Excluindo...'
+                                    : 'Excluir medicamento'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     )
 }

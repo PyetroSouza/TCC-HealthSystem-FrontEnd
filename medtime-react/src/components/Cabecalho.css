@@ -22,9 +22,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     width: 100%;
+    max-width: none;
     height: 67px;
-    margin-bottom: 21px;
+    margin: 0 0 21px;
+    box-sizing: border-box;
+
     background: linear-gradient(to right, #1C86BF, #4EA8D8);
     border-radius: 15px;
     color: #FFFFFF;
@@ -50,7 +54,7 @@
 }
 
 .logo-app span {
-    color: #00C897;
+    color: #FFFFFF;
 }
 
 .data-hora {
@@ -94,17 +98,17 @@
 }
 
 .perfil .dados-perfil .nome-perfil {
-    font-size: 12px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 500;
     font-family: 'Roboto', sans-serif;
-    color: #E0E0E0;
+    color: #FFFFFF;
 }
 
 .perfil .dados-perfil .email-perfil {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 400;
     font-family: 'Roboto', sans-serif;
-    color: #E0E0E0;
+    color: #FFFFFF;
 }
 
 @media (max-width: 480px) {

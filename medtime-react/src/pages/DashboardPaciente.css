@@ -249,6 +249,19 @@
     cursor: not-allowed;
 }
 
+.localizacao,
+.historico {
+    color: #FFFFFF;
+    border: none;
+    font: inherit;
+}
+
+.localizacao span,
+.historico span {
+    font-size: 16px;
+    font-weight: 500;
+}
+
 .dados-pulseira {
     display: flex;
     flex-direction: row;
@@ -569,15 +582,15 @@
     color: inherit;
     text-align: left;
     cursor: pointer;
-  }
-  
-  .confirmacao-tomada {
+}
+
+.confirmacao-tomada {
     flex-basis: 100%;
     padding: 16px;
     border-top: 1px solid #e5e7eb;
-  }
-  
-  .botao-confirmar-tomada {
+}
+
+.botao-confirmar-tomada {
     padding: 10px 18px;
     border: none;
     border-radius: 8px;
@@ -585,19 +598,19 @@
     color: white;
     font-weight: 600;
     cursor: pointer;
-  }
-  
-  .botao-confirmar-tomada:disabled {
+}
+
+.botao-confirmar-tomada:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  .tomada-confirmada {
+}
+
+.tomada-confirmada {
     display: flex;
     align-items: center;
     gap: 8px;
     color: #009951;
-  }
+}
 
 @media (max-width: 1024px) {
     .dashboard-inferior-grid {
@@ -784,5 +797,486 @@
         grid-column: 2;
         padding-right: 0;
         justify-content: flex-end;
+    }
+}
+
+
+/* ========================================
+   MEDTIME — MELHORIAS RESPONSIVAS
+   ======================================== */
+
+.dashboard-conteudo {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 24px;
+    min-width: 0;
+}
+
+/* Informações do paciente */
+
+.card-boas-vindas-paciente {
+    height: auto;
+    min-height: 126px;
+    padding: 18px 24px;
+}
+
+.botao-voltar {
+    margin: 0 !important;
+}
+
+.card-conteudo-principal {
+    gap: 20px;
+}
+
+.info-perfil {
+    padding: 0;
+    min-width: 0;
+}
+
+.tags {
+    flex-wrap: wrap;
+}
+
+.tags li {
+    font-size: 12px;
+}
+
+.botao-medicamento {
+    margin: 0;
+    flex-shrink: 0;
+    background: #007A40;
+}
+
+/* Organização principal */
+
+.dashboard-inferior-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+}
+
+.dashboard-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.conteudo-principal-direita {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    gap: 20px;
+}
+
+/* Contato de emergência */
+
+.contato-de-emergencia {
+    width: 100%;
+    min-height: 0;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.nome-telefone {
+    padding-bottom: 22px;
+}
+
+.nome-telefone p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.botoes {
+    gap: 12px;
+}
+
+.localizacao,
+.historico {
+    width: 100%;
+    height: 52px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Pulseira na lateral */
+
+.dados-pulseira {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+}
+
+.temperatura,
+.frequencia-cardiaca,
+.pressao-sanguinea {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 90px;
+    padding: 12px 6px;
+    align-items: center;
+    box-sizing: border-box;
+    box-shadow: none;
+    background: #1D6FA4;
+}
+
+.dados-pulseira span {
+    font-size: clamp(15px, 1.4vw, 20px);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.dados-pulseira p {
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.aviso-dados-pulseira {
+    margin: -10px 0 0;
+    color: #4B5563;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Área principal de medicamentos */
+
+.proximos-medicamentos-placeholder {
+    width: 100%;
+    min-width: 0;
+    min-height: 300px;
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
+.header-proximos-medicamentos {
+    align-items: center;
+    gap: 16px;
+}
+
+.proximos-remedios span {
+    color: #1E2F4B;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.menu-medicamentos {
+    opacity: 1;
+}
+
+.container-remedios {
+    width: 100%;
+    min-width: 0;
+}
+
+.remedio {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100% - 32px);
+    max-width: none;
+    min-width: 0;
+    height: auto;
+    padding: 12px;
+    gap: 10px;
+}
+
+.cabecalho-medicamento {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.info-esquerda {
+    padding-left: 8px;
+}
+
+.nome-quantidade {
+    align-items: flex-start;
+}
+
+.nome-quantidade span {
+    color: #1D6FA4;
+    text-align: left;
+}
+
+.nome-quantidade p {
+    text-align: left;
+    color: #374151;
+    font-size: 13px;
+}
+
+.tempo-remedio p {
+    color: #1D6FA4;
+}
+
+.acoes-medicamento {
+    margin-left: auto;
+    padding-right: 0;
+}
+
+.acoes-medicamento button {
+    width: 44px;
+    height: 44px;
+}
+
+.confirmacao-tomada {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.botao-confirmar-tomada,
+.sem-medicamentos button {
+    background: #007A40;
+    color: #FFFFFF;
+}
+
+/* Tablet e notebooks menores */
+
+@media (max-width: 1100px) {
+    .dashboard-inferior-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .conteudo-principal-direita {
+        grid-row: 1;
+    }
+
+    .dashboard-lateral {
+        grid-row: 2;
+    }
+
+    .dados-pulseira span {
+        font-size: 20px;
+    }
+
+    .dados-pulseira p {
+        font-size: 13px;
+    }
+}
+
+/* Celulares */
+
+@media (max-width: 600px) {
+    .dashboard-conteudo {
+        padding: 12px;
+    }
+
+    .card-boas-vindas-paciente {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .card-conteudo-principal {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .botao-medicamento {
+        width: 100%;
+    }
+
+    .dashboard-inferior-grid {
+        gap: 16px;
+    }
+
+    .contato-de-emergencia {
+        padding: 18px;
+    }
+
+    .dados-pulseira {
+        grid-template-columns: 1fr;
+    }
+
+    .temperatura,
+    .frequencia-cardiaca,
+    .pressao-sanguinea {
+        min-height: 72px;
+    }
+
+    .dados-pulseira span {
+        font-size: 22px;
+    }
+
+    .dados-pulseira p {
+        font-size: 14px;
+    }
+
+    .header-proximos-medicamentos {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .proximos-remedios,
+    .menu-medicamentos {
+        padding: 0;
+    }
+
+    .remedio {
+        width: calc(100% - 24px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .cabecalho-medicamento {
+        flex: 1 1 100%;
+        gap: 8px;
+    }
+
+    .info-esquerda {
+        padding-left: 0;
+        gap: 8px;
+    }
+
+    .nome-quantidade span {
+        font-size: 16px;
+    }
+
+    .acoes-medicamento {
+        margin-left: auto;
+    }
+}
+
+/* Melhorias de acessibilidade */
+
+.nome-quantidade span,
+.tempo-remedio p {
+    color: #1D6FA4;
+}
+
+.nome-quantidade p,
+.nome-telefone p {
+    color: #374151;
+}
+
+.botao-medicamento,
+.botao-confirmar-tomada,
+.sem-medicamentos button {
+    background: #007A40;
+    color: #FFFFFF;
+}
+
+.botao-medicamento:focus-visible,
+.botao-confirmar-tomada:focus-visible,
+.sem-medicamentos button:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+.status-tomada {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #E6F4EA;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* Modal de exclusão */
+
+.modal-exclusao-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.modal-exclusao {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-exclusao h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1E2F4B;
+}
+
+.modal-exclusao p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
+}
+
+.modal-exclusao-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.modal-exclusao-acoes button {
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.modal-botao-cancelar {
+    background: #F3F4F6;
+    color: #374151;
+    border: 1px solid #D1D5DB;
+}
+
+.modal-botao-excluir {
+    background: #B42318;
+    color: #FFFFFF;
+    border: none;
+}
+
+.modal-exclusao-acoes button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.modal-exclusao-acoes button:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .modal-exclusao {
+        padding: 20px;
+    }
+
+    .modal-exclusao-acoes {
+        flex-direction: column-reverse;
+    }
+
+    .modal-exclusao-acoes button {
+        width: 100%;
     }
 }
