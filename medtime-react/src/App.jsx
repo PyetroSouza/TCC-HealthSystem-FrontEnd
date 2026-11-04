@@ -2,6 +2,7 @@
 import { buscarUnidadesMedida } from './services/api.js'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import Login from './pages/Login.jsx'
 import Inicio from './pages/Inicio.jsx'
 import CadastroIdoso from './pages/CadastroIdoso'
 import Pacientes from './pages/Pacientes.jsx'
@@ -17,7 +18,7 @@ import './App.css'
 
 
 function App() {
-  const [telaAtual, setTelaAtual] = useState('inicio')
+  const [telaAtual, setTelaAtual] = useState('login')
   const [busca, setBusca] = useState('')
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [listaMedicamentos, setListaMedicamentos] = useState(
@@ -105,7 +106,14 @@ function App() {
 
     testarAPI()
   }, [])
-
+  if (telaAtual === 'login') {
+    return (
+      <>
+        <Toaster position="top-right" richColors />
+        <Login />
+      </>
+    )
+  }
   return (
     <div className="aplicacao">
       <Cabecalho />
@@ -118,6 +126,7 @@ function App() {
       />
 
       <main className="conteudo">
+        {telaAtual === 'login' && <Login />}
         {telaAtual === 'inicio' && (
           <Inicio
             aoCadastrar={() => setTelaAtual('cadastro')}
