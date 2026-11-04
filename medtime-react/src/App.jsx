@@ -9,6 +9,7 @@ import Cabecalho from './components/Cabecalho.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
+import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
 import { buscarUsuarios } from './services/api.js'
 import { Toaster } from 'sonner'
 import { medicamentos as medicamentosIniciais } from './data/medicamentos'
@@ -128,7 +129,6 @@ function App() {
               setPacienteSelecionado(paciente)
               setTelaAtual('dashboard')
             }}
-
           />
         )}
 
@@ -145,6 +145,7 @@ function App() {
           aoEditarMedicamento={iniciarEdicaoMedicamento}
           medicamentos={listaMedicamentos}
           aoVerTodosMedicamentos={() => setTelaAtual('todos-medicamentos')}
+          aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
         />)}
         {telaAtual === 'cadastro-remedio' && (
           <CadastroRemedio
@@ -157,6 +158,13 @@ function App() {
 
         {telaAtual === 'todos-medicamentos' && (
           <TodosMedicamentos
+            pacienteSelecionado={pacienteSelecionado}
+            aoVoltar={voltarParaDashboard}
+          />
+        )}
+
+        {telaAtual === 'historico-medicamentos' && (
+          <HistoricoMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
           />

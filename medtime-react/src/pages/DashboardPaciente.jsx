@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 
 
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos }) {
+function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos, aoVerHistorico }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
@@ -194,8 +194,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <button
                                 type="button"
                                 className="historico"
-                                disabled
-                                title="Funcionalidade em desenvolvimento"
+                                onClick={aoVerHistorico}
                             >
                                 <img src="/assets/historico.svg" alt="" />
                                 <span>Histórico</span>

@@ -6,6 +6,14 @@ export function montarPayloadMedicamento(medicamento, idUsuario) {
         String(hoje.getDate()).padStart(2, '0')
     ].join('-')
 
+    const dataHoraInicio = new Date(
+        `${data}T${medicamento.proximo_horario}:00`
+    )
+    
+    if (Number.isNaN(dataHoraInicio.getTime())) {
+        throw new Error('Data ou horário inicial inválido')
+    }
+
     return {
         medicamento: {
             nome: medicamento.nome,
@@ -25,7 +33,7 @@ export function montarPayloadMedicamento(medicamento, idUsuario) {
 
         programacao_medicamento: {
             frequencia: medicamento.frequencia,
-            data_hora_inicio: `${data} ${medicamento.proximo_horario}:00`,
+            data_hora_inicio: dataHoraInicio.toISOString(),
             id_tipo_intervalo: medicamento.id_tipo_intervalo
         },
 

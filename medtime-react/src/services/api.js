@@ -281,7 +281,6 @@ export async function excluirMedicamentoCompleto(
     }
   )
 
-  // HTTP 204 não possui corpo JSON.
   if (resposta.status === 204) {
     return true
   }
@@ -295,4 +294,20 @@ export async function excluirMedicamentoCompleto(
   }
 
   return true
+}
+
+export async function buscarHistoricoMedicamentos(idUsuario) {
+  const resposta = await fetch(
+      `${API_URL}/historico_medicamento/usuario/${idUsuario}`
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+      throw new Error(
+          resultado.message || 'Erro ao buscar o histórico'
+      )
+  }
+
+  return resultado.response?.historico_medicamento ?? []
 }
