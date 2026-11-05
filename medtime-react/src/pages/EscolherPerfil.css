@@ -1,0 +1,132 @@
+
+.escolher-perfil-pagina {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    background: linear-gradient(155deg, #155E89, #176B9A 45%, #1C86BF);
+    font-family: 'Inter', sans-serif;
+    color: #FFFFFF;
+}
+
+.escolher-perfil-container {
+    width: 100%;
+    max-width: 880px;
+}
+
+.escolher-perfil-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    margin-bottom: 40px;
+    border: none;
+    background: transparent;
+    color: #FFFFFF;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.escolher-perfil-marca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.escolher-perfil-cabecalho {
+    margin: 32px 0 40px;
+    text-align: center;
+}
+
+.escolher-perfil-cabecalho h1 {
+    margin: 0 0 12px;
+    color: #FFFFFF;
+    font-size: clamp(26px, 3vw, 38px);
+}
+
+.escolher-perfil-cabecalho p {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 15px;
+}
+
+.escolher-perfil-opcoes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.escolher-perfil-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    min-height: 260px;
+    padding: 32px 24px;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    background: #FFFFFF;
+    color: #1E2F4B;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.escolher-perfil-card:hover {
+    transform: translateY(-4px);
+    border-color: #18B995;
+}
+
+.escolher-perfil-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: #009B80;
+    color: #FFFFFF;
+}
+
+.escolher-perfil-card strong {
+    font-size: 22px;
+}
+
+.escolher-perfil-card > span:last-child {
+    max-width: 280px;
+    color: #4B5563;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.escolher-perfil-voltar:focus-visible,
+.escolher-perfil-card:focus-visible {
+    outline: 3px solid #C8FFEB;
+    outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+    .escolher-perfil-opcoes {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .escolher-perfil-card {
+        min-height: 200px;
+        padding: 24px;
+    }
+
+    .escolher-perfil-voltar {
+        margin-bottom: 24px;
+    }
+
+    .escolher-perfil-cabecalho {
+        margin: 24px 0 28px;
+    }
+}

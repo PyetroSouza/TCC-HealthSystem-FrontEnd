@@ -11,6 +11,8 @@ import DashboardPaciente from './pages/DashboardPaciente.jsx'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
 import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
+import CadastroUsuario from './pages/CadastroUsuario.jsx'
+import EscolherPerfil from './pages/EscolherPerfil.jsx'
 import { buscarUsuarios } from './services/api.js'
 import { Toaster } from 'sonner'
 import { medicamentos as medicamentosIniciais } from './data/medicamentos'
@@ -19,6 +21,7 @@ import './App.css'
 
 function App() {
   const [telaAtual, setTelaAtual] = useState('login')
+  const [perfilCadastro, setPerfilCadastro] = useState(null)
   const [busca, setBusca] = useState('')
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [listaMedicamentos, setListaMedicamentos] = useState(
@@ -109,9 +112,44 @@ function App() {
   if (telaAtual === 'login') {
     return (
       <>
-        <Toaster position="top-right" richColors />
-        <Login />
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+        />
+
+        <Login
+          aoCadastrar={() => setTelaAtual('escolher-perfil')}
+        />
       </>
+    )
+  }
+
+  if (telaAtual === 'cadastro-usuario') {
+    return (
+      <>
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+        />
+
+        <CadastroUsuario
+          perfil={perfilCadastro}
+          aoVoltarLogin={() => setTelaAtual('escolher-perfil')}
+        />
+      </>
+    )
+  }
+  if (telaAtual === 'escolher-perfil') {
+    return (
+      <EscolherPerfil
+        aoVoltar={() => setTelaAtual('login')}
+        aoSelecionarPerfil={(perfil) => {
+          setPerfilCadastro(perfil)
+          setTelaAtual('cadastro-usuario')
+        }}
+      />
     )
   }
   return (
