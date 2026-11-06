@@ -27,14 +27,16 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(null)
 
+
     useEffect(() => {
         let ativo = true
 
         async function carregarHistorico() {
-            try {
-                setCarregando(true)
-                setErro(null)
+            setCarregando(true)
+            setErro(null)
+            setHistorico([])
 
+            try {
                 const registros = await buscarHistoricoMedicamentos(
                     pacienteSelecionado.id
                 )
@@ -42,16 +44,26 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
                 if (ativo) {
                     setHistorico(registros)
                 }
+
             } catch (erro) {
-                if (ativo) setErro(erro.message)
+                if (ativo) {
+                    console.error('Erro ao carregar histórico:', erro)
+                    setHistorico([])
+                    setErro(erro.message || 'Erro ao carregar histórico')
+                }
+
             } finally {
-                if (ativo) setCarregando(false)
+                if (ativo) {
+                    setCarregando(false)
+                }
             }
         }
 
         if (pacienteSelecionado?.id) {
             carregarHistorico()
         } else {
+            setHistorico([])
+            setErro(null)
             setCarregando(false)
         }
 
@@ -59,6 +71,7 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
             ativo = false
         }
     }, [pacienteSelecionado?.id])
+
 
     const historicoOrdenado = [...historico].sort(
         (a, b) =>

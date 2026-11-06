@@ -1,0 +1,135 @@
+
+.verificacao-codigo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.verificacao-codigo-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: #E8F3F9;
+    color: #1D6FA4;
+}
+
+.verificacao-codigo h3 {
+    margin: 0;
+    color: #1E2F4B;
+    font-size: 24px;
+}
+
+.verificacao-codigo > p {
+    max-width: 420px;
+    margin: 0;
+    color: #4B5563;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.verificacao-codigo-email {
+    overflow-wrap: anywhere;
+}
+
+.verificacao-codigo-campos {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.verificacao-codigo-campos input {
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+    padding: 0;
+    border: 1px solid #A8B5C4;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #1E2F4B;
+    font: inherit;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.verificacao-codigo-campos input:focus {
+    outline: none;
+    border-color: #1D6FA4;
+    box-shadow: 0 0 0 3px rgba(29, 111, 164, 0.15);
+}
+
+.verificacao-codigo .verificacao-codigo-aviso {
+    padding: 14px;
+    width: 100%;
+    border-radius: 10px;
+    background: #F0F8FC;
+    color: #245A78;
+    font-size: 13px;
+}
+
+.verificacao-codigo-acoes {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.verificacao-codigo-voltar,
+.verificacao-codigo-confirmar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 52px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+}
+
+.verificacao-codigo-voltar {
+    border: 1px solid #1D6FA4;
+    background: #FFFFFF;
+    color: #1D6FA4;
+    cursor: pointer;
+}
+
+.verificacao-codigo-confirmar {
+    flex: 1;
+    border: none;
+    background: #007A40;
+    color: #FFFFFF;
+}
+
+.verificacao-codigo-confirmar:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.verificacao-codigo-voltar:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .verificacao-codigo-campos {
+        gap: 6px;
+    }
+
+    .verificacao-codigo-campos input {
+        height: 48px;
+        font-size: 19px;
+    }
+
+    .verificacao-codigo-acoes {
+        flex-direction: column;
+    }
+}

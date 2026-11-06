@@ -42,7 +42,7 @@ function ListaMedicamentos({
             ) : (
                 medicamentos.map((medicamento) => (
                     <CardMedicamento
-                        key={`${medicamento.id_programacao_medicamento}-${medicamento.proximo_horario}`}
+                    key={`${medicamento.id_receita_medica}-${medicamento.horario_programado}-${medicamento.id_programacao_medicamento ?? 'sem-programacao'}`}
                         medicamento={medicamento}
                         idUsuario={idUsuario}
                         aoEditar={aoEditar}

@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Mail, LockKeyhole, Eye, EyeOff, HeartPulse, ShieldCheck } from 'lucide-react'
+import { Mail, LockKeyhole, Eye, EyeOff, HeartPulse } from 'lucide-react'
+import PainelAutenticacao from '../components/auth/PainelAutenticacao'
 import { toast } from 'sonner'
 import './Login.css'
 
@@ -12,7 +13,11 @@ const loginSchema = z.object({
   senha: z.string().min(1, 'Informe sua senha')
 })
 
-function Login({ aoCadastrar, aoRecuperarSenha }) {
+function Login({
+  aoCadastrar,
+  aoRecuperarSenha,
+  aoEntrarDemo
+}) {
   const [mostrarSenha, setMostrarSenha] = useState(false)
 
   const {
@@ -38,33 +43,12 @@ function Login({ aoCadastrar, aoRecuperarSenha }) {
     <main className="login-pagina">
       <div className="login-container">
 
-        <section className="login-apresentacao">
-          <div className="login-marca">
-            <HeartPulse size={34} aria-hidden="true" />
-            <span>Med<span className="login-marca-destaque">Time</span></span>
-          </div>
-
-          <div className="login-mensagem">
-            <span className="login-etiqueta">
-              Cuidado em cada momento
-            </span>
-
-            <h1>
-              Cuidar é estar presente.
-            </h1>
-
-            <p>
-              Organize medicamentos, acompanhe horários
-              e tenha mais tranquilidade no cuidado
-              de quem importa.
-            </p>
-          </div>
-
-          <div className="login-rodape-painel">
-            <ShieldCheck size={20} aria-hidden="true" />
-            <span>Organização e cuidado em um só lugar</span>
-          </div>
-        </section>
+ 
+          <PainelAutenticacao
+            etiqueta="Cuidado e organização"
+            titulo="Cuidar é estar presente."
+            descricao="Organize medicamentos e acompanhe cada cuidado com mais tranquilidade."
+          />
 
         <section className="login-area-formulario">
           <div className="login-formulario-conteudo">
@@ -175,6 +159,16 @@ function Login({ aoCadastrar, aoRecuperarSenha }) {
               >
                 {isSubmitting ? 'Verificando...' : 'Entrar'}
               </button>
+
+              {import.meta.env.DEV && (
+                <button
+                  type="button"
+                  className="login-botao-demo"
+                  onClick={aoEntrarDemo}
+                >
+                  Visualizar MedTime (demonstração)
+                </button>
+              )}
             </form>
 
             <div className="login-cadastro">

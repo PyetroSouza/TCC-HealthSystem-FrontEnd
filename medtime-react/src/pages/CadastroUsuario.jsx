@@ -1,20 +1,15 @@
-import { UserPlus, ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { toast } from 'sonner'
 import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
 import { cadastrarUsuarioAPI } from '../services/authService'
+import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
 import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
-import { Eye, EyeOff, MailCheck } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import './CadastroUsuario.css'
 
-function cadastrarUsuario(dados) {
-    toast.info('Cadastro validado! A integração com a API será feita em seguida.')
-}
-
-function CadastroUsuario({ perfil, aoVoltarLogin }) {
+function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
     const [etapaAtual, setEtapaAtual] = useState(1)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false)
@@ -74,18 +69,25 @@ function CadastroUsuario({ perfil, aoVoltarLogin }) {
         }
     }
 
+
     async function cadastrarUsuario(dados) {
         try {
             const payload = montarPayloadUsuario(dados)
-
+    
             await cadastrarUsuarioAPI(payload)
-
+    
             toast.success('Conta cadastrada com sucesso!')
+    
+            aoIrParaLogin()
+    
         } catch (erro) {
             console.error('Erro no cadastro:', erro)
             toast.error(erro.message || 'Erro ao cadastrar usuário.')
         }
     }
+    
+
+    
 
     function voltarEtapa() {
         if (etapaAtual === 1) {
@@ -500,50 +502,18 @@ function CadastroUsuario({ perfil, aoVoltarLogin }) {
 
 
                             {etapaAtual === 3 && (
-                                <section className="cadastro-usuario-verificacao">
-                                    <div className="cadastro-usuario-verificacao-icone">
-                                        <MailCheck size={32} aria-hidden="true" />
-                                    </div>
-
-                                    <h3>Verifique seu e-mail</h3>
-
-                                    <p>
-                                        Para proteger sua conta, será necessário confirmar
-                                        seu endereço de e-mail com um código de verificação.
-                                    </p>
-
-                                    <div className="cadastro-usuario-verificacao-aviso" role="status">
-                                        A verificação por e-mail ainda não está disponível
-                                        nesta versão do MedTime.
-                                    </div>
-
-                                    <div className="cadastro-usuario-acoes">
-                                        <button
-                                            type="button"
-                                            className="cadastro-usuario-botao-voltar"
-                                            onClick={() => setEtapaAtual(2)}
-                                        >
-                                            Voltar
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="cadastro-usuario-botao"
-                                            disabled
-                                        >
-                                            Verificar código
-                                        </button>
-                                    </div>
-                                </section>
+                                <VerificacaoCodigo
+                                    finalidade="cadastro"
+                                    aoVoltar={() => setEtapaAtual(2)}
+                                />
                             )}
-
                         </form>
 
 
 
                         <footer className="cadastro-usuario-rodape">
                             <span>Já possui uma conta?</span>
-                            <button type="button" onClick={aoVoltarLogin}>
+                            <button type="button" onClick={aoIrParaLogin}>
                                 Entrar
                             </button>
                         </footer>

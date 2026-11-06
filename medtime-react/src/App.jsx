@@ -13,6 +13,10 @@ import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
 import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import EscolherPerfil from './pages/EscolherPerfil.jsx'
+import RecuperarSenha from './pages/RecuperarSenha.jsx'
+import RedefinirSenha from './pages/RedefinirSenha.jsx'
+import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
+import PainelAutenticacao from './components/auth/PainelAutenticacao'
 import { buscarUsuarios } from './services/api.js'
 import { Toaster } from 'sonner'
 import { medicamentos as medicamentosIniciais } from './data/medicamentos'
@@ -29,21 +33,36 @@ function App() {
   )
   const [medicamentoEmEdicao, setMedicamentoEmEdicao] = useState(null)
   const [pacientes, setPacientes] = useState([])
+  const [emailRecuperacao, setEmailRecuperacao] = useState('')
+
 
   useEffect(() => {
+    if (telaAtual !== 'inicio') return
+  
+    let ativo = true
+  
     async function carregarPacientes() {
       try {
         const usuarios = await buscarUsuarios()
-
-        setPacientes(usuarios)
-        console.log('👥 Usuários recebidos:', usuarios)
+  
+        if (ativo) {
+          setPacientes(usuarios)
+          console.log('👥 Usuários atualizados:', usuarios)
+        }
       } catch (erro) {
-        console.error('Erro ao carregar usuários:', erro)
+        if (ativo) {
+          console.error('Erro ao carregar usuários:', erro)
+        }
       }
     }
-
+  
     carregarPacientes()
-  }, [])
+  
+    return () => {
+      ativo = false
+    }
+  }, [telaAtual])
+  
 
   function voltarParaInicio() {
     setTelaAtual('inicio')
@@ -120,6 +139,8 @@ function App() {
 
         <Login
           aoCadastrar={() => setTelaAtual('escolher-perfil')}
+          aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
+          aoEntrarDemo={() => setTelaAtual('inicio')}
         />
       </>
     )
@@ -137,6 +158,7 @@ function App() {
         <CadastroUsuario
           perfil={perfilCadastro}
           aoVoltarLogin={() => setTelaAtual('escolher-perfil')}
+          aoIrParaLogin={() => setTelaAtual('login')}
         />
       </>
     )
@@ -152,6 +174,63 @@ function App() {
       />
     )
   }
+  if (telaAtual === 'redefinir-senha') {
+    return (
+      <>
+        <Toaster position="top-right" richColors closeButton />
+
+        <RedefinirSenha
+          aoVoltarLogin={() => setTelaAtual('login')}
+        />
+      </>
+    )
+  }
+
+  if (telaAtual === 'recuperar-senha') {
+    return (
+      <>
+        <Toaster position="top-right" richColors closeButton />
+  
+        <RecuperarSenha
+          aoVoltarLogin={() => setTelaAtual('login')}
+          aoVisualizarVerificacao={(email) => {
+            setEmailRecuperacao(email)
+            setTelaAtual('verificacao-recuperacao')
+          }}
+        />
+      </>
+    )
+  }
+  
+
+  if (telaAtual === 'verificacao-recuperacao') {
+    return (
+      <main className="login-pagina">
+        <div className="login-container">
+
+          <PainelAutenticacao
+            etiqueta="Verificação da conta"
+            titulo="Sua segurança é importante."
+            descricao="Confira as informações para proteger o acesso ao MedTime."
+          />
+
+          <section className="login-area-formulario">
+            <div className="login-formulario-conteudo">
+              <VerificacaoCodigo
+                finalidade="recuperacao"
+                email={emailRecuperacao}
+                aoVoltar={() =>
+                  setTelaAtual('recuperar-senha')
+                }
+              />
+            </div>
+          </section>
+
+        </div>
+      </main>
+    )
+  }
+
   return (
     <div className="aplicacao">
       <Cabecalho />
@@ -163,8 +242,7 @@ function App() {
         duration={4000}
       />
 
-      <main className="conteudo">
-        {telaAtual === 'login' && <Login />}
+      <main className="conteudo"> 
         {telaAtual === 'inicio' && (
           <Inicio
             aoCadastrar={() => setTelaAtual('cadastro')}

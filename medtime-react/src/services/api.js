@@ -23,8 +23,9 @@ export async function buscarTiposDosagem() {
   return dados.response.tipo_dosagem
 }
 
+
 export async function cadastrarMedicamentoAPI(dadosMedicamento) {
-  const resposta = await fetch(`http://localhost:8080/v1/healthSystem/medtime/medicamento`, {
+  const resposta = await fetch(`${API_URL}/medicamento`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -34,16 +35,17 @@ export async function cadastrarMedicamentoAPI(dadosMedicamento) {
 
   const resultado = await resposta.json()
 
-  if (!resposta.ok) {
+  if (!resposta.ok || resultado.status === false) {
     throw new Error(
-      dados.field?.join(', ') ||
-      dados.message ||
+      resultado.field?.join(', ') ||
+      resultado.message ||
       'Erro ao cadastrar medicamento'
     )
   }
 
   return resultado
 }
+
 
 export async function buscarTiposIntervalo() {
   const resposta = await fetch(`${API_URL}/tipo_intervalo`)

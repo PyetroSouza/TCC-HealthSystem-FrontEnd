@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Pencil, Trash2, ChevronDown, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { confirmarIngestaoMedicamento } from '../services/api'
@@ -15,6 +15,7 @@ function CardMedicamento({
   const [confirmando, setConfirmando] = useState(false)
 
   const confirmado = Boolean(medicamento.confirmado)
+  const confirmacaoEmAndamento = useRef(false)
 
   const horarioProgramado = medicamento.horario_programado
 
@@ -24,17 +25,23 @@ function CardMedicamento({
   const liberado = horarioValido &&
     Date.now() >= new Date(horarioProgramado).getTime() - 30 * 60 * 1000
 
+
   async function confirmarTomada() {
-    if (confirmando || confirmado || !liberado) return
+    if (
+      confirmacaoEmAndamento.current ||
+      confirmado ||
+      !liberado
+    ) return
 
     if (!medicamento.id_receita_medica || !idUsuario) {
       toast.error('Dados da receita ou do paciente indisponíveis.')
       return
     }
 
-    try {
-      setConfirmando(true)
+    confirmacaoEmAndamento.current = true
+    setConfirmando(true)
 
+    try {
       await confirmarIngestaoMedicamento(
         medicamento.id_receita_medica,
         idUsuario,
@@ -43,16 +50,19 @@ function CardMedicamento({
 
       toast.success('Tomada registrada com sucesso!')
       setExpandido(false)
-      aoConfirmarTomada?.()
+
+      await aoConfirmarTomada?.()
 
     } catch (erro) {
       toast.error('Não foi possível registrar a tomada.', {
         description: erro.message
       })
     } finally {
+      confirmacaoEmAndamento.current = false
       setConfirmando(false)
     }
   }
+
 
   return (
     <div className="remedio">

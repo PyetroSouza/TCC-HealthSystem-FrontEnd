@@ -1,0 +1,33 @@
+.recuperar-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 36px;
+    padding: 8px 0;
+
+    border: none;
+    background: transparent;
+
+    color: #1D6FA4;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.recuperar-voltar:hover {
+    text-decoration: underline;
+}
+
+.recuperar-voltar:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+    .recuperar-voltar {
+        margin-bottom: 28px;
+    }
+}

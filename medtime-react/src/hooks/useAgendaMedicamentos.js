@@ -4,12 +4,13 @@ import { buscarAgendaMedicamentos } from '../services/api.js'
 
 export function useAgendaMedicamentos(idUsuario, dataConsulta) {
     const [agenda, setAgenda] = useState([])
-    const [carregandoAgenda, setCarregandoAgenda] = useState(true)
+    const [carregandoAgenda, setCarregandoAgenda] = useState(false)
     const [erroAgenda, setErroAgenda] = useState(null)
 
     const carregarAgenda = useCallback(async () => {
         if (!idUsuario) {
             setAgenda([])
+            setErroAgenda(null)
             setCarregandoAgenda(false)
             return
         }
@@ -20,23 +21,25 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
         try {
             const hoje = new Date()
 
-            const data = [
+            const dataLocal = [
                 hoje.getFullYear(),
                 String(hoje.getMonth() + 1).padStart(2, '0'),
                 String(hoje.getDate()).padStart(2, '0')
             ].join('-')
 
-            const dataAgenda = dataConsulta || data
-
             const medicamentosAPI = await buscarAgendaMedicamentos(
                 idUsuario,
-                dataAgenda
+                dataConsulta || dataLocal
             )
 
             setAgenda(medicamentosAPI)
+
         } catch (erro) {
             console.error('Erro ao carregar agenda:', erro)
-            setErroAgenda(erro.message)
+
+            setAgenda([])
+            setErroAgenda(erro.message || 'Erro ao carregar agenda')
+
         } finally {
             setCarregandoAgenda(false)
         }
