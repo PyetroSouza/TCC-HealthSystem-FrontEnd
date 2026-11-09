@@ -1,26 +1,19 @@
 
 import BoasVindas from '../components/BoasVindas.jsx'
-import Buscar from '../components/Buscar.jsx'
 import CardPaciente from '../components/CardPaciente.jsx'
 import './Inicio.css'
 
 function Inicio({
   aoCadastrar,
-  busca,
-  setBusca,
+  aoVerPacientes,
   abrirDashboard,
   pacientes
 }) {
 
-  const pacientesFiltrados = pacientes.filter((paciente) =>
-    paciente.nome.toLowerCase().includes(busca.trim().toLowerCase())
-  )
 
   return (
     <>
       <BoasVindas aoCadastrar={aoCadastrar} />
-
-      <Buscar busca={busca} setBusca={setBusca} />
 
       <div className="container">
         <section className="resumo">
@@ -34,17 +27,30 @@ function Inicio({
             <p className="resumo_texto">Alertas Pendentes</p>
           </div>
         </section>
-        <div className="lista_pacientes">
+        <section className="secao-pacientes-inicio">
+          <div className="cabecalho-pacientes-inicio">
+            <h2>Pacientes acompanhados</h2>
 
-          {pacientesFiltrados.map((paciente) => (
-            <CardPaciente
-              key={paciente.id}
-              paciente={paciente}
-              aoClicar={() => abrirDashboard(paciente)}
-            />
-          ))}
+            <button
+              type="button"
+              className="botao-ver-pacientes"
+              onClick={aoVerPacientes}
+            >
+              Ver todos
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
 
-        </div>
+          <div className="lista_pacientes">
+            {pacientes.slice(0, 3).map((paciente) => (
+              <CardPaciente
+                key={paciente.id ?? paciente.id_usuario}
+                paciente={paciente}
+                aoClicar={() => abrirDashboard(paciente)}
+              />
+            ))}
+          </div>
+        </section>
       </div>
     </>
   )

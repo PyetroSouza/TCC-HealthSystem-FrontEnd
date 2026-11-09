@@ -35,6 +35,101 @@
     font-weight: 500;
 }
 
+.cabecalho-pacientes-inicio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 24px 0 16px;
+}
+
+.cabecalho-pacientes-inicio h2 {
+    margin: 0;
+    color: #20344A;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.botao-ver-pacientes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    width: fit-content;
+    min-height: 46px;
+    padding: 12px 20px;
+
+    border: 1px solid #1D6FA4;
+    border-radius: 10px;
+
+    background-color: #FFFFFF;
+    color: #1D6FA4;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.botao-ver-pacientes:hover {
+    background-color: #1D6FA4;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+.botao-ver-pacientes:active {
+    transform: translateY(0);
+}
+
+.botao-ver-pacientes:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+.secao-pacientes-inicio {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.cabecalho-pacientes-inicio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+}
+
+.cabecalho-pacientes-inicio h2 {
+    margin: 0;
+    color: #20344A;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.secao-pacientes-inicio .lista_pacientes {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .cabecalho-pacientes-inicio {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cabecalho-pacientes-inicio .botao-ver-pacientes {
+        align-self: flex-start;
+    }
+}
+
 .card_ativos {
     color: #009951;
 }
@@ -88,7 +183,8 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-left: 35px;
+    min-width: 0;
+    padding-left: 0;
 }
 
 .nome {
@@ -96,6 +192,7 @@
     font-size: 16px;
     font-weight: 500;
     color: #1F2937;
+    overflow-wrap: anywhere;
 }
 
 .idade {
@@ -149,6 +246,26 @@
         min-width: 0;
     }
 }
+
+@media (max-width: 600px) {
+    .botao-ver-pacientes {
+        width: 100%;
+    }
+
+    .cabecalho-pacientes-inicio {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .botao-ver-pacientes {
+        transition: none;
+        transform: none;
+    }
+}
+
 
 @media (max-width: 768px) {
     .resumo {

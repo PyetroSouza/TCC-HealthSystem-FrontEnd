@@ -38,13 +38,13 @@ function App() {
 
   useEffect(() => {
     if (telaAtual !== 'inicio') return
-  
+
     let ativo = true
-  
+
     async function carregarPacientes() {
       try {
         const usuarios = await buscarUsuarios()
-  
+
         if (ativo) {
           setPacientes(usuarios)
           console.log('👥 Usuários atualizados:', usuarios)
@@ -55,14 +55,14 @@ function App() {
         }
       }
     }
-  
+
     carregarPacientes()
-  
+
     return () => {
       ativo = false
     }
   }, [telaAtual])
-  
+
 
   function voltarParaInicio() {
     setTelaAtual('inicio')
@@ -190,7 +190,7 @@ function App() {
     return (
       <>
         <Toaster position="top-right" richColors closeButton />
-  
+
         <RecuperarSenha
           aoVoltarLogin={() => setTelaAtual('login')}
           aoVisualizarVerificacao={(email) => {
@@ -201,7 +201,7 @@ function App() {
       </>
     )
   }
-  
+
 
   if (telaAtual === 'verificacao-recuperacao') {
     return (
@@ -242,14 +242,27 @@ function App() {
         duration={4000}
       />
 
-      <main className="conteudo"> 
+      <main className="conteudo">
         {telaAtual === 'inicio' && (
           <Inicio
             aoCadastrar={() => setTelaAtual('cadastro')}
-            busca={busca}
-            setBusca={setBusca}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}
+            abrirDashboard={(paciente) => {
+              setPacienteSelecionado(paciente)
+              setTelaAtual('dashboard')
+            }} 
+            aoVerPacientes={() => setTelaAtual('pacientes')}
+          />
+        )}
+
+        {telaAtual === 'cadastro' && <CadastroIdoso />}
+
+
+        {telaAtual === 'pacientes' && (
+          <Pacientes
+            pacientes={pacientes}
+            aoVoltar={() => setTelaAtual('inicio')}
             abrirDashboard={(paciente) => {
               setPacienteSelecionado(paciente)
               setTelaAtual('dashboard')
@@ -257,9 +270,6 @@ function App() {
           />
         )}
 
-        {telaAtual === 'cadastro' && <CadastroIdoso />}
-
-        {telaAtual === 'pacientes' && <Pacientes />}
 
         {telaAtual === 'dashboard' && (<DashboardPaciente
           pacienteSelecionado={pacienteSelecionado}
