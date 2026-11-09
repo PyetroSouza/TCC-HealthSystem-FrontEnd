@@ -84,20 +84,16 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         id_receita_medica: item.id_receita_medica,
         nome: item.nome_medicamento,
         quantidade_dose: Number(item.dosagem),
-
-
+        tipo_dosagem: item.tipo_dosagem,
         horario_programado: item.horario_programado,
-
-
         proximo_horario: new Date(
             item.horario_programado
         ).toLocaleTimeString('pt-BR', {
             hour: '2-digit',
             minute: '2-digit'
         }),
-
-
-        confirmado: item.confirmado
+        confirmado: item.confirmado,
+        status: item.status,
     }))
 
 

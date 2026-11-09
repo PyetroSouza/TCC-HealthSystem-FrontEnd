@@ -1,13 +1,31 @@
 
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { buscarAgendaMedicamentos } from '../services/api.js'
+
+const INTERVALO_ATUALIZACAO = 60_000
+const INTERVALO_MINIMO = 10_000
+
+function obterDataLocal() {
+    const hoje = new Date()
+
+    return [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, '0'),
+        String(hoje.getDate()).padStart(2, '0')
+    ].join('-')
+}
 
 export function useAgendaMedicamentos(idUsuario, dataConsulta) {
     const [agenda, setAgenda] = useState([])
     const [carregandoAgenda, setCarregandoAgenda] = useState(false)
     const [erroAgenda, setErroAgenda] = useState(null)
 
-    const carregarAgenda = useCallback(async () => {
+    const ultimaRequisicao = useRef(0)
+    const ultimaConsultaAutomatica = useRef(0)
+
+    const carregarAgenda = useCallback(async (silencioso = false) => {
+        const requisicaoAtual = ++ultimaRequisicao.current
+
         if (!idUsuario) {
             setAgenda([])
             setErroAgenda(null)
@@ -15,44 +33,122 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
             return
         }
 
-        setCarregandoAgenda(true)
-        setErroAgenda(null)
+        if (!silencioso) {
+            setCarregandoAgenda(true)
+            setErroAgenda(null)
+        }
 
         try {
-            const hoje = new Date()
-
-            const dataLocal = [
-                hoje.getFullYear(),
-                String(hoje.getMonth() + 1).padStart(2, '0'),
-                String(hoje.getDate()).padStart(2, '0')
-            ].join('-')
+            const data = dataConsulta || obterDataLocal()
 
             const medicamentosAPI = await buscarAgendaMedicamentos(
                 idUsuario,
-                dataConsulta || dataLocal
+                data
             )
 
+            // Impede respostas antigas de sobrescrever dados novos
+            if (requisicaoAtual !== ultimaRequisicao.current) {
+                return
+            }
+
             setAgenda(medicamentosAPI)
+            setErroAgenda(null)
 
         } catch (erro) {
+            if (requisicaoAtual !== ultimaRequisicao.current) {
+                return
+            }
+
             console.error('Erro ao carregar agenda:', erro)
 
-            setAgenda([])
-            setErroAgenda(erro.message || 'Erro ao carregar agenda')
+            if (!silencioso) {
+                setAgenda([])
+            }
+
+            setErroAgenda(
+                erro.message || 'Erro ao carregar agenda'
+            )
 
         } finally {
-            setCarregandoAgenda(false)
+            if (requisicaoAtual === ultimaRequisicao.current) {
+                setCarregandoAgenda(false)
+            }
         }
     }, [idUsuario, dataConsulta])
 
-    useEffect(() => {
-        carregarAgenda()
+    // Mantém atualização imediata após ações do usuário
+    const recarregarAgenda = useCallback(() => {
+        return carregarAgenda(false)
     }, [carregarAgenda])
+
+    useEffect(() => {
+        // Primeira consulta ao abrir o dashboard
+        setAgenda([])
+        ultimaConsultaAutomatica.current = Date.now()
+        carregarAgenda(false)
+
+        if (!idUsuario) {
+            return () => {
+                ultimaRequisicao.current++
+            }
+        }
+
+        function atualizarAutomaticamente() {
+            if (document.visibilityState !== 'visible') {
+                return
+            }
+
+            const agora = Date.now()
+
+            // Evita consultas duplicadas ao alternar abas
+            if (
+                agora - ultimaConsultaAutomatica.current <
+                INTERVALO_MINIMO
+            ) {
+                return
+            }
+
+            ultimaConsultaAutomatica.current = agora
+            carregarAgenda(true)
+        }
+
+        const intervalo = setInterval(
+            atualizarAutomaticamente,
+            INTERVALO_ATUALIZACAO
+        )
+
+        document.addEventListener(
+            'visibilitychange',
+            atualizarAutomaticamente
+        )
+
+        window.addEventListener(
+            'focus',
+            atualizarAutomaticamente
+        )
+
+        return () => {
+            clearInterval(intervalo)
+
+            document.removeEventListener(
+                'visibilitychange',
+                atualizarAutomaticamente
+            )
+
+            window.removeEventListener(
+                'focus',
+                atualizarAutomaticamente
+            )
+
+            // Invalida requisições pendentes
+            ultimaRequisicao.current++
+        }
+    }, [idUsuario, carregarAgenda])
 
     return {
         agenda,
         carregandoAgenda,
         erroAgenda,
-        recarregarAgenda: carregarAgenda
+        recarregarAgenda
     }
 }

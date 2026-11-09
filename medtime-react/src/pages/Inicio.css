@@ -4,11 +4,13 @@
     gap: 25px;
 }
 
+
 .resumo {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
 }
+
 
 .card_resumo {
     display: flex;
@@ -21,6 +23,7 @@
     background-color: #FFFFFF;
 }
 
+
 .resumo_numero {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -28,12 +31,14 @@
     font-weight: 400;
 }
 
+
 .resumo_texto {
     margin: 0;
     font-family: 'Inter', sans-serif;
     font-size: 20px;
     font-weight: 500;
 }
+
 
 .cabecalho-pacientes-inicio {
     display: flex;
@@ -43,6 +48,7 @@
     margin: 24px 0 16px;
 }
 
+
 .cabecalho-pacientes-inicio h2 {
     margin: 0;
     color: #20344A;
@@ -50,25 +56,31 @@
     font-weight: 600;
 }
 
+
 .botao-ver-pacientes {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
 
+
     width: fit-content;
     min-height: 46px;
     padding: 12px 20px;
 
+
     border: 1px solid #1D6FA4;
     border-radius: 10px;
+
 
     background-color: #FFFFFF;
     color: #1D6FA4;
 
+
     font: inherit;
     font-size: 14px;
     font-weight: 600;
+
 
     cursor: pointer;
     transition:
@@ -77,20 +89,24 @@
         transform 0.2s ease;
 }
 
+
 .botao-ver-pacientes:hover {
     background-color: #1D6FA4;
     color: #FFFFFF;
     transform: translateY(-2px);
 }
 
+
 .botao-ver-pacientes:active {
     transform: translateY(0);
 }
+
 
 .botao-ver-pacientes:focus-visible {
     outline: 3px solid #1D6FA4;
     outline-offset: 3px;
 }
+
 
 .secao-pacientes-inicio {
     display: flex;
@@ -98,6 +114,7 @@
     gap: 16px;
     margin-top: 24px;
 }
+
 
 .cabecalho-pacientes-inicio {
     display: flex;
@@ -107,6 +124,7 @@
     margin: 0;
 }
 
+
 .cabecalho-pacientes-inicio h2 {
     margin: 0;
     color: #20344A;
@@ -114,10 +132,12 @@
     font-weight: 600;
 }
 
+
 .secao-pacientes-inicio .lista_pacientes {
     margin-top: 0;
     margin-bottom: 0;
 }
+
 
 @media (max-width: 600px) {
     .cabecalho-pacientes-inicio {
@@ -125,24 +145,29 @@
         flex-direction: column;
     }
 
+
     .cabecalho-pacientes-inicio .botao-ver-pacientes {
         align-self: flex-start;
     }
 }
 
+
 .card_ativos {
     color: #009951;
 }
 
+
 .card_alertas {
     color: #B32D34;
 }
+
 
 .lista_pacientes {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
 }
+
 
 .card_paciente {
     box-sizing: border-box;
@@ -151,10 +176,12 @@
     min-height: 162px;
     padding: 16px;
 
+
     display: grid;
     grid-template-columns: 75px minmax(0, 1fr);
     grid-template-rows: 1fr auto;
     column-gap: 12px;
+
 
     background-color: #FFFFFF;
     border: 1px solid #D9D9D9;
@@ -162,6 +189,7 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     font-family: 'Roboto', sans-serif;
 }
+
 
 .avatar {
     display: flex;
@@ -174,10 +202,12 @@
     font-size: 24px;
 }
 
+
 .avatar,
 .info {
     align-self: center;
 }
+
 
 .info {
     display: flex;
@@ -187,6 +217,7 @@
     padding-left: 0;
 }
 
+
 .nome {
     margin: 0;
     font-size: 16px;
@@ -195,11 +226,13 @@
     overflow-wrap: anywhere;
 }
 
+
 .idade {
     margin: 0 0 6px;
     font-size: 14px;
     color: #6B7280;
 }
+
 
 .tags {
     display: flex;
@@ -210,6 +243,7 @@
     list-style: none;
 }
 
+
 .tags li {
     padding: 2px 8px;
     border-radius: 6px;
@@ -217,6 +251,7 @@
     color: #3F4A8A;
     font-size: 10px;
 }
+
 
 .proximo_remedio {
     grid-column: 1 / -1;
@@ -230,10 +265,12 @@
     color: #6B7280;
 }
 
+
 .proximo_remedio img {
     width: 16px;
     height: 16px;
 }
+
 
 @media (max-width: 1250px) {
     .lista_pacientes {
@@ -241,22 +278,26 @@
         gap: 20px;
     }
 
+
     .card_paciente {
         width: 100%;
         min-width: 0;
     }
 }
 
+
 @media (max-width: 600px) {
     .botao-ver-pacientes {
         width: 100%;
     }
+
 
     .cabecalho-pacientes-inicio {
         align-items: flex-start;
         flex-direction: column;
     }
 }
+
 
 
 @media (prefers-reduced-motion: reduce) {
@@ -267,14 +308,17 @@
 }
 
 
+
 @media (max-width: 768px) {
     .resumo {
         grid-template-columns: 1fr;
     }
 
+
     .lista_pacientes {
         grid-template-columns: 1fr;
     }
+
 
     .card_paciente {
         width: 100%;

@@ -1,533 +1,533 @@
 .cadastro-usuario-pagina {
-    width: 100%;
-    min-height: 100dvh;
-    margin: 0;
-    background: #FFFFFF;
-    font-family: 'Inter', sans-serif;
+width: 100%;
+min-height: 100dvh;
+margin: 0;
+background: #FFFFFF;
+font-family: 'Inter', sans-serif;
 }
 
 .cadastro-usuario-container {
-    display: grid;
-    grid-template-columns: minmax(0, 44%) minmax(0, 56%);
-    width: 100%;
-    min-height: 100dvh;
+display: grid;
+grid-template-columns: minmax(0, 44%) minmax(0, 56%);
+width: 100%;
+min-height: 100dvh;
 }
 
 .cadastro-usuario-apresentacao {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 32px;
-    padding: clamp(32px, 5vw, 80px);
-    background: linear-gradient(155deg, #155E89, #176B9A 45%, #1C86BF);
-    color: #FFFFFF;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+gap: 32px;
+padding: clamp(32px, 5vw, 80px);
+background: linear-gradient(155deg, #155E89, #176B9A 45%, #1C86BF);
+color: #FFFFFF;
 }
 
 .cadastro-usuario-marca {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 28px;
-    font-weight: 700;
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 28px;
+font-weight: 700;
 }
 
 .cadastro-usuario-mensagem h1 {
-    margin: 0 0 20px;
-    max-width: 430px;
-    color: #FFFFFF;
-    font-size: clamp(32px, 3.2vw, 52px);
-    line-height: 1.16;
+margin: 0 0 20px;
+max-width: 430px;
+color: #FFFFFF;
+font-size: clamp(32px, 3.2vw, 52px);
+line-height: 1.16;
 }
 
 .cadastro-usuario-mensagem p {
-    max-width: 400px;
-    margin: 0;
-    color: #FFFFFF;
-    font-size: 16px;
-    line-height: 1.7;
+max-width: 400px;
+margin: 0;
+color: #FFFFFF;
+font-size: 16px;
+line-height: 1.7;
 }
 
 .cadastro-usuario-rodape-painel {
-    margin: 0;
-    font-size: 13px;
+margin: 0;
+font-size: 13px;
 }
 
 .cadastro-usuario-area-formulario {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-    padding: 24px 48px;
+display: flex;
+justify-content: center;
+align-items: center;
+min-width: 0;
+padding: 24px 48px;
 }
 
 .cadastro-usuario-conteudo {
-    width: 100%;
-    max-width: 520px;
+width: 100%;
+max-width: 520px;
 }
 
 .cadastro-usuario-voltar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    padding: 8px 0;
-    border: none;
-    background: transparent;
-    color: #1D6FA4;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 20px;
+padding: 8px 0;
+border: none;
+background: transparent;
+color: #1D6FA4;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
 }
 
 .cadastro-usuario-cabecalho h2 {
-    margin: 0 0 10px;
-    color: #1E2F4B;
-    font-size: 32px;
+margin: 0 0 10px;
+color: #1E2F4B;
+font-size: 32px;
 }
 
 .cadastro-usuario-cabecalho p {
-    margin: 0;
-    color: #4B5563;
-    font-size: 15px;
+margin: 0;
+color: #4B5563;
+font-size: 15px;
 }
 
 .cadastro-usuario-aviso {
-    margin-top: 32px;
-    padding: 20px;
-    border: 1px solid #D1DCE5;
-    border-radius: 10px;
-    color: #4B5563;
-    font-size: 14px;
-    line-height: 1.6;
+margin-top: 32px;
+padding: 20px;
+border: 1px solid #D1DCE5;
+border-radius: 10px;
+color: #4B5563;
+font-size: 14px;
+line-height: 1.6;
 }
 
 .cadastro-usuario-rodape {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 32px;
-    font-size: 14px;
-    color: #374151;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-wrap: wrap;
+gap: 8px;
+margin-top: 32px;
+font-size: 14px;
+color: #374151;
 }
 
 .cadastro-usuario-rodape button {
-    border: none;
-    background: transparent;
-    color: #1D6FA4;
-    font-weight: 600;
-    cursor: pointer;
+border: none;
+background: transparent;
+color: #1D6FA4;
+font-weight: 600;
+cursor: pointer;
 }
 
 .cadastro-usuario-voltar:focus-visible,
 .cadastro-usuario-rodape button:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 3px;
+outline: 3px solid #1D6FA4;
+outline-offset: 3px;
 }
 
 .cadastro-usuario-formulario {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 24px;
+display: flex;
+flex-direction: column;
+gap: 16px;
+margin-top: 24px;
 }
 
 .cadastro-usuario-campo {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+display: flex;
+flex-direction: column;
+gap: 8px;
 }
 
 .cadastro-usuario-campo label {
-    color: #1E2F4B;
-    font-size: 14px;
-    font-weight: 600;
+color: #1E2F4B;
+font-size: 14px;
+font-weight: 600;
 }
 
 .cadastro-usuario-campo input {
-    width: 100%;
-    min-height: 54px;
-    padding: 0 16px;
-    border: 1px solid #A8B5C4;
-    border-radius: 10px;
-    background: #FFFFFF;
-    color: #1E2F4B;
-    font: inherit;
+width: 100%;
+min-height: 54px;
+padding: 0 16px;
+border: 1px solid #A8B5C4;
+border-radius: 10px;
+background: #FFFFFF;
+color: #1E2F4B;
+font: inherit;
 }
 
 .cadastro-usuario-campo input:focus {
-    outline: none;
-    border-color: #1D6FA4;
-    box-shadow: 0 0 0 3px rgba(29, 111, 164, 0.15);
+outline: none;
+border-color: #1D6FA4;
+box-shadow: 0 0 0 3px rgba(29, 111, 164, 0.15);
 }
 
 .cadastro-usuario-botao {
-    width: 100%;
-    min-height: 54px;
-    margin-top: 8px;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    background: #007A40;
-    color: #FFFFFF;
-    font: inherit;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
+width: 100%;
+min-height: 54px;
+margin-top: 8px;
+padding: 12px 20px;
+border: none;
+border-radius: 10px;
+background: #007A40;
+color: #FFFFFF;
+font: inherit;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+transition: background-color 0.2s;
 }
 
 .cadastro-usuario-botao:hover {
-    background: #006B38;
+background: #006B38;
 }
 
 .cadastro-usuario-botao:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 3px;
+outline: 3px solid #1D6FA4;
+outline-offset: 3px;
 }
 
 .cadastro-usuario-erro {
-    margin: 0;
-    color: #B42318;
-    font-size: 13px;
-    line-height: 1.5;
+margin: 0;
+color: #B42318;
+font-size: 13px;
+line-height: 1.5;
 }
 
 .cadastro-usuario-campo input[aria-invalid="true"] {
-    border-color: #B42318;
+border-color: #B42318;
 }
 
 .cadastro-usuario-campo input[aria-invalid="true"]:focus {
-    box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.12);
+box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.12);
 }
 
 .cadastro-usuario-botao:disabled {
-    opacity: 0.6;
-    cursor: wait;
+opacity: 0.6;
+cursor: wait;
 }
 
 .cadastro-usuario-formulario h3 {
-    margin: 0 0 4px;
-    color: #1E2F4B;
-    font-size: 20px;
-    font-weight: 700;
+margin: 0 0 4px;
+color: #1E2F4B;
+font-size: 20px;
+font-weight: 700;
 }
 
 .cadastro-usuario-acoes {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
+display: flex;
+gap: 12px;
+margin-top: 8px;
 }
 
 .cadastro-usuario-acoes .cadastro-usuario-botao {
-    flex: 1;
-    margin-top: 0;
+flex: 1;
+margin-top: 0;
 }
 
 .cadastro-usuario-botao-voltar {
-    min-height: 54px;
-    padding: 12px 24px;
-    border: 1px solid #1D6FA4;
-    border-radius: 10px;
-    background: #FFFFFF;
-    color: #1D6FA4;
-    font: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
+min-height: 54px;
+padding: 12px 24px;
+border: 1px solid #1D6FA4;
+border-radius: 10px;
+background: #FFFFFF;
+color: #1D6FA4;
+font: inherit;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
 }
 
 .cadastro-usuario-botao-voltar:hover {
-    background: #EEF4F8;
+background: #EEF4F8;
 }
 
 .cadastro-usuario-botao-voltar:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 3px;
+outline: 3px solid #1D6FA4;
+outline-offset: 3px;
 }
 
 /* Opção exclusiva do paciente */
 
 .cadastro-usuario-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #1E2F4B;
-    font-size: 14px;
-    cursor: pointer;
+display: flex;
+align-items: center;
+gap: 12px;
+color: #1E2F4B;
+font-size: 14px;
+cursor: pointer;
 }
 
 .cadastro-usuario-checkbox input {
-    width: 18px;
-    height: 18px;
-    min-height: auto;
-    flex-shrink: 0;
-    accent-color: #007A40;
+width: 18px;
+height: 18px;
+min-height: auto;
+flex-shrink: 0;
+accent-color: #007A40;
 }
 
 .cadastro-usuario-checkbox input:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 3px;
+outline: 3px solid #1D6FA4;
+outline-offset: 3px;
 }
 
 /* Indicador de progresso */
 
 
 .cadastro-usuario-progresso {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin: 28px 0 32px;
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 12px;
+margin: 28px 0 32px;
 }
 
 .cadastro-usuario-progresso-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
+min-width: 0;
 }
 
 .cadastro-usuario-etapa {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+display: flex;
+align-items: center;
+justify-content: center;
 
-    width: 34px;
-    height: 34px;
-    border: 2px solid #A8B5C4;
-    border-radius: 50%;
+width: 34px;
+height: 34px;
+border: 2px solid #A8B5C4;
+border-radius: 50%;
 
-    color: #53657A;
-    background: #FFFFFF;
-    font-size: 14px;
-    font-weight: 600;
+color: #53657A;
+background: #FFFFFF;
+font-size: 14px;
+font-weight: 600;
 }
 
 .cadastro-usuario-etapa.ativa {
-    background: #1D6FA4;
-    border-color: #1D6FA4;
-    color: #FFFFFF;
+background: #1D6FA4;
+border-color: #1D6FA4;
+color: #FFFFFF;
 }
 
 .cadastro-usuario-etapa.concluida {
-    background: #007A40;
-    border-color: #007A40;
-    color: #FFFFFF;
+background: #007A40;
+border-color: #007A40;
+color: #FFFFFF;
 }
 
 .cadastro-usuario-etapa-titulo {
-    color: #64748B;
-    font-size: 12px;
-    text-align: center;
-    line-height: 1.4;
+color: #64748B;
+font-size: 12px;
+text-align: center;
+line-height: 1.4;
 }
 
 .cadastro-usuario-progresso-item.ativo
 .cadastro-usuario-etapa-titulo {
-    color: #1D6FA4;
-    font-weight: 700;
+color: #1D6FA4;
+font-weight: 700;
 }
 
 .cadastro-usuario-termos {
-    margin-top: 4px;
+margin-top: 4px;
 }
 
 .cadastro-usuario-termos-label {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    color: #374151;
-    font-size: 13px;
-    line-height: 1.6;
-    cursor: pointer;
+display: flex;
+align-items: flex-start;
+gap: 12px;
+color: #374151;
+font-size: 13px;
+line-height: 1.6;
+cursor: pointer;
 }
 
 .cadastro-usuario-termos-label input {
-    width: 18px;
-    height: 18px;
-    min-height: auto;
-    flex-shrink: 0;
-    margin-top: 2px;
-    accent-color: #007A40;
+width: 18px;
+height: 18px;
+min-height: auto;
+flex-shrink: 0;
+margin-top: 2px;
+accent-color: #007A40;
 }
 
 .cadastro-usuario-termos-label input:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 3px;
+outline: 3px solid #1D6FA4;
+outline-offset: 3px;
 }
 
 
 /* Campos de senha com botão de visualização */
 
 .cadastro-usuario-input-senha {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    min-height: 54px;
-    padding: 0 6px 0 0;
+display: flex;
+align-items: center;
+width: 100%;
+min-height: 54px;
+padding: 0 6px 0 0;
 
-    background: #FFFFFF;
-    border: 1px solid #A8B5C4;
-    border-radius: 10px;
+background: #FFFFFF;
+border: 1px solid #A8B5C4;
+border-radius: 10px;
 
-    transition: border-color 0.2s, box-shadow 0.2s;
+transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .cadastro-usuario-input-senha:focus-within {
-    border-color: #1D6FA4;
-    box-shadow: 0 0 0 3px rgba(29, 111, 164, 0.15);
+border-color: #1D6FA4;
+box-shadow: 0 0 0 3px rgba(29, 111, 164, 0.15);
 }
 
 /* Sobrescreve o estilo geral dos inputs */
 
 .cadastro-usuario-campo .cadastro-usuario-input-senha input {
-    flex: 1;
-    width: 100%;
-    min-width: 0;
-    min-height: 52px;
-    padding: 0 16px;
+flex: 1;
+width: 100%;
+min-width: 0;
+min-height: 52px;
+padding: 0 16px;
 
-    border: none;
-    outline: none;
-    box-shadow: none;
-    background: transparent;
+border: none;
+outline: none;
+box-shadow: none;
+background: transparent;
 
-    color: #1E2F4B;
-    font: inherit;
-    font-size: 15px;
+color: #1E2F4B;
+font: inherit;
+font-size: 15px;
 }
 
 .cadastro-usuario-campo .cadastro-usuario-input-senha input:focus {
-    border: none;
-    outline: none;
-    box-shadow: none;
+border: none;
+outline: none;
+box-shadow: none;
 }
 
 /* Erros de validação */
 
 .cadastro-usuario-input-senha:has(input[aria-invalid="true"]) {
-    border-color: #B42318;
+border-color: #B42318;
 }
 
 .cadastro-usuario-input-senha:has(input[aria-invalid="true"]):focus-within {
-    box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.12);
+box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.12);
 }
 
 /* Botão do olhinho */
 
 .cadastro-usuario-mostrar-senha {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
 
-    width: 44px;
-    height: 44px;
-    padding: 0;
+width: 44px;
+height: 44px;
+padding: 0;
 
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #53657A;
+border: none;
+border-radius: 8px;
+background: transparent;
+color: #53657A;
 
-    cursor: pointer;
+cursor: pointer;
 }
 
 .cadastro-usuario-mostrar-senha:hover {
-    background: #EEF4F8;
+background: #EEF4F8;
 }
 
 .cadastro-usuario-mostrar-senha:focus-visible {
-    outline: 3px solid #1D6FA4;
-    outline-offset: 2px;
+outline: 3px solid #1D6FA4;
+outline-offset: 2px;
 }
 
 
 /* Etapa 3 — Verificação de conta */
 
 .cadastro-usuario-verificacao {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    text-align: center;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+width: 100%;
+text-align: center;
 }
 
 .cadastro-usuario-verificacao-icone {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+display: flex;
+align-items: center;
+justify-content: center;
 
-    width: 76px;
-    height: 76px;
+width: 76px;
+height: 76px;
 
-    border-radius: 50%;
-    background: #E8F3F9;
-    color: #1D6FA4;
+border-radius: 50%;
+background: #E8F3F9;
+color: #1D6FA4;
 }
 
 .cadastro-usuario-verificacao h3 {
-    margin: 0;
-    color: #1E2F4B;
-    font-size: 24px;
+margin: 0;
+color: #1E2F4B;
+font-size: 24px;
 }
 
 .cadastro-usuario-verificacao > p {
-    max-width: 420px;
-    margin: 0;
-    color: #4B5563;
-    font-size: 15px;
-    line-height: 1.7;
+max-width: 420px;
+margin: 0;
+color: #4B5563;
+font-size: 15px;
+line-height: 1.7;
 }
 
 .cadastro-usuario-verificacao-aviso {
-    width: 100%;
-    padding: 16px;
+width: 100%;
+padding: 16px;
 
-    border: 1px solid #B8D8EA;
-    border-radius: 10px;
+border: 1px solid #B8D8EA;
+border-radius: 10px;
 
-    background: #F0F8FC;
-    color: #245A78;
+background: #F0F8FC;
+color: #245A78;
 
-    font-size: 14px;
-    line-height: 1.6;
+font-size: 14px;
+line-height: 1.6;
 }
 
 .cadastro-usuario-verificacao .cadastro-usuario-acoes {
-    width: 100%;
-    margin-top: 12px;
+width: 100%;
+margin-top: 12px;
 }
 
 
 @media (max-width: 850px) {
-    .cadastro-usuario-container {
-        grid-template-columns: 1fr;
-    }
+.cadastro-usuario-container {
+grid-template-columns: 1fr;
+}
 
-    .cadastro-usuario-apresentacao {
-        display: none;
-    }
+.cadastro-usuario-apresentacao {
+display: none;
+}
 
-    .cadastro-usuario-area-formulario {
-        min-height: 100dvh;
-        padding: 32px 24px;
-    }
+.cadastro-usuario-area-formulario {
+min-height: 100dvh;
+padding: 32px 24px;
+}
 
-    .cadastro-usuario-cabecalho h2 {
-        font-size: 27px;
-    }
+.cadastro-usuario-cabecalho h2 {
+font-size: 27px;
+}
 }
 
 @media (max-width: 480px) {
-    .cadastro-usuario-progresso {
-        gap: 6px;
-    }
+.cadastro-usuario-progresso {
+gap: 6px;
+}
 
-    .cadastro-usuario-etapa-titulo {
-        font-size: 11px;
-    }
+.cadastro-usuario-etapa-titulo {
+font-size: 11px;
+}
 }

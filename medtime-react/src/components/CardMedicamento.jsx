@@ -1,8 +1,16 @@
 
 import { useRef, useState } from 'react'
-import { Pencil, Trash2, ChevronDown, Check } from 'lucide-react'
+import {
+  Pencil,
+  Trash2,
+  ChevronDown,
+  Check,
+  Clock3,
+  AlertCircle
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { confirmarIngestaoMedicamento } from '../services/api'
+import { obterIconeDosagem } from '../utils/obterIconeDosagem'
 
 function CardMedicamento({
   medicamento,
@@ -15,6 +23,9 @@ function CardMedicamento({
   const [confirmando, setConfirmando] = useState(false)
 
   const confirmado = Boolean(medicamento.confirmado)
+  const atrasado = !confirmado &&
+    medicamento.status === 'ATRASADO'
+  const IconeDosagem = obterIconeDosagem(medicamento.tipo_dosagem)
   const confirmacaoEmAndamento = useRef(false)
 
   const horarioProgramado = medicamento.horario_programado
@@ -73,9 +84,11 @@ function CardMedicamento({
         aria-expanded={expandido}
       >
         <div className="info-esquerda">
-          <img
-            src="/assets/remedio.svg"
-            alt=""
+          <IconeDosagem
+            className="icone-tipo-dosagem"
+            size={26}
+            strokeWidth={2}
+            aria-hidden="true"
           />
 
           <div className="nome-quantidade">
@@ -86,39 +99,56 @@ function CardMedicamento({
 
         <div className="tempo-remedio">
           <h1>{medicamento.proximo_horario}</h1>
+
           <p>Horário previsto</p>
-          {confirmado && (
+
+          {confirmado ? (
             <span className="status-tomada">
-              <Check size={14} />
+              <Check size={14} aria-hidden="true" />
               Tomada registrada
             </span>
+          ) : atrasado ? (
+            <span className="status-atrasado">
+              <AlertCircle size={14} aria-hidden="true" />
+              Atrasado
+            </span>
+          ) : (
+            <span className="status-programado">
+              <Clock3 size={14} aria-hidden="true" />
+              Programado
+            </span>
           )}
+
         </div>
 
         <ChevronDown size={20} />
       </button>
 
-      <div className="acoes-medicamento">
-        <button
-          type="button"
-          className="botao-editar"
-          aria-label={`Editar ${medicamento.nome}`}
-          title="Editar medicamento"
-          onClick={() => aoEditar(medicamento)}
-        >
-          <Pencil size={18} />
-        </button>
 
-        <button
-          type="button"
-          className="botao-excluir"
-          aria-label={`Excluir ${medicamento.nome}`}
-          title="Excluir medicamento"
-          onClick={() => aoExcluir(medicamento)}
-        >
-          <Trash2 size={18} />
-        </button>
-      </div>
+      {!confirmado && (
+        <div className="acoes-medicamento">
+          <button
+            type="button"
+            className="botao-editar"
+            aria-label={`Editar ${medicamento.nome}`}
+            title="Editar medicamento"
+            onClick={() => aoEditar(medicamento)}
+          >
+            <Pencil size={18} />
+          </button>
+
+          <button
+            type="button"
+            className="botao-excluir"
+            aria-label={`Excluir ${medicamento.nome}`}
+            title="Excluir medicamento"
+            onClick={() => aoExcluir(medicamento)}
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+      )}
+
 
       {expandido && (
         <div className="confirmacao-tomada">

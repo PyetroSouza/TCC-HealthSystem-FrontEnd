@@ -1,3 +1,4 @@
+
 .dashboard-conteudo {
     display: flex;
     flex-direction: column;
@@ -5,6 +6,7 @@
     padding: 24px;
     box-sizing: border-box;
 }
+
 
 .card-boas-vindas-paciente {
     width: 100%;
@@ -18,7 +20,9 @@
     box-shadow: 0px 4px 4px 0px #00000040;
     border-radius: 15px;
 
+
 }
+
 
 .botao-voltar {
     background: transparent !important;
@@ -37,9 +41,11 @@
     margin-left: 24.61px;
 }
 
+
 .botao-voltar:hover {
     text-decoration: underline;
 }
+
 
 .card-conteudo-principal {
     display: flex;
@@ -48,6 +54,7 @@
     flex-direction: row;
     width: 100%;
 }
+
 
 .info-perfil {
     display: flex;
@@ -58,19 +65,23 @@
     padding-left: 25.91px;
 }
 
+
 .dados-texto {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
+
 .dados-texto .nome {
     font-size: 16px;
 }
 
+
 .dados-texto .idade {
     font-size: 14px;
 }
+
 
 .foto-perfil {
     display: flex;
@@ -83,12 +94,14 @@
     flex-shrink: 0;
 }
 
+
 .foto-perfil h2 {
     font-size: 16px;
     font-weight: 400;
     font-family: 'Roboto', sans-serif;
     color: inherit;
 }
+
 
 .tags {
     display: flex;
@@ -98,9 +111,11 @@
     margin: 0;
 }
 
+
 .tags li {
     font-size: 10px;
 }
+
 
 .botao-medicamento {
     display: flex;
@@ -108,14 +123,17 @@
     align-items: center;
     gap: 3.95px;
 
+
     margin-right: 38.92px;
     margin-bottom: 41.1px;
+
 
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
     color: #FFFFFF;
     cursor: pointer;
+
 
     background: linear-gradient(90deg,
             #1ABC9C 5%,
@@ -130,6 +148,7 @@
     align-items: flex-start;
 }
 
+
 .conteudo-principal-direita {
     display: flex;
     flex-direction: column;
@@ -137,6 +156,7 @@
     gap: 38.84px;
     flex-grow: 1;
 }
+
 
 .contato-de-emergencia {
     width: 303px;
@@ -149,6 +169,7 @@
     flex-shrink: 0;
 }
 
+
 .titulo {
     display: flex;
     align-items: center;
@@ -156,6 +177,7 @@
     gap: 10.11px;
     padding-bottom: 16px;
 }
+
 
 .titulo h1 {
     font-family: Poppins;
@@ -167,12 +189,14 @@
     text-align: center;
 }
 
+
 .nome-telefone {
     display: flex;
     flex-direction: column;
     align-items: start;
     padding-bottom: 37px;
 }
+
 
 .nome-telefone span {
     font-family: Poppins;
@@ -185,6 +209,7 @@
     color: #1E2F4B;
 }
 
+
 .nome-telefone p {
     font-family: Poppins;
     font-weight: 400;
@@ -196,12 +221,14 @@
     color: #8892B0;
 }
 
+
 .botoes {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 19px;
 }
+
 
 .localizacao {
     display: flex;
@@ -214,6 +241,7 @@
     opacity: 1;
     background: linear-gradient(90deg, #1ABC9C 5%, #2CB977 95%);
 }
+
 
 .localizacao h1 {
     font-family: 'Inter', sans-serif;
@@ -223,6 +251,7 @@
     color: #F9F9F9;
 }
 
+
 .historico {
     display: flex;
     align-items: center;
@@ -235,6 +264,7 @@
     background: linear-gradient(90deg, #1ABC9C 5%, #2CB977 95%);
 }
 
+
 .historico h1 {
     font-family: 'Inter', sans-serif;
     font-weight: 300;
@@ -243,36 +273,44 @@
     color: #F9F9F9;
 }
 
+
 .localizacao {
     opacity: 0.65;
     cursor: not-allowed;
 }
+
 
 .localizacao,
 .historico {
     color: #FFFFFF;
     border: none;
     font: inherit;
-}   
+}
+
 
 .historico:not(:disabled) {
     opacity: 1;
     cursor: pointer;
 }
 
+
 .historico:not(:disabled) {
     transition: filter 0.2s ease, transform 0.2s ease;
 }
+
+
 .historico:not(:disabled):focus-visible {
     outline: 3px solid #1D6FA4;
     outline-offset: 3px;
 }
+
 
 .localizacao span,
 .historico span {
     font-size: 16px;
     font-weight: 500;
 }
+
 
 .dados-pulseira {
     display: flex;
@@ -282,6 +320,7 @@
     width: 100%;
 }
 
+
 .dados-pulseira span {
     font-family: Inter;
     font-weight: 400;
@@ -289,7 +328,9 @@
     text-align: center;
     color: #FFFFFF;
 
+
 }
+
 
 .dados-pulseira p {
     font-family: Inter;
@@ -299,6 +340,7 @@
     color: #FFFFFF;
     margin: 0;
 }
+
 
 .temperatura,
 .frequencia-cardiaca,
@@ -314,7 +356,9 @@
     background: linear-gradient(90deg, #1C86BF 0%, #4EA8D8 95%);
     box-shadow: 0px 4px 4px 0px #00000025;
 
+
 }
+
 
 .proximos-medicamentos-placeholder {
     width: 880px;
@@ -324,6 +368,7 @@
     border: 2px solid #98989842;
 }
 
+
 .header-proximos-medicamentos {
     display: flex;
     flex-direction: row;
@@ -331,6 +376,7 @@
     padding-top: 25px;
     padding-bottom: 20px;
 }
+
 
 .botao-ver-todos {
     border: none;
@@ -342,14 +388,18 @@
     font-size: 14px;
 }
 
+
 .botao-ver-todos:hover {
     text-decoration: underline;
 }
+
 
 .botao-ver-todos:focus-visible {
     outline: 3px solid #1C86BF;
     outline-offset: 3px;
 }
+
+
 
 .proximos-remedios,
 .menu-medicamentos {
@@ -359,18 +409,22 @@
     gap: 7px;
 }
 
+
 .proximos-remedios {
     padding-left: 25px;
 }
+
 
 .menu-medicamentos {
     padding-right: 27px;
 }
 
+
 .menu-medicamentos {
     opacity: 0.65;
     cursor: pointer;
 }
+
 
 .proximos-medicamentos span {
     font-family: Inter, sans-serif;
@@ -380,6 +434,7 @@
     text-align: center;
     color: #1E2F4B;
 }
+
 
 .menu-medicamentos p {
     font-family: Inter;
@@ -391,6 +446,7 @@
     color: #1ABC9C;
 }
 
+
 .container-remedios {
     display: flex;
     flex-direction: column;
@@ -398,6 +454,7 @@
     gap: 12px;
     padding-bottom: 25px;
 }
+
 
 .remedio {
     display: flex;
@@ -422,6 +479,7 @@
     padding-bottom: 12px;
 }
 
+
 .info-esquerda {
     display: flex;
     flex-direction: row;
@@ -432,12 +490,14 @@
     flex: 1;
 }
 
+
 .nome-quantidade {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-width: 0;
 }
+
 
 .nome-quantidade span {
     font-family: Inter;
@@ -449,6 +509,7 @@
     color: #4EA8D8;
     overflow-wrap: anywhere;
 }
+
 
 .nome-quantidade p {
     font-family: Inter;
@@ -462,12 +523,25 @@
     color: #8892B0;
 }
 
+
 .tempo-remedio {
     display: flex;
     flex-direction: column;
-    padding-right: 8px;
+    align-items: center;
+    justify-content: center;
+
+
+    width: 150px;
+    min-width: 150px;
     flex-shrink: 0;
+
+
+    text-align: center;
+    gap: 2px;
 }
+
+
+
 
 .tempo-remedio h1 {
     font-family: Inter;
@@ -478,6 +552,7 @@
     vertical-align: middle;
     margin: 0
 }
+
 
 .tempo-remedio p {
     font-family: Inter;
@@ -490,6 +565,13 @@
     color: #4EA8D8;
 }
 
+
+.tempo-remedio h1,
+.tempo-remedio p {
+    margin: 0;
+}
+
+
 .acoes-medicamento {
     display: flex;
     align-items: center;
@@ -498,45 +580,56 @@
     flex-shrink: 0;
 }
 
+
+
 .acoes-medicamento button {
     display: flex;
     align-items: center;
     justify-content: center;
 
+
     width: 40px;
     height: 40px;
     padding: 0;
+
 
     border: 1px solid transparent;
     border-radius: 8px;
     cursor: pointer;
 
+
     font-size: 18px;
     transition: background-color 0.2s ease;
 }
+
 
 .acoes-medicamento .botao-editar {
     background-color: #EAF5FB;
     color: #1D6FA4;
 }
 
+
 .acoes-medicamento .botao-editar:hover {
     background-color: #D3EAF7;
 }
+
 
 .acoes-medicamento .botao-excluir {
     background-color: #FFF1F0;
     color: #C0392B;
 }
 
+
 .acoes-medicamento .botao-excluir:hover {
     background-color: #FFE0DC;
 }
+
 
 .acoes-medicamento button:focus-visible {
     outline: 3px solid #1D6FA4;
     outline-offset: 2px;
 }
+
 
 .sem-medicamentos {
     display: flex;
@@ -547,10 +640,12 @@
     text-align: center;
 }
 
+
 .sem-medicamentos img {
     width: 40px;
     height: 40px;
 }
+
 
 .sem-medicamentos p {
     margin: 0;
@@ -559,12 +654,14 @@
     color: #1E2F4B;
 }
 
+
 .sem-medicamentos span {
     max-width: 320px;
     font-size: 14px;
     line-height: 1.5;
     color: #6B7280;
 }
+
 
 .sem-medicamentos button {
     margin-top: 8px;
@@ -576,6 +673,7 @@
     font-weight: 500;
     cursor: pointer;
 }
+
 
 .sem-medicamentos button:focus-visible {
     outline: 3px solid #1C86BF;
@@ -596,11 +694,13 @@
     cursor: pointer;
 }
 
+
 .confirmacao-tomada {
     flex-basis: 100%;
     padding: 16px;
     border-top: 1px solid #e5e7eb;
 }
+
 
 .botao-confirmar-tomada {
     padding: 10px 18px;
@@ -612,10 +712,12 @@
     cursor: pointer;
 }
 
+
 .botao-confirmar-tomada:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 
 .tomada-confirmada {
     display: flex;
@@ -630,10 +732,12 @@
         gap: 24px;
     }
 
+
     .contato-de-emergencia {
         width: 100%;
         min-height: auto;
     }
+
 
     .conteudo-principal-direita {
         width: 100%;
@@ -642,10 +746,12 @@
         min-width: 0;
     }
 
+
     .dados-pulseira {
         justify-content: space-between;
         gap: 12px;
     }
+
 
     .temperatura,
     .frequencia-cardiaca,
@@ -656,17 +762,21 @@
         padding: 20px;
     }
 
+
     .dados-pulseira span {
         font-size: 32px;
     }
+
 
     .dados-pulseira p {
         font-size: 14px;
     }
 
+
     .proximos-medicamentos-placeholder {
         width: 100%;
     }
+
 
     .remedio {
         width: calc(100% - 32px);
@@ -674,10 +784,12 @@
     }
 }
 
+
 @media (max-width: 480px) {
     .dashboard-conteudo {
         padding: 12px 0;
     }
+
 
     .card-boas-vindas-paciente {
         height: auto;
@@ -685,9 +797,11 @@
         gap: 20px;
     }
 
+
     .botao-voltar {
         margin: 0;
     }
+
 
     .card-conteudo-principal {
         flex-direction: column;
@@ -695,28 +809,34 @@
         gap: 20px;
     }
 
+
     .info-perfil {
         padding: 0;
         align-items: flex-start;
     }
 
+
     .dados-texto {
         min-width: 0;
     }
 
+
     .tags {
         flex-wrap: wrap;
     }
+
 
     .botao-medicamento {
         width: 100%;
         margin: 0;
     }
 
+
     .dados-pulseira {
         flex-direction: column;
         gap: 12px;
     }
+
 
     .temperatura,
     .frequencia-cardiaca,
@@ -726,6 +846,7 @@
         padding: 20px;
     }
 
+
     .header-proximos-medicamentos {
         flex-direction: column;
         align-items: flex-start;
@@ -733,17 +854,21 @@
         padding: 20px 16px;
     }
 
+
     .proximos-remedios {
         padding-left: 0;
     }
+
 
     .menu-medicamentos {
         padding-right: 0;
     }
 
+
     .container-remedios {
         padding: 0 12px 20px;
     }
+
 
     .remedio {
         width: 100%;
@@ -752,26 +877,32 @@
         padding: 12px;
     }
 
+
     .info-esquerda {
         padding-left: 0;
         gap: 8px;
     }
 
+
     .nome-quantidade span {
         font-size: 14px;
     }
+
 
     .tempo-remedio {
         padding-right: 0;
     }
 
+
     .tempo-remedio h1 {
         font-size: 16px;
     }
 
+
     .tempo-remedio p {
         font-size: 11px;
     }
+
 
     .remedio {
         display: grid;
@@ -780,14 +911,17 @@
         padding: 16px;
     }
 
+
     .info-esquerda {
         grid-column: 1 / -1;
         min-width: 0;
     }
 
+
     .nome-quantidade {
         align-items: flex-start;
     }
+
 
     .nome-quantidade span {
         text-align: left;
@@ -795,15 +929,18 @@
         overflow-wrap: break-word;
     }
 
+
     .nome-quantidade p {
         text-align: left;
     }
+
 
     .tempo-remedio {
         grid-column: 1;
         align-items: flex-start;
         justify-content: center;
     }
+
 
     .acoes-medicamento {
         grid-column: 2;
@@ -813,9 +950,14 @@
 }
 
 
-/* ========================================
-   MEDTIME — MELHORIAS RESPONSIVAS
-   ======================================== */
+@media (max-width: 600px) {
+    .tempo-remedio {
+        width: auto;
+        min-width: 0;
+        align-items: flex-end;
+        text-align: right;
+    }
+}
 
 .dashboard-conteudo {
     width: 100%;
@@ -825,7 +967,6 @@
     min-width: 0;
 }
 
-/* Informações do paciente */
 
 .card-boas-vindas-paciente {
     height: auto;
@@ -833,26 +974,32 @@
     padding: 18px 24px;
 }
 
+
 .botao-voltar {
     margin: 0 !important;
 }
 
+
 .card-conteudo-principal {
     gap: 20px;
 }
+
 
 .info-perfil {
     padding: 0;
     min-width: 0;
 }
 
+
 .tags {
     flex-wrap: wrap;
 }
 
+
 .tags li {
     font-size: 12px;
 }
+
 
 .botao-medicamento {
     margin: 0;
@@ -860,7 +1007,7 @@
     background: #007A40;
 }
 
-/* Organização principal */
+
 
 .dashboard-inferior-grid {
     display: grid;
@@ -870,12 +1017,14 @@
     width: 100%;
 }
 
+
 .dashboard-lateral {
     display: flex;
     flex-direction: column;
     gap: 18px;
     min-width: 0;
 }
+
 
 .conteudo-principal-direita {
     display: flex;
@@ -887,7 +1036,7 @@
     gap: 20px;
 }
 
-/* Contato de emergência */
+
 
 .contato-de-emergencia {
     width: 100%;
@@ -896,9 +1045,11 @@
     box-sizing: border-box;
 }
 
+
 .nome-telefone {
     padding-bottom: 22px;
 }
+
 
 .nome-telefone p {
     font-size: 15px;
@@ -906,9 +1057,11 @@
     color: #374151;
 }
 
+
 .botoes {
     gap: 12px;
 }
+
 
 .localizacao,
 .historico {
@@ -920,7 +1073,7 @@
     justify-content: center;
 }
 
-/* Pulseira na lateral */
+
 
 .dados-pulseira {
     display: grid;
@@ -928,6 +1081,7 @@
     gap: 8px;
     width: 100%;
 }
+
 
 .temperatura,
 .frequencia-cardiaca,
@@ -943,11 +1097,13 @@
     background: #1D6FA4;
 }
 
+
 .dados-pulseira span {
     font-size: clamp(15px, 1.4vw, 20px);
     font-weight: 600;
     overflow-wrap: anywhere;
 }
+
 
 .dados-pulseira p {
     font-size: 11px;
@@ -956,6 +1112,7 @@
     overflow-wrap: anywhere;
 }
 
+
 .aviso-dados-pulseira {
     margin: -10px 0 0;
     color: #4B5563;
@@ -963,7 +1120,6 @@
     text-align: center;
 }
 
-/* Área principal de medicamentos */
 
 .proximos-medicamentos-placeholder {
     width: 100%;
@@ -973,10 +1129,12 @@
     border-radius: 12px;
 }
 
+
 .header-proximos-medicamentos {
     align-items: center;
     gap: 16px;
 }
+
 
 .proximos-remedios span {
     color: #1E2F4B;
@@ -984,14 +1142,17 @@
     font-weight: 600;
 }
 
+
 .menu-medicamentos {
     opacity: 1;
 }
+
 
 .container-remedios {
     width: 100%;
     min-width: 0;
 }
+
 
 .remedio {
     display: flex;
@@ -1004,23 +1165,34 @@
     gap: 10px;
 }
 
+
+.icone-tipo-dosagem {
+    color: #1D6FA4;
+    flex-shrink: 0;
+}
+
+
 .cabecalho-medicamento {
     flex: 1 1 280px;
     min-width: 0;
 }
 
+
 .info-esquerda {
     padding-left: 8px;
 }
+
 
 .nome-quantidade {
     align-items: flex-start;
 }
 
+
 .nome-quantidade span {
     color: #1D6FA4;
     text-align: left;
 }
+
 
 .nome-quantidade p {
     text-align: left;
@@ -1028,24 +1200,29 @@
     font-size: 13px;
 }
 
+
 .tempo-remedio p {
     color: #1D6FA4;
 }
+
 
 .acoes-medicamento {
     margin-left: auto;
     padding-right: 0;
 }
 
+
 .acoes-medicamento button {
     width: 44px;
     height: 44px;
 }
 
+
 .confirmacao-tomada {
     width: 100%;
     box-sizing: border-box;
 }
+
 
 .botao-confirmar-tomada,
 .sem-medicamentos button {
@@ -1053,125 +1230,18 @@
     color: #FFFFFF;
 }
 
-/* Tablet e notebooks menores */
-
-@media (max-width: 1100px) {
-    .dashboard-inferior-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .conteudo-principal-direita {
-        grid-row: 1;
-    }
-
-    .dashboard-lateral {
-        grid-row: 2;
-    }
-
-    .dados-pulseira span {
-        font-size: 20px;
-    }
-
-    .dados-pulseira p {
-        font-size: 13px;
-    }
-}
-
-/* Celulares */
-
-@media (max-width: 600px) {
-    .dashboard-conteudo {
-        padding: 12px;
-    }
-
-    .card-boas-vindas-paciente {
-        padding: 16px;
-        gap: 16px;
-    }
-
-    .card-conteudo-principal {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .botao-medicamento {
-        width: 100%;
-    }
-
-    .dashboard-inferior-grid {
-        gap: 16px;
-    }
-
-    .contato-de-emergencia {
-        padding: 18px;
-    }
-
-    .dados-pulseira {
-        grid-template-columns: 1fr;
-    }
-
-    .temperatura,
-    .frequencia-cardiaca,
-    .pressao-sanguinea {
-        min-height: 72px;
-    }
-
-    .dados-pulseira span {
-        font-size: 22px;
-    }
-
-    .dados-pulseira p {
-        font-size: 14px;
-    }
-
-    .header-proximos-medicamentos {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 16px;
-    }
-
-    .proximos-remedios,
-    .menu-medicamentos {
-        padding: 0;
-    }
-
-    .remedio {
-        width: calc(100% - 24px);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .cabecalho-medicamento {
-        flex: 1 1 100%;
-        gap: 8px;
-    }
-
-    .info-esquerda {
-        padding-left: 0;
-        gap: 8px;
-    }
-
-    .nome-quantidade span {
-        font-size: 16px;
-    }
-
-    .acoes-medicamento {
-        margin-left: auto;
-    }
-}
-
-/* Melhorias de acessibilidade */
 
 .nome-quantidade span,
 .tempo-remedio p {
     color: #1D6FA4;
 }
 
+
 .nome-quantidade p,
 .nome-telefone p {
     color: #374151;
 }
+
 
 .botao-medicamento,
 .botao-confirmar-tomada,
@@ -1180,6 +1250,7 @@
     color: #FFFFFF;
 }
 
+
 .botao-medicamento:focus-visible,
 .botao-confirmar-tomada:focus-visible,
 .sem-medicamentos button:focus-visible {
@@ -1187,7 +1258,10 @@
     outline-offset: 3px;
 }
 
-.status-tomada {
+
+.status-tomada,
+.status-atrasado,
+.status-programado {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1196,36 +1270,56 @@
     padding: 5px 8px;
     border-radius: 6px;
     background: #E6F4EA;
-    color: #166534;
     font-size: 12px;
     font-weight: 600;
 }
 
 
-/* Modal de exclusão */
+.status-tomada {
+    background-color: #E7F5EC;
+    color: #166534;
+}
+
+
+.status-atrasado {
+    background-color: #FDECEB;
+    color: #B42318;
+}
+
+
+.status-programado {
+    background-color: #EAF3F9;
+    color: #1D6FA4;
+}
+
 
 .modal-exclusao-overlay {
     position: fixed;
     inset: 0;
     z-index: 9999;
 
+
     display: flex;
     align-items: center;
     justify-content: center;
 
+
     padding: 20px;
     background: rgba(15, 23, 42, 0.65);
 }
+
 
 .modal-exclusao {
     width: 100%;
     max-width: 440px;
     padding: 28px;
 
+
     background: #FFFFFF;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
 }
+
 
 .modal-exclusao h2 {
     margin: 0 0 12px;
@@ -1234,6 +1328,7 @@
     color: #1E2F4B;
 }
 
+
 .modal-exclusao p {
     margin: 0;
     font-size: 15px;
@@ -1241,12 +1336,14 @@
     color: #374151;
 }
 
+
 .modal-exclusao-acoes {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     margin-top: 28px;
 }
+
 
 .modal-exclusao-acoes button {
     min-height: 44px;
@@ -1257,11 +1354,13 @@
     cursor: pointer;
 }
 
+
 .modal-botao-cancelar {
     background: #F3F4F6;
     color: #374151;
     border: 1px solid #D1D5DB;
 }
+
 
 .modal-botao-excluir {
     background: #B42318;
@@ -1269,24 +1368,156 @@
     border: none;
 }
 
+
 .modal-exclusao-acoes button:disabled {
     opacity: 0.6;
     cursor: wait;
 }
+
 
 .modal-exclusao-acoes button:focus-visible {
     outline: 3px solid #1D6FA4;
     outline-offset: 3px;
 }
 
+
+@media (max-width: 1100px) {
+    .dashboard-inferior-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .conteudo-principal-direita {
+        grid-row: 1;
+    }
+
+
+    .dashboard-lateral {
+        grid-row: 2;
+    }
+
+
+    .dados-pulseira span {
+        font-size: 20px;
+    }
+
+
+    .dados-pulseira p {
+        font-size: 13px;
+    }
+}
+
+
+
+@media (max-width: 600px) {
+    .dashboard-conteudo {
+        padding: 12px;
+    }
+
+
+    .card-boas-vindas-paciente {
+        padding: 16px;
+        gap: 16px;
+    }
+
+
+    .card-conteudo-principal {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .botao-medicamento {
+        width: 100%;
+    }
+
+
+    .dashboard-inferior-grid {
+        gap: 16px;
+    }
+
+
+    .contato-de-emergencia {
+        padding: 18px;
+    }
+
+
+    .dados-pulseira {
+        grid-template-columns: 1fr;
+    }
+
+
+    .temperatura,
+    .frequencia-cardiaca,
+    .pressao-sanguinea {
+        min-height: 72px;
+    }
+
+
+    .dados-pulseira span {
+        font-size: 22px;
+    }
+
+
+    .dados-pulseira p {
+        font-size: 14px;
+    }
+
+
+    .header-proximos-medicamentos {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+
+    .proximos-remedios,
+    .menu-medicamentos {
+        padding: 0;
+    }
+
+
+    .remedio {
+        width: calc(100% - 24px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+
+    .cabecalho-medicamento {
+        flex: 1 1 100%;
+        gap: 8px;
+    }
+
+
+    .info-esquerda {
+        padding-left: 0;
+        gap: 8px;
+    }
+
+
+    .nome-quantidade span {
+        font-size: 16px;
+    }
+
+
+    .acoes-medicamento {
+        margin-left: auto;
+    }
+}
+
+
 @media (max-width: 480px) {
     .modal-exclusao {
         padding: 20px;
     }
 
+
     .modal-exclusao-acoes {
         flex-direction: column-reverse;
     }
+
 
     .modal-exclusao-acoes button {
         width: 100%;
