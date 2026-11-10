@@ -107,6 +107,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
         setNovaQuantidade('')
     }
 
+
     async function salvarEstoque(item) {
         if (salvando) return
 
@@ -115,11 +116,14 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
         if (
             novaQuantidade.trim() === '' ||
             !Number.isFinite(quantidade) ||
-            quantidade < 0
+            quantidade < 0 ||
+            quantidade > 99999.99 ||
+            !Number.isInteger(quantidade * 100)
         ) {
-            toast.error('Informe uma quantidade válida, igual ou maior que zero.')
+            toast.error('Informe uma quantidade entre 0 e 99.999,99, com até duas casas decimais.')
             return
         }
+
 
         if (item.id_estoque == null) {
             toast.error('Estoque não identificado.')
@@ -198,22 +202,54 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                             {estoques.map(item => {
                                 const editando = editandoId === item.id_estoque
 
+
+                                const quantidade = Number(item.quantidade_em_estoque)
+
+                                const quantidadeValida =
+                                    item.quantidade_em_estoque != null &&
+                                    item.quantidade_em_estoque !== '' &&
+                                    Number.isFinite(quantidade) &&
+                                    quantidade >= 0
+
+                                const esgotado = quantidadeValida && quantidade === 0
+
+
                                 return (
+
                                     <article
                                         className="estoque-card"
                                         key={item.id_receita_medica}
                                     >
-                                        <div className="estoque-circulo">
+
+                                        <div
+                                            className={`estoque-circulo ${!quantidadeValida
+                                                ? ''
+                                                : esgotado
+                                                    ? 'estoque-circulo-esgotado'
+                                                    : 'estoque-circulo-disponivel'
+                                                }`}
+                                        >
                                             <strong>
                                                 {item.quantidade_em_estoque == null
                                                     ? '—'
-                                                    : Number(item.quantidade_em_estoque)
-                                                        .toLocaleString('pt-BR')}
+                                                    : Number(item.quantidade_em_estoque).toLocaleString('pt-BR')}
                                             </strong>
                                             <span>Restante</span>
                                         </div>
 
+
                                         <h3>{item.nome_medicamento}</h3>
+
+                                        {quantidadeValida && (
+                                            <p
+                                                className={`estoque-status ${esgotado
+                                                    ? 'estoque-status-esgotado'
+                                                    : 'estoque-status-disponivel'
+                                                    }`}
+                                            >
+                                                {esgotado ? 'Estoque esgotado' : 'Disponível'}
+                                            </p>
+                                        )}
 
                                         {editando ? (
                                             <div className="estoque-edicao">
@@ -276,5 +312,4 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
         </section>
     )
 }
-
 export default EstoquePaciente

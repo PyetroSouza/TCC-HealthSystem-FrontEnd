@@ -20,9 +20,22 @@ export const cadastroUsuarioSchema = z.object({
         .max(20, 'O CPF deve ter no máximo 20 caracteres')
         .optional(),
 
+
     telefone: z.string()
-        .max(20, 'O telefone deve ter no máximo 20 caracteres')
+        .refine(
+            (valor) => {
+                const numeros = valor.replace(/\D/g, '')
+
+                return numeros.length === 0 ||
+                    numeros.length === 10 ||
+                    numeros.length === 11
+            },
+            {
+                message: 'Informe um telefone válido com DDD'
+            }
+        )
         .optional(),
+
 
     data_nascimento: z.iso.date({
         error: 'Informe uma data de nascimento válida'

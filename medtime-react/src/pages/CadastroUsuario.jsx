@@ -6,6 +6,7 @@ import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
 import { cadastrarUsuarioAPI } from '../services/authService'
 import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
 import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
+import { formatarTelefone } from '../utils/formatarTelefone'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import './CadastroUsuario.css'
 
@@ -70,24 +71,24 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
     }
 
 
-    async function cadastrarUsuario(dados) {
-        try {
-            const payload = montarPayloadUsuario(dados)
-    
-            await cadastrarUsuarioAPI(payload)
-    
-            toast.success('Conta cadastrada com sucesso!')
-    
-            aoIrParaLogin()
-    
-        } catch (erro) {
-            console.error('Erro no cadastro:', erro)
-            toast.error(erro.message || 'Erro ao cadastrar usuário.')
-        }
-    }
-    
+async function cadastrarUsuario(dados) {
+    try {
 
-    
+        const payload = montarPayloadUsuario(dados)
+
+        await cadastrarUsuarioAPI(payload)
+
+        toast.success('Conta cadastrada com sucesso!')
+        aoIrParaLogin()
+
+    } catch (erro) {
+        console.error('Erro no cadastro:', erro)
+        toast.error(erro.message || 'Erro ao cadastrar usuário.')
+    }
+}
+
+
+
 
     function voltarEtapa() {
         if (etapaAtual === 1) {
@@ -343,28 +344,24 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                         </label>
 
                                         <input
+
                                             id="telefone-cadastro"
                                             type="tel"
                                             placeholder="(11) 99999-9999"
                                             autoComplete="tel"
-                                            inputMode="tel"
-                                            maxLength={20}
+                                            inputMode="numeric"
+                                            maxLength={15}
                                             aria-invalid={!!errors.telefone}
                                             aria-describedby={
                                                 errors.telefone ? 'erro-telefone' : undefined
                                             }
-                                            {...register('telefone')}
+                                            {...register('telefone', {
+                                                onChange: (event) => {
+                                                    const telefoneFormatado = formatarTelefone(event.target.value)
+                                                    event.target.value = telefoneFormatado
+                                                }
+                                            })}
                                         />
-
-                                        {errors.telefone && (
-                                            <p
-                                                id="erro-telefone"
-                                                className="cadastro-usuario-erro"
-                                                role="alert"
-                                            >
-                                                {errors.telefone.message}
-                                            </p>
-                                        )}
                                     </div>
 
 

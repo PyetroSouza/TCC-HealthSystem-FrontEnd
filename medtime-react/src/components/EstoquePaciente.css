@@ -49,8 +49,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 20px 12px;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 18px 12px;
     border: 1px solid #E4EBF0;
     border-radius: 12px;
 }
@@ -60,10 +61,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
-    width: 110px;
-    height: 110px;
-    border: 7px solid #1D6FA4;
+    width: 100px;
+    height: 100px;
+    margin: 0 0 4px;
+    border: 6px solid #1D6FA4;
     border-radius: 50%;
     box-sizing: border-box;
 
@@ -71,8 +74,9 @@
 }
 
 .estoque-circulo strong {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .estoque-circulo span {
@@ -83,8 +87,33 @@
 .estoque-card h3 {
     margin: 0;
     font-size: 14px;
+    line-height: 1.4;
     text-align: center;
     overflow-wrap: anywhere;
+}
+
+.estoque-status {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.estoque-circulo-disponivel {
+    border-color: #16803C;
+}
+
+.estoque-circulo-esgotado {
+    border-color: #DC2626;
+}
+
+.estoque-status-disponivel {
+    color: #16803C;
+}
+
+.estoque-status-esgotado {
+    color: #DC2626;
 }
 
 .estoque-edicao {
@@ -92,6 +121,7 @@
     flex-direction: column;
     gap: 10px;
     width: 100%;
+    margin-top: 4px;
 }
 
 .estoque-edicao label {
@@ -131,6 +161,7 @@
 }
 
 .estoque-gerenciar {
+    margin-top: 4px;
     background: #EAF3F9;
     border: 1px solid #BFDFF1;
     color: #1D6FA4;
@@ -164,7 +195,6 @@
     outline-offset: 2px;
 }
 
-
 @media (max-width: 600px) {
     .estoque-paciente {
         padding: 16px;
@@ -172,5 +202,13 @@
 
     .estoque-cabecalho {
         flex-direction: column;
+    }
+
+    .estoque-grid {
+        gap: 12px;
+    }
+
+    .estoque-card {
+        padding: 16px 10px;
     }
 }

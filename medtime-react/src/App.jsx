@@ -8,6 +8,7 @@ import CadastroIdoso from './pages/CadastroIdoso'
 import Pacientes from './pages/Pacientes.jsx'
 import Cabecalho from './components/Cabecalho.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
+import { buscarAgendaMedicamentos } from './services/api.js'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
 import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
@@ -27,13 +28,17 @@ function App() {
   const [telaAtual, setTelaAtual] = useState('login')
   const [perfilCadastro, setPerfilCadastro] = useState(null)
   const [busca, setBusca] = useState('')
+  const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [listaMedicamentos, setListaMedicamentos] = useState(
     () => [...medicamentosIniciais]
   )
   const [medicamentoEmEdicao, setMedicamentoEmEdicao] = useState(null)
   const [pacientes, setPacientes] = useState([])
+  const [carregandoPacientes, setCarregandoPacientes] = useState(false)
+  const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
+
 
 
   useEffect(() => {
@@ -42,16 +47,28 @@ function App() {
     let ativo = true
 
     async function carregarPacientes() {
+      setCarregandoPacientes(true)
+      setErroPacientes(null)
+
       try {
         const usuarios = await buscarUsuarios()
 
-        if (ativo) {
-          setPacientes(usuarios)
-          console.log('👥 Usuários atualizados:', usuarios)
-        }
+        if (!ativo) return
+
+        setPacientes(usuarios)
+
       } catch (erro) {
+        if (!ativo) return
+
+        console.error('Erro ao carregar usuários:', erro)
+
+        setErroPacientes(
+          'Não foi possível carregar os pacientes. Verifique a conexão e tente novamente.'
+        )
+
+      } finally {
         if (ativo) {
-          console.error('Erro ao carregar usuários:', erro)
+          setCarregandoPacientes(false)
         }
       }
     }
@@ -62,6 +79,57 @@ function App() {
       ativo = false
     }
   }, [telaAtual])
+
+  useEffect(() => {
+    if (telaAtual !== 'inicio' || pacientes.length === 0 || erroPacientes) {
+      setAlertasPendentes(0)
+      return
+    }
+
+    let ativo = true
+
+    async function carregarAlertas() {
+      try {
+        const resultados = await Promise.all(
+
+          pacientes.map(paciente => {
+            const hoje = new Date()
+
+            const dataLocal = [
+              hoje.getFullYear(),
+              String(hoje.getMonth() + 1).padStart(2, '0'),
+              String(hoje.getDate()).padStart(2, '0')
+            ].join('-')
+
+            return buscarAgendaMedicamentos(
+              paciente.id ?? paciente.id_usuario,
+              dataLocal
+            )
+          })
+
+        )
+
+        const total = resultados
+          .flatMap(resultado =>
+            Array.isArray(resultado) ? resultado : []
+          )
+          .filter(item =>
+            String(item.status ?? '').toUpperCase() === 'ATRASADO' &&
+            !item.confirmado
+          ).length
+
+        if (ativo) setAlertasPendentes(total)
+      } catch (erro) {
+        console.error('Erro ao carregar alertas:', erro)
+      }
+    }
+
+    carregarAlertas()
+
+    return () => {
+      ativo = false
+    }
+  }, [telaAtual, pacientes, erroPacientes])
 
 
   function voltarParaInicio() {
@@ -248,10 +316,13 @@ function App() {
             aoCadastrar={() => setTelaAtual('cadastro')}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}
+            carregandoPacientes={carregandoPacientes}
+            erroPacientes={erroPacientes}
+            alertasPendentes={alertasPendentes}
             abrirDashboard={(paciente) => {
               setPacienteSelecionado(paciente)
               setTelaAtual('dashboard')
-            }} 
+            }}
             aoVerPacientes={() => setTelaAtual('pacientes')}
           />
         )}

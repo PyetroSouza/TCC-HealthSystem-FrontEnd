@@ -7,7 +7,10 @@ function Inicio({
   aoCadastrar,
   aoVerPacientes,
   abrirDashboard,
-  pacientes
+  pacientes = [],
+  carregandoPacientes = false,
+  erroPacientes = null,
+  alertasPendentes = 0
 }) {
 
 
@@ -18,12 +21,14 @@ function Inicio({
       <div className="container">
         <section className="resumo">
           <div className="card_resumo card_ativos">
-            <p className="resumo_numero">{pacientes.length}</p>
+            <p className="resumo_numero">
+              {carregandoPacientes || erroPacientes ? '—' : pacientes.length}
+            </p>
             <p className="resumo_texto">Pacientes Ativos</p>
           </div>
 
           <div className="card_resumo card_alertas">
-            <p className="resumo_numero">0</p>
+           <p className="resumo_numero">{alertasPendentes}</p>
             <p className="resumo_texto">Alertas Pendentes</p>
           </div>
         </section>
@@ -42,13 +47,23 @@ function Inicio({
           </div>
 
           <div className="lista_pacientes">
-            {pacientes.slice(0, 3).map((paciente) => (
-              <CardPaciente
-                key={paciente.id ?? paciente.id_usuario}
-                paciente={paciente}
-                aoClicar={() => abrirDashboard(paciente)}
-              />
-            ))}
+            {carregandoPacientes ? (
+              <p role="status">Carregando pacientes...</p>
+            ) : erroPacientes ? (
+              <p role="alert">
+                Não foi possível carregar os pacientes. Tente novamente mais tarde.
+              </p>
+            ) : pacientes.length === 0 ? (
+              <p>Nenhum paciente cadastrado ainda.</p>
+            ) : (
+              pacientes.slice(0, 3).map((paciente) => (
+                <CardPaciente
+                  key={paciente.id ?? paciente.id_usuario}
+                  paciente={paciente}
+                  aoClicar={() => abrirDashboard(paciente)}
+                />
+              ))
+            )}
           </div>
         </section>
       </div>

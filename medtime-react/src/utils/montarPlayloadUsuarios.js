@@ -5,6 +5,7 @@ export function montarPayloadUsuario(dados) {
         email: dados.email.trim().toLowerCase(),
         senha: dados.senha,
         cpf: dados.cpf?.trim() || null,
-        data_nascimento: dados.data_nascimento
+        data_nascimento: dados.data_nascimento,
+        telefone: dados.telefone?.replace(/\D/g, '') || null
     }
 }

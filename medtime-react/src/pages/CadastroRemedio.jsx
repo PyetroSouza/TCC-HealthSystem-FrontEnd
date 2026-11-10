@@ -165,7 +165,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
     }
 
     if (!modoEdicao && !imagemMedicamento) {
-      toast.warning('Selecione uma imagem primeiro.')
+      toast.warning('Selecione a imagem')
       return
     }
 
@@ -421,7 +421,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
               <div className="campo-formulario">
                 <label htmlFor="concentracao">Concentração</label>
                 <input
-                  type="text"
+                  type="number"
                   id="concentracao"
                   aria-invalid={!!errors.concentracao}
                   aria-describedby={errors.concentracao ? 'erro-concentracao' : undefined}
