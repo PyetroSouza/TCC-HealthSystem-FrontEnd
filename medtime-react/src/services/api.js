@@ -262,7 +262,14 @@ export async function confirmarIngestaoMedicamento(
 
   const resultado = await resposta.json()
 
-  if (!resposta.ok || !resultado.status) {
+
+  if (!resposta.ok || resultado.status === false) {
+    if (resultado.field?.includes('ESTOQUE_INSUFICIENTE')) {
+      throw new Error(
+        'Estoque insuficiente para a dose programada. Verifique a quantidade disponível no Controle de Estoque.'
+      )
+    }
+
     const campo = resultado.field?.join(', ')
 
     throw new Error(
@@ -271,6 +278,7 @@ export async function confirmarIngestaoMedicamento(
         : resultado.message || 'Não foi possível confirmar a tomada.'
     )
   }
+
 
   return resultado
 }
