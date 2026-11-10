@@ -1,0 +1,256 @@
+/* =========================================
+   CARD MEDICAMENTO - ESTRUTURA GERAL
+   ========================================= */
+
+.remedio.medtime-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+
+    width: calc(100% - 24px);
+    max-width: none;
+    min-width: 0;
+    height: auto;
+
+    padding: 12px;
+    gap: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid #BFDFF1;
+    border-radius: 10px;
+    background: #F9FAFB;
+}
+
+/* Cabeçalho expansível */
+
+.medtime-card .medtime-card-toggle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px 20px;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    flex: none;
+
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+/* Ícone e identificação */
+
+.medtime-card .info-esquerda {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0;
+    gap: 12px;
+}
+
+.medtime-card-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+
+    background: #EAF3F9;
+    color: #1D6FA4;
+}
+
+.medtime-card .nome-quantidade {
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.medtime-card .nome-quantidade span {
+    color: #1D6FA4;
+    text-align: left;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.medtime-card .nome-quantidade p {
+    margin: 3px 0 0;
+    text-align: left;
+}
+
+/* Horário e situação */
+
+.medtime-card .tempo-remedio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 150px;
+    min-width: 0;
+    padding: 0;
+    gap: 3px;
+    text-align: center;
+}
+
+.medtime-card-horario {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.medtime-card .tempo-remedio p {
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+.medtime-card .tempo-remedio>span {
+    align-self: center;
+}
+
+/* Seta expansível */
+
+.medtime-card-seta {
+    justify-self: end;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.medtime-card-seta.expandida {
+    transform: rotate(180deg);
+}
+
+/* Ações */
+
+.medtime-card .acoes-medicamento {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    margin: 0;
+    padding: 0;
+    gap: 8px;
+}
+
+.medtime-card .confirmacao-tomada {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.medtime-card .medtime-card-toggle:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+
+@media (max-width: 600px) {
+
+    .remedio.medtime-card {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .medtime-card .medtime-card-toggle {
+        grid-template-columns: minmax(0, 1fr) 20px;
+        grid-template-rows: auto auto;
+        gap: 12px 8px;
+    }
+
+    .medtime-card .info-esquerda {
+        grid-column: 1;
+        grid-row: 1;
+        gap: 10px;
+    }
+
+    .medtime-card .nome-quantidade span {
+        font-size: 15px;
+    }
+
+    .medtime-card-seta {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+    }
+
+
+    .medtime-card .tempo-remedio {
+        grid-column: 1 / -1;
+        grid-row: 2;
+
+        width: 100%;
+        min-width: 0;
+        padding-top: 12px;
+
+        border-top: 1px solid #E1EAF0;
+
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .medtime-card .tempo-remedio p {
+        text-align: left;
+    }
+
+    .medtime-card .tempo-remedio>span {
+        align-self: flex-start;
+    }
+
+
+    .medtime-card .acoes-medicamento {
+        grid-column: 1;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .medtime-card .acoes-medicamento button {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+    }
+
+    .medtime-card .confirmacao-tomada {
+        grid-column: 1;
+    }
+
+    .remedio.medtime-card {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .medtime-card .medtime-card-toggle {
+        gap: 8px;
+    }
+
+    .medtime-card .tempo-remedio {
+        padding-top: 8px;
+        gap: 2px;
+    }
+
+    .medtime-card .info-esquerda {
+        gap: 8px;
+    }
+
+    .medtime-card-icone {
+        width: 34px;
+        height: 34px;
+    }
+
+    .medtime-card .nome-quantidade span {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .medtime-card .acoes-medicamento {
+        margin-top: 0;
+    }
+
+}

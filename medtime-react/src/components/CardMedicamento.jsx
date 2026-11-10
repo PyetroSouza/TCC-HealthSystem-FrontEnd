@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner'
 import { confirmarIngestaoMedicamento } from '../services/api'
 import { obterIconeDosagem } from '../utils/obterIconeDosagem'
+import './CardMedicamento.css'
 
 function CardMedicamento({
   medicamento,
@@ -21,12 +22,15 @@ function CardMedicamento({
 }) {
   const [expandido, setExpandido] = useState(false)
   const [confirmando, setConfirmando] = useState(false)
+  const confirmacaoEmAndamento = useRef(false)
 
   const confirmado = Boolean(medicamento.confirmado)
   const atrasado = !confirmado &&
     medicamento.status === 'ATRASADO'
-  const IconeDosagem = obterIconeDosagem(medicamento.tipo_dosagem)
-  const confirmacaoEmAndamento = useRef(false)
+
+  const IconeDosagem = obterIconeDosagem(
+    medicamento.tipo_dosagem
+  )
 
   const horarioProgramado = medicamento.horario_programado
 
@@ -34,8 +38,8 @@ function CardMedicamento({
     !Number.isNaN(new Date(horarioProgramado).getTime())
 
   const liberado = horarioValido &&
-    Date.now() >= new Date(horarioProgramado).getTime() - 30 * 60 * 1000
-
+    Date.now() >=
+      new Date(horarioProgramado).getTime() - 30 * 60 * 1000
 
   async function confirmarTomada() {
     if (
@@ -63,7 +67,6 @@ function CardMedicamento({
       setExpandido(false)
 
       await aoConfirmarTomada?.()
-
     } catch (erro) {
       toast.error('Não foi possível registrar a tomada.', {
         description: erro.message
@@ -74,22 +77,26 @@ function CardMedicamento({
     }
   }
 
-
   return (
-    <div className="remedio">
+    <article className="remedio medtime-card">
+
       <button
         type="button"
-        className="cabecalho-medicamento"
+        className="cabecalho-medicamento medtime-card-toggle"
         onClick={() => setExpandido(!expandido)}
         aria-expanded={expandido}
+        aria-label={`${medicamento.nome}, ${medicamento.proximo_horario}. ${expandido ? 'Recolher' : 'Expandir'} detalhes`}
       >
+
         <div className="info-esquerda">
-          <IconeDosagem
-            className="icone-tipo-dosagem"
-            size={26}
-            strokeWidth={2}
-            aria-hidden="true"
-          />
+          <div className="medtime-card-icone">
+            <IconeDosagem
+              className="icone-tipo-dosagem"
+              size={24}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          </div>
 
           <div className="nome-quantidade">
             <span>{medicamento.nome}</span>
@@ -98,7 +105,9 @@ function CardMedicamento({
         </div>
 
         <div className="tempo-remedio">
-          <h1>{medicamento.proximo_horario}</h1>
+          <strong className="medtime-card-horario">
+            {medicamento.proximo_horario}
+          </strong>
 
           <p>Horário previsto</p>
 
@@ -118,12 +127,14 @@ function CardMedicamento({
               Programado
             </span>
           )}
-
         </div>
 
-        <ChevronDown size={20} />
+        <ChevronDown
+          className={`medtime-card-seta ${expandido ? 'expandida' : ''}`}
+          size={20}
+          aria-hidden="true"
+        />
       </button>
-
 
       {!confirmado && (
         <div className="acoes-medicamento">
@@ -149,12 +160,11 @@ function CardMedicamento({
         </div>
       )}
 
-
       {expandido && (
         <div className="confirmacao-tomada">
           {confirmado ? (
             <p className="tomada-confirmada">
-              <Check size={18} />
+              <Check size={18} aria-hidden="true" />
               Tomada já registrada
             </p>
           ) : (
@@ -177,7 +187,8 @@ function CardMedicamento({
           )}
         </div>
       )}
-    </div>
+
+    </article>
   )
 }
 

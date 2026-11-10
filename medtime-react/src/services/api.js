@@ -179,7 +179,9 @@ export async function atualizarReceitaMedicaAPI(idReceita, dados) {
   return resultado
 }
 
+
 export async function atualizarEstoqueAPI(idEstoque, dados) {
+
   const resposta = await fetch(`${API_URL}/estoque/${idEstoque}`, {
     method: 'PUT',
     headers: {
@@ -198,6 +200,7 @@ export async function atualizarEstoqueAPI(idEstoque, dados) {
 
   return resultado
 }
+
 
 export async function buscarProgramacaoPorReceita(idReceitaMedica) {
   const resposta = await fetch(
@@ -300,15 +303,15 @@ export async function excluirMedicamentoCompleto(
 
 export async function buscarHistoricoMedicamentos(idUsuario) {
   const resposta = await fetch(
-      `${API_URL}/historico_medicamento/usuario/${idUsuario}`
+    `${API_URL}/historico_medicamento/usuario/${idUsuario}`
   )
 
   const resultado = await resposta.json()
 
   if (!resposta.ok || resultado.status === false) {
-      throw new Error(
-          resultado.message || 'Erro ao buscar o histórico'
-      )
+    throw new Error(
+      resultado.message || 'Erro ao buscar o histórico'
+    )
   }
 
   return resultado.response?.historico_medicamento ?? []

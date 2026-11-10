@@ -1,6 +1,7 @@
 import './DashboardPaciente.css'
 import { useRef, useState, useEffect } from 'react'
 import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
+import EstoquePaciente from '../components/EstoquePaciente.jsx'
 import { useAgendaMedicamentos } from '../hooks/useAgendaMedicamentos.js'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
@@ -257,7 +258,10 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
 
                     </div>
-
+            <EstoquePaciente
+                agenda={agenda}
+                idUsuario={pacienteSelecionado?.id}
+            />
                 </div>
             </div>
 
