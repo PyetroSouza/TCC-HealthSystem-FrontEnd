@@ -1,24 +1,21 @@
-import './DashboardPaciente.css'
-import { useRef, useState, useEffect } from 'react'
-import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
-import EstoquePaciente from '../components/EstoquePaciente.jsx'
-import { useAgendaMedicamentos } from '../hooks/useAgendaMedicamentos.js'
-import { gerarIniciais } from '../utils/gerarIniciais.js'
-import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
-import { excluirMedicamentoCompleto } from '../services/api.js'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import EstoquePaciente from '../components/EstoquePaciente.jsx'
+import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
+import { useAgendaMedicamentos } from '../hooks/useAgendaMedicamentos.js'
+import { excluirMedicamentoCompleto } from '../services/api.js'
+import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
+import { gerarIniciais } from '../utils/gerarIniciais.js'
+import './DashboardPaciente.css'
 
 
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos, aoVerHistorico }) {
+function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
     const [excluindo, setExcluindo] = useState(false)
     const botaoCancelarRef = useRef(null)
-
-
-
 
     function confirmarExclusao(medicamento) {
         setMedicamentoParaExcluir(medicamento)
@@ -96,6 +93,16 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         confirmado: item.confirmado,
         status: item.status,
     }))
+
+
+    const proximosMedicamentos = medicamentosDaAgenda
+        .filter(medicamento => !medicamento.confirmado)
+        .sort((a, b) =>
+            new Date(a.horario_programado) -
+            new Date(b.horario_programado)
+        )
+        .slice(0, 3)
+
 
 
     const calcularIdade = (dataNascimento) => {
@@ -230,38 +237,53 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                 <div className="conteudo-principal-direita">
 
                     <div className="proximos-medicamentos-placeholder">
+
                         <div className="header-proximos-medicamentos">
-                            <div className="proximos-remedios">
-                                <img src="/assets/prancheta.svg" alt="prancheta de remédios" />
-                                <span>Próximos Medicamentos</span>
+                            <div className="proximos-cabecalho">
+                                <div className="proximos-remedios">
+                                    <img
+                                        src="/assets/prancheta.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                    />
+                                    <h2>Próximos Medicamentos</h2>
+                                </div>
+
+                                <div className="proximos-acoes">
+                                    <button
+                                        type="button"
+                                        className="proximos-link"
+                                        onClick={aoVerAgenda}
+                                    >
+                                        Ver agenda completa
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="proximos-link"
+                                        onClick={aoVerTodosMedicamentos}
+                                    >
+                                        Ver todos medicamentos
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                className="menu-medicamentos botao-ver-todos"
-                                onClick={aoVerTodosMedicamentos}
-                            >
-                                <img src="/assets/menu.svg" alt="" aria-hidden="true" />
-                                Ver todos medicamentos
-                            </button>
                         </div>
 
                         <ListaMedicamentos
-                            medicamentos={medicamentosDaAgenda}
+                            medicamentos={proximosMedicamentos}
                             carregando={carregandoAgenda}
                             erro={erroAgenda}
                             aoAdicionar={aoClicarCadastrarRemedio}
-                            aoEditar={aoEditarMedicamento}
-                            aoExcluir={confirmarExclusao}
                             idUsuario={pacienteSelecionado.id}
                             aoConfirmarTomada={recarregarAgenda}
                         />
 
 
                     </div>
-            <EstoquePaciente
-                agenda={agenda}
-                idUsuario={pacienteSelecionado?.id}
-            />
+                    <EstoquePaciente
+                        agenda={agenda}
+                        idUsuario={pacienteSelecionado?.id}
+                    />
                 </div>
             </div>
 

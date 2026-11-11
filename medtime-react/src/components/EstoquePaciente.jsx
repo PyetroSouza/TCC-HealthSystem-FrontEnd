@@ -1,10 +1,10 @@
 
+import { Check, Pencil, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Package, Pencil, Check, X } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-    buscarReceitaMedica,
-    atualizarEstoqueAPI
+    atualizarEstoqueAPI,
+    buscarReceitaMedica
 } from '../services/api.js'
 import './EstoquePaciente.css'
 
@@ -120,7 +120,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             !Number.isFinite(quantidade) ||
             quantidade < 0 ||
             quantidade > 99999.99 ||
-            !Number.isInteger(Number(quantidade.toFixed(2)) * 100)
+            !/^\d+(\.\d{1,2})?$/.test(novaQuantidade.trim())
         ) {
             toast.error(
                 'Informe uma quantidade entre 0 e 99.999,99, com até duas casas decimais.'
@@ -249,14 +249,6 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                                             ? 'baixo'
                                             : 'disponivel'
 
-                                console.log('🎨 Status do estoque:', {
-                                    medicamento: item.nome_medicamento,
-                                    quantidade: item.quantidade_em_estoque,
-                                    dose: item.dosagem,
-                                    unidadesCompativeis,
-                                    estoqueBaixo,
-                                    classeStatus
-                                })
                                 return (
 
                                     <article
@@ -264,16 +256,17 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                                         key={item.id_receita_medica}
                                     >
 
-                                        <div
-                                            className={`estoque-circulo ${classeStatus ? `estoque-circulo-${classeStatus}` : ''
-                                                }`}
-                                        >
+                                        <div className={`estoque-circulo estoque-circulo-${classeStatus}`}>
                                             <strong>
                                                 {item.quantidade_em_estoque == null
                                                     ? '—'
                                                     : Number(item.quantidade_em_estoque).toLocaleString('pt-BR')}
                                             </strong>
-                                            <span>Restante</span>
+                                            <span>
+                                                {item.sigla_embalagem
+                                                    ? `Restante (${item.sigla_embalagem})`
+                                                    : 'Restante'}
+                                            </span>
                                         </div>
 
 
@@ -281,12 +274,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
 
                                         {quantidadeValida && (
 
-                                            <p
-                                                className={`estoque-status ${classeStatus
-                                                    ? `estoque-status-${classeStatus}`
-                                                    : ''
-                                                    }`}
-                                            >
+                                            <p className={`estoque-status ${classeStatus ? `estoque-status-${classeStatus}` : ''}`}>
                                                 {statusEstoque}
                                             </p>
 
