@@ -1,13 +1,11 @@
 
-import { useRef, useState } from 'react'
 import {
-  Pencil,
-  Trash2,
-  ChevronDown,
+  AlertCircle,
   Check,
-  Clock3,
-  AlertCircle
+  ChevronDown,
+  Clock3
 } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { confirmarIngestaoMedicamento } from '../services/api'
 import { obterIconeDosagem } from '../utils/obterIconeDosagem'
@@ -16,8 +14,6 @@ import './CardMedicamento.css'
 function CardMedicamento({
   medicamento,
   idUsuario,
-  aoEditar,
-  aoExcluir,
   aoConfirmarTomada
 }) {
   const [expandido, setExpandido] = useState(false)
@@ -135,30 +131,6 @@ function CardMedicamento({
           aria-hidden="true"
         />
       </button>
-
-      {!confirmado && (
-        <div className="acoes-medicamento">
-          <button
-            type="button"
-            className="botao-editar"
-            aria-label={`Editar ${medicamento.nome}`}
-            title="Editar medicamento"
-            onClick={() => aoEditar(medicamento)}
-          >
-            <Pencil size={18} />
-          </button>
-
-          <button
-            type="button"
-            className="botao-excluir"
-            aria-label={`Excluir ${medicamento.nome}`}
-            title="Excluir medicamento"
-            onClick={() => aoExcluir(medicamento)}
-          >
-            <Trash2 size={18} />
-          </button>
-        </div>
-      )}
 
       {expandido && (
         <div className="confirmacao-tomada">

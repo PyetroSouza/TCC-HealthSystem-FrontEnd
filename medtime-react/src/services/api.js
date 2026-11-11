@@ -324,3 +324,20 @@ export async function buscarHistoricoMedicamentos(idUsuario) {
 
   return resultado.response?.historico_medicamento ?? []
 }
+
+
+
+export async function buscarTodasReceitasMedicas() {
+  const resposta = await fetch(`${API_URL}/receita_medica`)
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+      throw new Error(
+          resultado.message || 'Erro ao buscar medicamentos.'
+      )
+  }
+
+  return resultado.response?.receita_medica ?? []
+}
+
+

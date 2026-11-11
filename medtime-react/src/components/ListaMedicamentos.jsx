@@ -6,8 +6,6 @@ function ListaMedicamentos({
     carregando,
     erro,
     aoAdicionar,
-    aoEditar,
-    aoExcluir,
     idUsuario,
     aoConfirmarTomada
 }) {
@@ -45,8 +43,6 @@ function ListaMedicamentos({
                     key={`${medicamento.id_receita_medica}-${medicamento.horario_programado}-${medicamento.id_programacao_medicamento ?? 'sem-programacao'}`}
                         medicamento={medicamento}
                         idUsuario={idUsuario}
-                        aoEditar={aoEditar}
-                        aoExcluir={aoExcluir}
                         aoConfirmarTomada={aoConfirmarTomada}
                     />
                 ))

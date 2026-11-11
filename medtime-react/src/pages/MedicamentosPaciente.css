@@ -1,0 +1,236 @@
+.medicamentos-paciente {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.medicamentos-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: #1D6FA4;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.medicamentos-cabecalho {
+    margin-bottom: 24px;
+}
+
+.medicamentos-cabecalho h1 {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 2vw, 28px);
+    color: #183B4F;
+}
+
+.medicamentos-cabecalho p {
+    margin: 0;
+    color: #64748B;
+    line-height: 1.5;
+}
+
+
+.medicamentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,
+            minmax(min(100%, 300px), 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+.medicamento-item {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 12px rgba(24, 59, 79, 0.05);
+    transition: box-shadow 0.2s ease;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+
+.medicamento-item:hover {
+    box-shadow: 0 6px 20px rgba(24, 59, 79, 0.09);
+}
+
+.medicamento-visualizar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+}
+
+.medicamento-imagem {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #F5F8FA;
+    overflow: hidden;
+}
+
+.medicamento-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.medicamento-resumo {
+    flex: 1;
+    min-width: 0;
+}
+
+.medicamento-resumo h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.medicamento-resumo p {
+    color: #475569;
+}
+
+.medicamento-resumo span {
+    display: inline-block;
+    margin-top: 10px;
+    color: #16803c;
+    font-size: 14px;
+}
+
+.medicamento-resumo h2,
+.medicamento-resumo p,
+.medicamento-detalhes p {
+    overflow-wrap: anywhere;
+}
+
+
+.medicamento-detalhes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    padding: 16px 0;
+    border-top: 1px solid #E2E8F0;
+    overflow-wrap: anywhere;
+}
+
+.medicamento-detalhes p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #475569;
+}
+
+.medicamento-detalhes strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: #64748B;
+    font-weight: 500;
+}
+
+
+.medicamento-acoes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.medicamento-acoes button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+
+    border: 1px solid #BFDFF1;
+    border-radius: 10px;
+
+    background-color: #EAF5FB;
+    color: #1D6FA4;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.medicamento-acoes button:hover:not(:disabled) {
+    background-color: #D3EAF7;
+}
+
+.medicamento-acoes .medicamento-excluir {
+    background-color: #FFF1F0;
+    border-color: #FECACA;
+    color: #B91C1C;
+}
+
+.medicamento-acoes .medicamento-excluir:hover:not(:disabled) {
+    background-color: #FEE2E2;
+}
+
+.medicamento-acoes button:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 2px;
+}
+
+.medicamento-acoes button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+.medicamentos-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 20px;
+    text-align: center;
+}
+
+
+@media (max-width: 480px) {
+    .medicamentos-paciente {
+        padding: 16px;
+    }
+
+    .medicamentos-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .medicamento-item {
+        padding: 16px;
+    }
+
+    .medicamento-imagem {
+        width: 72px;
+        height: 72px;
+    }
+
+    .medicamento-resumo h2 {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+}
