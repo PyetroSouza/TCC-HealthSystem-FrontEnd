@@ -104,6 +104,24 @@
     border-color: #16803C;
 }
 
+
+.estoque-circulo-baixo {
+    border-color: #D97706;
+}
+
+.estoque-status-baixo {
+    color: #B45309;
+}
+
+.estoque-circulo.estoque-circulo-baixo {
+    border-color: #D97706;
+}
+
+.estoque-status.estoque-status-baixo {
+    color: #B45309;
+}
+
+
 .estoque-circulo-esgotado {
     border-color: #DC2626;
 }

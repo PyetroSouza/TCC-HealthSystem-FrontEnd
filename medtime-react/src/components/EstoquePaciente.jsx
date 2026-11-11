@@ -108,9 +108,11 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
     }
 
 
+
     async function salvarEstoque(item) {
         if (salvando) return
 
+        // Quantidade digitada no campo de edição
         const quantidade = Number(novaQuantidade)
 
         if (
@@ -118,12 +120,13 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             !Number.isFinite(quantidade) ||
             quantidade < 0 ||
             quantidade > 99999.99 ||
-            !Number.isInteger(quantidade * 100)
+            !Number.isInteger(Number(quantidade.toFixed(2)) * 100)
         ) {
-            toast.error('Informe uma quantidade entre 0 e 99.999,99, com até duas casas decimais.')
+            toast.error(
+                'Informe uma quantidade entre 0 e 99.999,99, com até duas casas decimais.'
+            )
             return
         }
-
 
         if (item.id_estoque == null) {
             toast.error('Estoque não identificado.')
@@ -140,29 +143,29 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             return
         }
 
-
         setSalvando(true)
 
         try {
-
             await atualizarEstoqueAPI(item.id_estoque, {
                 id_usuarios: Number(idUsuario),
                 id_medicamentos: Number(item.id_medicamento),
                 quantidade_em_estoque: quantidade
             })
 
-
             const atualizado = await buscarReceitaMedica(
                 item.id_receita_medica
             )
 
             if (!atualizado) {
-                throw new Error('Não foi possível consultar o estoque atualizado.')
+                throw new Error(
+                    'Não foi possível consultar o estoque atualizado.'
+                )
             }
 
             setEstoques(anteriores =>
                 anteriores.map(estoque =>
-                    estoque.id_estoque === item.id_estoque
+                    Number(estoque.id_receita_medica) ===
+                        Number(atualizado.id_receita_medica)
                         ? atualizado
                         : estoque
                 )
@@ -180,6 +183,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             setSalvando(false)
         }
     }
+
 
     return (
         <section className="estoque-paciente">
@@ -201,9 +205,8 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                         <div className="estoque-grid">
                             {estoques.map(item => {
                                 const editando = editandoId === item.id_estoque
-
-
                                 const quantidade = Number(item.quantidade_em_estoque)
+                                const dose = Number(item.dosagem)
 
                                 const quantidadeValida =
                                     item.quantidade_em_estoque != null &&
@@ -211,9 +214,49 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                                     Number.isFinite(quantidade) &&
                                     quantidade >= 0
 
+                                const unidadesCompativeis =
+                                    item.id_unidade_medida != null &&
+                                    item.id_unidade_medida_embalagem != null &&
+                                    Number(item.id_unidade_medida) ===
+                                    Number(item.id_unidade_medida_embalagem)
+
+                                const doseValida = Number.isFinite(dose) && dose > 0
+
                                 const esgotado = quantidadeValida && quantidade === 0
 
+                                const estoqueBaixo =
+                                    quantidadeValida &&
+                                    quantidade > 0 &&
+                                    unidadesCompativeis &&
+                                    doseValida &&
+                                    quantidade <= dose * 2
 
+                                const statusEstoque = !quantidadeValida
+                                    ? 'Não informado'
+                                    : esgotado
+                                        ? 'Estoque esgotado'
+                                        : estoqueBaixo
+                                            ? quantidade < dose
+                                                ? 'Insuficiente para uma dose'
+                                                : 'Estoque baixo'
+                                            : 'Disponível'
+
+                                const classeStatus = !quantidadeValida
+                                    ? ''
+                                    : esgotado
+                                        ? 'esgotado'
+                                        : estoqueBaixo
+                                            ? 'baixo'
+                                            : 'disponivel'
+
+                                console.log('🎨 Status do estoque:', {
+                                    medicamento: item.nome_medicamento,
+                                    quantidade: item.quantidade_em_estoque,
+                                    dose: item.dosagem,
+                                    unidadesCompativeis,
+                                    estoqueBaixo,
+                                    classeStatus
+                                })
                                 return (
 
                                     <article
@@ -222,11 +265,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                                     >
 
                                         <div
-                                            className={`estoque-circulo ${!quantidadeValida
-                                                ? ''
-                                                : esgotado
-                                                    ? 'estoque-circulo-esgotado'
-                                                    : 'estoque-circulo-disponivel'
+                                            className={`estoque-circulo ${classeStatus ? `estoque-circulo-${classeStatus}` : ''
                                                 }`}
                                         >
                                             <strong>
@@ -241,14 +280,16 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                                         <h3>{item.nome_medicamento}</h3>
 
                                         {quantidadeValida && (
+
                                             <p
-                                                className={`estoque-status ${esgotado
-                                                    ? 'estoque-status-esgotado'
-                                                    : 'estoque-status-disponivel'
+                                                className={`estoque-status ${classeStatus
+                                                    ? `estoque-status-${classeStatus}`
+                                                    : ''
                                                     }`}
                                             >
-                                                {esgotado ? 'Estoque esgotado' : 'Disponível'}
+                                                {statusEstoque}
                                             </p>
+
                                         )}
 
                                         {editando ? (
