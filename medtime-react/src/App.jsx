@@ -12,6 +12,7 @@ import { buscarAgendaMedicamentos } from './services/api.js'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
 import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
+import MedicamentosPaciente from './pages/MedicamentosPaciente.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import EscolherPerfil from './pages/EscolherPerfil.jsx'
 import RecuperarSenha from './pages/RecuperarSenha.jsx'
@@ -346,11 +347,12 @@ function App() {
           pacienteSelecionado={pacienteSelecionado}
           setPacienteSelecionado={setPacienteSelecionado}
           voltarParaInicio={voltarParaInicio}
+          aoVerAgenda={() => setTelaAtual('todos-medicamentos')}
           excluirMedicamento={excluirMedicamento}
           aoClicarCadastrarRemedio={irParaCadastroRemedio}
           aoEditarMedicamento={iniciarEdicaoMedicamento}
           medicamentos={listaMedicamentos}
-          aoVerTodosMedicamentos={() => setTelaAtual('todos-medicamentos')}
+          aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
           aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
         />)}
         {telaAtual === 'cadastro-remedio' && (
@@ -375,6 +377,15 @@ function App() {
             aoVoltar={voltarParaDashboard}
           />
         )}
+
+        {telaAtual === 'medicamentos-paciente' && (
+          <MedicamentosPaciente
+            pacienteSelecionado={pacienteSelecionado}
+            aoVoltar={voltarParaDashboard}
+            aoEditar={iniciarEdicaoMedicamento}
+          />
+        )}
+
       </main>
     </div>
   )
