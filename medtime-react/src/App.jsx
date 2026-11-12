@@ -357,7 +357,13 @@ function App() {
         />)}
         {telaAtual === 'cadastro-remedio' && (
           <CadastroRemedio
-            voltarParaDashboard={voltarParaDashboard}
+            voltarParaDashboard={() => {
+              if (medicamentoEmEdicao) {
+                setTelaAtual('medicamentos-paciente')
+              } else {
+                setTelaAtual('dashboard')
+              }
+            }}
             cadastrarMedicamento={cadastrarMedicamento}
             medicamentoEmEdicao={medicamentoEmEdicao}
             atualizarMedicamento={atualizarMedicamento}
