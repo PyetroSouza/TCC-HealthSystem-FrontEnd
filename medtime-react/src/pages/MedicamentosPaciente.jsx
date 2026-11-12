@@ -52,11 +52,7 @@ function MedicamentosPaciente({
 
         if (idPaciente != null) {
             carregarMedicamentos()
-        } else {
-            setCarregando(false)
-            setErro('Paciente não identificado.')
         }
-
         return () => {
             ativo = false
         }
@@ -115,8 +111,10 @@ function MedicamentosPaciente({
                     {pacienteSelecionado?.nome}
                 </p>
             </header>
-
-            {carregando ? (
+            
+            {idPaciente == null ? (
+                <p role="alert">Paciente não identificado.</p>
+            ) : carregando ? (
                 <p>Carregando medicamentos...</p>
             ) : erro ? (
                 <p role="alert">{erro}</p>
@@ -253,7 +251,7 @@ function MedicamentosPaciente({
                                 disabled={excluindoId !== null}
                                 onClick={async () => {
                                     const sucesso = await excluirMedicamento(medicamentoParaExcluir)
-                                
+
                                     if (sucesso) {
                                         setMedicamentoParaExcluir(null)
                                     }

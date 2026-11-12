@@ -28,7 +28,6 @@ import './App.css'
 function App() {
   const [telaAtual, setTelaAtual] = useState('login')
   const [perfilCadastro, setPerfilCadastro] = useState(null)
-  const [busca, setBusca] = useState('')
   const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [listaMedicamentos, setListaMedicamentos] = useState(
@@ -39,6 +38,13 @@ function App() {
   const [carregandoPacientes, setCarregandoPacientes] = useState(false)
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
+
+  const alertasVisiveis =
+    telaAtual === 'inicio' &&
+      pacientes.length > 0 &&
+      !erroPacientes
+      ? alertasPendentes
+      : 0
 
 
 
@@ -83,7 +89,6 @@ function App() {
 
   useEffect(() => {
     if (telaAtual !== 'inicio' || pacientes.length === 0 || erroPacientes) {
-      setAlertasPendentes(0)
       return
     }
 
@@ -319,7 +324,7 @@ function App() {
             medicamentos={listaMedicamentos}
             carregandoPacientes={carregandoPacientes}
             erroPacientes={erroPacientes}
-            alertasPendentes={alertasPendentes}
+            alertasPendentes={alertasVisiveis}
             abrirDashboard={(paciente) => {
               setPacienteSelecionado(paciente)
               setTelaAtual('dashboard')

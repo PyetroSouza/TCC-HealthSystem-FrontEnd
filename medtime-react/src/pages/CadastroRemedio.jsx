@@ -1,30 +1,29 @@
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
+import AnexarImagem from '../components/AnexarImagem'
 import {
-  medicamentoSchema,
-  medicamentoEdicaoSchema
+  medicamentoEdicaoSchema,
+  medicamentoSchema
 } from '../schemas/medicamentoSchema'
-import { prepararMedicamento } from '../services/medicamentoService'
-import { montarPayloadMedicamento } from '../utils/montarPayloadMedicamento'
 import {
-  cadastrarMedicamentoCompleto,
-  buscarReceitaMedica,
   buscarProgramacaoPorReceita,
+  buscarReceitaMedica,
+  cadastrarMedicamentoCompleto,
   editarMedicamentoCompleto
 } from '../services/api'
 import {
-  buscarUnidadesMedida,
   buscarTiposDosagem,
   buscarTiposIntervalo,
-  cadastrarMedicamentoAPI
+  buscarUnidadesMedida
 } from '../services/api.js'
-import { toast } from 'sonner'
-import AnexarImagem from '../components/AnexarImagem'
+import { prepararMedicamento } from '../services/medicamentoService'
+import { montarPayloadMedicamento } from '../utils/montarPayloadMedicamento'
 
 import './CadastroRemedio.css'
 
-function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarMedicamentoLocal, pacienteSelecionado, medicamentoEmEdicao, atualizarMedicamento }) {
+function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarMedicamentoLocal, pacienteSelecionado, medicamentoEmEdicao }) {
   const [imagemMedicamento, setImagemMedicamento] = useState(null)
   const [imagemAtual, setImagemAtual] = useState(
     medicamentoEmEdicao?.imagem ?? null
@@ -38,7 +37,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     getValues,
     formState: { errors, isSubmitting }
@@ -152,10 +151,17 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
     }
 
     carregarDadosEdicao()
-  }, [modoEdicao, medicamentoEmEdicao?.id_receita_medica, pacienteSelecionado?.id])
+  }, [modoEdicao, medicamentoEmEdicao?.id_receita_medica, pacienteSelecionado?.id, reset])
 
-  const frequencia = watch('frequencia')
-  const intervalo = watch('intervalo')
+  const frequencia = useWatch({
+    control,
+    name: 'frequencia'
+  })
+
+  const intervalo = useWatch({
+    control,
+    name: 'intervalo'
+  })
 
   async function adicionarMedicamento(dados) {
 
@@ -263,7 +269,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
           pacienteSelecionado.id
         )
 
-        const resultado = await cadastrarMedicamentoCompleto(payload)
+        await cadastrarMedicamentoCompleto(payload)
 
 
         cadastrarMedicamentoLocal(medicamentoPreparado)

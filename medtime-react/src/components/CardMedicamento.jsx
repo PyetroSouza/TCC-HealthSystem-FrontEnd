@@ -1,11 +1,10 @@
-
 import {
   AlertCircle,
   Check,
   ChevronDown,
   Clock3
 } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { createElement, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { confirmarIngestaoMedicamento } from '../services/api'
 import { obterIconeDosagem } from '../utils/obterIconeDosagem'
@@ -18,13 +17,22 @@ function CardMedicamento({
 }) {
   const [expandido, setExpandido] = useState(false)
   const [confirmando, setConfirmando] = useState(false)
+  const [agora, setAgora] = useState(() => Date.now())
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setAgora(Date.now())
+    }, 15000)
+
+    return () => clearInterval(intervalo)
+  }, [])
   const confirmacaoEmAndamento = useRef(false)
 
   const confirmado = Boolean(medicamento.confirmado)
   const atrasado = !confirmado &&
     medicamento.status === 'ATRASADO'
 
-  const IconeDosagem = obterIconeDosagem(
+  const iconeDosagem = obterIconeDosagem(
     medicamento.tipo_dosagem
   )
 
@@ -34,8 +42,8 @@ function CardMedicamento({
     !Number.isNaN(new Date(horarioProgramado).getTime())
 
   const liberado = horarioValido &&
-    Date.now() >=
-      new Date(horarioProgramado).getTime() - 30 * 60 * 1000
+    agora >=
+    new Date(horarioProgramado).getTime() - 30 * 60 * 1000
 
   async function confirmarTomada() {
     if (
@@ -86,12 +94,12 @@ function CardMedicamento({
 
         <div className="info-esquerda">
           <div className="medtime-card-icone">
-            <IconeDosagem
-              className="icone-tipo-dosagem"
-              size={24}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
+            {createElement(iconeDosagem, {
+              className: 'icone-tipo-dosagem',
+              size: 24,
+              strokeWidth: 2,
+              'aria-hidden': true
+            })}
           </div>
 
           <div className="nome-quantidade">

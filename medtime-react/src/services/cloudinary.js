@@ -28,6 +28,4 @@ export async function enviarImagem(arquivo) {
   const dados = await resposta.json()
 
   return dados.secure_url
-  console.log('Cloud Name:', cloudName)
-  console.log('Upload Preset:', uploadPreset)
 }

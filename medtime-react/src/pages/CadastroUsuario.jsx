@@ -1,13 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
 import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
 import { cadastrarUsuarioAPI } from '../services/authService'
-import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
-import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
 import { formatarTelefone } from '../utils/formatarTelefone'
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
 import './CadastroUsuario.css'
 
 function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
@@ -49,26 +49,6 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
         }
     }
 
-    async function validarDadosAcesso() {
-        const camposValidos = await trigger([
-            'email',
-            'telefone',
-            'senha',
-            'confirmarSenha'
-        ])
-
-        if (camposValidos) {
-            setEtapaAtual(3)
-        }
-    }
-
-    async function validarDadosAcesso() {
-        const camposValidos = await trigger()
-
-        if (camposValidos) {
-            setEtapaAtual(3)
-        }
-    }
 
 
 async function cadastrarUsuario(dados) {
@@ -87,17 +67,6 @@ async function cadastrarUsuario(dados) {
     }
 }
 
-
-
-
-    function voltarEtapa() {
-        if (etapaAtual === 1) {
-            aoVoltarLogin()
-            return
-        }
-
-        setEtapaAtual((etapa) => etapa - 1)
-    }
     return (
         <main className="cadastro-usuario-pagina">
             <div className="cadastro-usuario-container">

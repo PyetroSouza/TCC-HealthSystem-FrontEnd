@@ -1,11 +1,12 @@
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Mail, LockKeyhole, Eye, EyeOff, HeartPulse } from 'lucide-react'
-import PainelAutenticacao from '../components/auth/PainelAutenticacao'
 import { toast } from 'sonner'
+import { z } from 'zod'
+import PainelAutenticacao from '../components/auth/PainelAutenticacao'
+import LogoMedTime from '../components/LogoMedTime'
 import './Login.css'
 
 const loginSchema = z.object({
@@ -33,11 +34,9 @@ function Login({
     }
   })
 
-  async function realizarLogin(dados) {
-    // Integração com a API será adicionada posteriormente.
-    // Não armazenamos credenciais nem simulamos uma sessão.
-    toast.info('A autenticação estará disponível após a integração com a API.')
-  }
+async function realizarLogin() {
+  toast.info('A autenticação estará disponível após a integração com a API.')
+}
 
   return (
     <main className="login-pagina">
@@ -54,7 +53,7 @@ function Login({
           <div className="login-formulario-conteudo">
 
             <div className="login-topo-mobile">
-              <HeartPulse size={28} aria-hidden="true" />
+              <LogoMedTime largura={200} />
               <strong>MedTime</strong>
             </div>
 

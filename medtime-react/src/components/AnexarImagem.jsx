@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
 
-function AnexarImagem({ aoSelecionarImagem, imagemInicial}) {
-    const [imagem, setImagem] = useState(null)
+import { useEffect, useState } from 'react'
+
+function AnexarImagem({ aoSelecionarImagem, imagemInicial }) {
     const [preview, setPreview] = useState(null)
-    const [enviando, setEnviando] = useState(false)
 
     function selecionarImagem(event) {
-        const arquivo = event.target.files[0]
+        const arquivo = event.target.files?.[0]
 
         if (!arquivo) return
 
@@ -30,23 +29,19 @@ function AnexarImagem({ aoSelecionarImagem, imagemInicial}) {
             return
         }
 
-        setImagem(arquivo)
+        const url = URL.createObjectURL(arquivo)
+
+        setPreview(url)
         aoSelecionarImagem(arquivo)
     }
 
     useEffect(() => {
-        if (!imagem) {
-            setPreview(null)
-            return
-        }
-
-        const url = URL.createObjectURL(imagem)
-        setPreview(url)
+        if (!preview) return
 
         return () => {
-            URL.revokeObjectURL(url)
+            URL.revokeObjectURL(preview)
         }
-    }, [imagem])
+    }, [preview])
 
     return (
         <div className="anexar-imagem">

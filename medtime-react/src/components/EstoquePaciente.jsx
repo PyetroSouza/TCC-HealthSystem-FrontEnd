@@ -75,7 +75,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
                 if (resultados.some(r => r.status === 'rejected')) {
                     setErro('Alguns estoques não puderam ser consultados.')
                 }
-            } catch (erro) {
+            } catch {
                 if (ativo) {
                     setErro('Não foi possível consultar os estoques.')
                 }
@@ -112,7 +112,6 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
     async function salvarEstoque(item) {
         if (salvando) return
 
-        // Quantidade digitada no campo de edição
         const quantidade = Number(novaQuantidade)
 
         if (
@@ -175,7 +174,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             setEditandoId(null)
             setNovaQuantidade('')
 
-        } catch (erro) {
+        } catch {
             toast.error('Não foi possível concluir a atualização.', {
                 description: erro.message
             })

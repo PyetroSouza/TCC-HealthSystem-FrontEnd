@@ -10,16 +10,13 @@ import './DashboardPaciente.css'
 
 
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda }) {
+function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
     const [excluindo, setExcluindo] = useState(false)
     const botaoCancelarRef = useRef(null)
 
-    function confirmarExclusao(medicamento) {
-        setMedicamentoParaExcluir(medicamento)
-    }
 
     useEffect(() => {
         if (!medicamentoParaExcluir) return
@@ -63,8 +60,6 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
             setExcluindo(false)
         }
     }
-
-
 
     const {
         agenda,

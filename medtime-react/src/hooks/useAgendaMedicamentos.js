@@ -46,7 +46,6 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
                 data
             )
 
-            // Impede respostas antigas de sobrescrever dados novos
             if (requisicaoAtual !== ultimaRequisicao.current) {
                 return
             }
@@ -76,20 +75,24 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
         }
     }, [idUsuario, dataConsulta])
 
-    // Mantém atualização imediata após ações do usuário
     const recarregarAgenda = useCallback(() => {
         return carregarAgenda(false)
     }, [carregarAgenda])
 
+
     useEffect(() => {
-        // Primeira consulta ao abrir o dashboard
-        setAgenda([])
+        const controleRequisicoes = ultimaRequisicao
+
         ultimaConsultaAutomatica.current = Date.now()
-        carregarAgenda(false)
+
+        const timerInicial = setTimeout(() => {
+            carregarAgenda(false)
+        }, 0)
 
         if (!idUsuario) {
             return () => {
-                ultimaRequisicao.current++
+                clearTimeout(timerInicial)
+                controleRequisicoes.current++
             }
         }
 
@@ -100,7 +103,6 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
 
             const agora = Date.now()
 
-            // Evita consultas duplicadas ao alternar abas
             if (
                 agora - ultimaConsultaAutomatica.current <
                 INTERVALO_MINIMO
@@ -128,6 +130,7 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
         )
 
         return () => {
+            clearTimeout(timerInicial)
             clearInterval(intervalo)
 
             document.removeEventListener(
@@ -140,8 +143,7 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
                 atualizarAutomaticamente
             )
 
-            // Invalida requisições pendentes
-            ultimaRequisicao.current++
+            controleRequisicoes.current++
         }
     }, [idUsuario, carregarAgenda])
 

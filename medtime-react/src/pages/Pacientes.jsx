@@ -1,6 +1,6 @@
 
+import { ArrowLeft, UsersRound } from 'lucide-react'
 import { useState } from 'react'
-import { ArrowLeft, UsersRound, UserPlus } from 'lucide-react'
 
 import Buscar from '../components/Buscar.jsx'
 import CardPaciente from '../components/CardPaciente.jsx'
@@ -11,8 +11,7 @@ import './Pacientes.css'
 function Pacientes({
     pacientes = [],
     abrirDashboard,
-    aoVoltar,
-    aoAdicionar
+    aoVoltar
 }) {
     const [busca, setBusca] = useState('')
 
