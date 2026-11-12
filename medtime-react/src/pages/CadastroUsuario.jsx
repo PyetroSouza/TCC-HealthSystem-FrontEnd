@@ -54,7 +54,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
 async function cadastrarUsuario(dados) {
     try {
 
-        const payload = montarPayloadUsuario(dados)
+        const payload = montarPayloadUsuario(dados, perfil)
 
         await cadastrarUsuarioAPI(payload)
 
