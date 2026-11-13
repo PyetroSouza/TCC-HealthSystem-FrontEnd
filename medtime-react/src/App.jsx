@@ -1,28 +1,29 @@
 
-import { buscarUnidadesMedida } from './services/api.js'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import Login from './pages/Login.jsx'
-import Inicio from './pages/Inicio.jsx'
-import CadastroIdoso from './pages/CadastroIdoso'
-import Pacientes from './pages/Pacientes.jsx'
+import { useEffect, useState } from 'react'
+import { toast, Toaster } from 'sonner'
+import './App.css'
+import PainelAutenticacao from './components/auth/PainelAutenticacao'
+import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
-import DashboardPaciente from './pages/DashboardPaciente.jsx'
-import { buscarAgendaMedicamentos } from './services/api.js'
+import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
+import VincularCuidador from './components/vinculo/VincularCuidador.jsx'
+import { medicamentos as medicamentosIniciais } from './data/medicamentos'
+import CadastroIdoso from './pages/CadastroIdoso'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
-import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
-import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
-import MedicamentosPaciente from './pages/MedicamentosPaciente.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
+import DashboardPaciente from './pages/DashboardPaciente.jsx'
 import EscolherPerfil from './pages/EscolherPerfil.jsx'
+import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
+import Inicio from './pages/Inicio.jsx'
+import Login from './pages/Login.jsx'
+import MedicamentosPaciente from './pages/MedicamentosPaciente.jsx'
+import Pacientes from './pages/Pacientes.jsx'
 import RecuperarSenha from './pages/RecuperarSenha.jsx'
 import RedefinirSenha from './pages/RedefinirSenha.jsx'
-import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
-import PainelAutenticacao from './components/auth/PainelAutenticacao'
-import { buscarUsuarios } from './services/api.js'
-import { Toaster } from 'sonner'
-import { medicamentos as medicamentosIniciais } from './data/medicamentos'
-import './App.css'
+import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
+import { buscarAgendaMedicamentos } from './services/api.js'
+import { buscarMeusPacientes } from './services/vinculoService.js'
+import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
 
 function App() {
@@ -38,6 +39,8 @@ function App() {
   const [carregandoPacientes, setCarregandoPacientes] = useState(false)
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState(null)
+  const perfilAutenticado = obterPerfilUsuario(usuarioAutenticado?.jwt)
 
   const alertasVisiveis =
     telaAtual === 'inicio' &&
@@ -47,9 +50,14 @@ function App() {
       : 0
 
 
-
   useEffect(() => {
-    if (telaAtual !== 'inicio') return
+    if (
+      telaAtual !== 'inicio' ||
+      !usuarioAutenticado?.jwt ||
+      perfilAutenticado !== 'cuidador'
+    ) {
+      return
+    }
 
     let ativo = true
 
@@ -58,21 +66,27 @@ function App() {
       setErroPacientes(null)
 
       try {
-        const usuarios = await buscarUsuarios()
+        const pacientesRecebidos = await buscarMeusPacientes(
+          usuarioAutenticado.jwt
+        )
 
         if (!ativo) return
 
-        setPacientes(usuarios)
+        console.log(
+          'Pacientes vinculados recebidos:',
+          pacientesRecebidos
+        )
 
+        setPacientes(pacientesRecebidos)
       } catch (erro) {
         if (!ativo) return
 
-        console.error('Erro ao carregar usuários:', erro)
-
-        setErroPacientes(
-          'Não foi possível carregar os pacientes. Verifique a conexão e tente novamente.'
+        console.error(
+          'Erro ao carregar pacientes vinculados:',
+          erro
         )
 
+        setErroPacientes(erro.message)
       } finally {
         if (ativo) {
           setCarregandoPacientes(false)
@@ -85,10 +99,17 @@ function App() {
     return () => {
       ativo = false
     }
-  }, [telaAtual])
+  }, [telaAtual, usuarioAutenticado?.jwt, perfilAutenticado])
+
+
 
   useEffect(() => {
-    if (telaAtual !== 'inicio' || pacientes.length === 0 || erroPacientes) {
+    if (
+      telaAtual !== 'inicio' ||
+      pacientes.length === 0 ||
+      erroPacientes ||
+      !usuarioAutenticado?.jwt
+    ) {
       return
     }
 
@@ -108,8 +129,9 @@ function App() {
             ].join('-')
 
             return buscarAgendaMedicamentos(
-              paciente.id ?? paciente.id_usuario,
-              dataLocal
+              paciente.id_paciente ?? paciente.id,
+              dataLocal,
+              usuarioAutenticado.jwt
             )
           })
 
@@ -135,8 +157,7 @@ function App() {
     return () => {
       ativo = false
     }
-  }, [telaAtual, pacientes, erroPacientes])
-
+  }, [telaAtual, pacientes, erroPacientes, usuarioAutenticado?.jwt])
 
   function voltarParaInicio() {
     setTelaAtual('inicio')
@@ -190,18 +211,7 @@ function App() {
     )
   }
 
-  useEffect(() => {
-    async function testarAPI() {
-      try {
-        const unidades = await buscarUnidadesMedida()
-        console.log('Dados recebidos da API:', unidades)
-      } catch (erro) {
-        console.error('Erro na conexão:', erro.message)
-      }
-    }
 
-    testarAPI()
-  }, [])
   if (telaAtual === 'login') {
     return (
       <>
@@ -215,6 +225,22 @@ function App() {
           aoCadastrar={() => setTelaAtual('escolher-perfil')}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
           aoEntrarDemo={() => setTelaAtual('inicio')}
+          aoEntrar={(usuario) => {
+            const perfil = obterPerfilUsuario(usuario.jwt)
+
+            if (!perfil) {
+              toast.error('Não foi possível identificar o perfil do usuário.')
+              return
+            }
+
+            setUsuarioAutenticado(usuario)
+
+            if (perfil === 'cuidador') {
+              setTelaAtual('inicio')
+            } else {
+              setTelaAtual('inicio-paciente')
+            }
+          }}
         />
       </>
     )
@@ -319,6 +345,7 @@ function App() {
       <main className="conteudo">
         {telaAtual === 'inicio' && (
           <Inicio
+            token={usuarioAutenticado?.jwt}
             aoCadastrar={() => setTelaAtual('cadastro')}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}
@@ -330,10 +357,25 @@ function App() {
               setTelaAtual('dashboard')
             }}
             aoVerPacientes={() => setTelaAtual('pacientes')}
-          />
-        )}
+          />)}
 
         {telaAtual === 'cadastro' && <CadastroIdoso />}
+
+        {telaAtual === 'inicio' &&
+          perfilAutenticado === 'cuidador' &&
+          usuarioAutenticado?.jwt && (
+            <GerarCodigoVinculo
+              token={usuarioAutenticado.jwt}
+            />
+          )}
+
+        {telaAtual === 'inicio-paciente' &&
+          perfilAutenticado === 'paciente' &&
+          usuarioAutenticado?.jwt && (
+            <VincularCuidador
+              token={usuarioAutenticado.jwt}
+            />
+          )}
 
 
         {telaAtual === 'pacientes' && (
@@ -357,6 +399,7 @@ function App() {
           aoClicarCadastrarRemedio={irParaCadastroRemedio}
           aoEditarMedicamento={iniciarEdicaoMedicamento}
           medicamentos={listaMedicamentos}
+          token={usuarioAutenticado?.jwt}
           aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
           aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
         />)}

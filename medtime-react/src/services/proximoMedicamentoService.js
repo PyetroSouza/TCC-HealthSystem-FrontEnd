@@ -1,7 +1,7 @@
 
 import { buscarAgendaMedicamentos } from './api.js'
 
-export async function buscarProximoMedicamento(idUsuario) {
+export async function buscarProximoMedicamento(idUsuario, token) {
     if (!idUsuario) return null
 
     const agora = new Date()
@@ -19,7 +19,8 @@ export async function buscarProximoMedicamento(idUsuario) {
 
         const agenda = await buscarAgendaMedicamentos(
             idUsuario,
-            dataFormatada
+            dataFormatada,
+            token
         )
 
         const proximasDoses = agenda

@@ -49,3 +49,46 @@ export async function cadastrarUsuarioAPI(dados) {
 
     return resultado
 }
+
+
+export async function entrarUsuarioAPI(dados) {
+    let resposta
+  
+    try {
+      resposta = await fetch(`${API_URL}/usuario/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: dados.email.trim().toLowerCase(),
+          senha: dados.senha
+        })
+      })
+    } catch {
+      throw new Error('Não foi possível conectar ao servidor do MedTime.')
+    }
+  
+    const resultado = await resposta.json().catch(() => null)
+  
+    if (!resposta.ok) {
+      if (resposta.status === 401) {
+        throw new Error('E-mail ou senha inválidos.')
+      }
+  
+      if (resposta.status === 403) {
+        throw new Error('Sua conta está inativa ou sem acesso autorizado.')
+      }
+  
+      throw new Error(
+        resultado?.message || 'Não foi possível realizar o login.'
+      )
+    }
+  
+    if (!resultado?.id || !resultado?.jwt) {
+      throw new Error('O servidor retornou dados de autenticação incompletos.')
+    }
+  
+    return resultado
+  }
+  

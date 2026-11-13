@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import PainelAutenticacao from '../components/auth/PainelAutenticacao'
 import LogoMedTime from '../components/LogoMedTime'
+import { entrarUsuarioAPI } from '../services/authService'
 import './Login.css'
 
 const loginSchema = z.object({
@@ -17,7 +18,8 @@ const loginSchema = z.object({
 function Login({
   aoCadastrar,
   aoRecuperarSenha,
-  aoEntrarDemo
+  aoEntrarDemo,
+  aoEntrar
 }) {
   const [mostrarSenha, setMostrarSenha] = useState(false)
 
@@ -34,20 +36,30 @@ function Login({
     }
   })
 
-async function realizarLogin() {
-  toast.info('A autenticação estará disponível após a integração com a API.')
-}
+
+  async function realizarLogin(dados) {
+    try {
+      const usuario = await entrarUsuarioAPI(dados)
+
+      toast.success('Login realizado com sucesso!')
+
+      aoEntrar(usuario)
+    } catch (erro) {
+      toast.error(erro.message || 'Erro ao realizar login.')
+    }
+  }
+
 
   return (
     <main className="login-pagina">
       <div className="login-container">
 
- 
-          <PainelAutenticacao
-            etiqueta="Cuidado e organização"
-            titulo="Cuidar é estar presente."
-            descricao="Organize medicamentos e acompanhe cada cuidado com mais tranquilidade."
-          />
+
+        <PainelAutenticacao
+          etiqueta="Cuidado e organização"
+          titulo="Cuidar é estar presente."
+          descricao="Organize medicamentos e acompanhe cada cuidado com mais tranquilidade."
+        />
 
         <section className="login-area-formulario">
           <div className="login-formulario-conteudo">

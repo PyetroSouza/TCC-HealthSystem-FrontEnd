@@ -10,6 +10,7 @@ function Inicio({
   pacientes = [],
   carregandoPacientes = false,
   erroPacientes = null,
+  token,
   alertasPendentes = 0
 }) {
 
@@ -28,7 +29,7 @@ function Inicio({
           </div>
 
           <div className="card_resumo card_alertas">
-           <p className="resumo_numero">{alertasPendentes}</p>
+            <p className="resumo_numero">{alertasPendentes}</p>
             <p className="resumo_texto">Alertas Pendentes</p>
           </div>
         </section>
@@ -60,6 +61,7 @@ function Inicio({
                 <CardPaciente
                   key={paciente.id ?? paciente.id_usuario}
                   paciente={paciente}
+                  token={token}
                   aoClicar={() => abrirDashboard(paciente)}
                 />
               ))

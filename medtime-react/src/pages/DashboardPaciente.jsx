@@ -10,7 +10,7 @@ import './DashboardPaciente.css'
 
 
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda }) {
+function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda, token }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
@@ -66,7 +66,11 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         carregandoAgenda,
         erroAgenda,
         recarregarAgenda
-    } = useAgendaMedicamentos(pacienteSelecionado?.id)
+    } = useAgendaMedicamentos(
+        pacienteSelecionado?.id_paciente ?? pacienteSelecionado?.id,
+        undefined,
+        token
+    )
 
     console.log('📋 Agenda do Dashboard:', agenda)
 

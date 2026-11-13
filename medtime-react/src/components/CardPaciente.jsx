@@ -5,7 +5,7 @@ import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
 import { calcularIdade } from '../utils/calcularIdade.js'
 
-function CardPaciente({ paciente, aoClicar }) {
+function CardPaciente({ paciente, aoClicar, token }) {
     const corAvatar = gerarCorAvatar(paciente.nome)
     const idade = calcularIdade(paciente.data_nascimento)
     const [proximoMedicamento, setProximoMedicamento] = useState(null)
@@ -21,7 +21,8 @@ function CardPaciente({ paciente, aoClicar }) {
             setProximoMedicamento(null)
 
             try {
-                const medicamento = await buscarProximoMedicamento(paciente.id)
+                const medicamento = await buscarProximoMedicamento(paciente.id_paciente ?? paciente.id,
+                    token)
 
                 if (ativo) {
                     setProximoMedicamento(medicamento)
@@ -43,7 +44,7 @@ function CardPaciente({ paciente, aoClicar }) {
         return () => {
             ativo = false
         }
-    }, [paciente.id])
+    }, [paciente.id_paciente, paciente.id, token])
 
 
     return (

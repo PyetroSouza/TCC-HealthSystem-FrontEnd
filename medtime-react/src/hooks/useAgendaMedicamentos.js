@@ -15,7 +15,7 @@ function obterDataLocal() {
     ].join('-')
 }
 
-export function useAgendaMedicamentos(idUsuario, dataConsulta) {
+export function useAgendaMedicamentos(idUsuario, dataConsulta, token) {
     const [agenda, setAgenda] = useState([])
     const [carregandoAgenda, setCarregandoAgenda] = useState(false)
     const [erroAgenda, setErroAgenda] = useState(null)
@@ -43,7 +43,8 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
 
             const medicamentosAPI = await buscarAgendaMedicamentos(
                 idUsuario,
-                data
+                data,
+                token
             )
 
             if (requisicaoAtual !== ultimaRequisicao.current) {
@@ -73,7 +74,7 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
                 setCarregandoAgenda(false)
             }
         }
-    }, [idUsuario, dataConsulta])
+    }, [idUsuario, dataConsulta, token])
 
     const recarregarAgenda = useCallback(() => {
         return carregarAgenda(false)
@@ -89,7 +90,7 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
             carregarAgenda(false)
         }, 0)
 
-        if (!idUsuario) {
+        if (!idUsuario || !token) {
             return () => {
                 clearTimeout(timerInicial)
                 controleRequisicoes.current++
@@ -145,7 +146,7 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta) {
 
             controleRequisicoes.current++
         }
-    }, [idUsuario, carregarAgenda])
+    }, [idUsuario, carregarAgenda, token])
 
     return {
         agenda,

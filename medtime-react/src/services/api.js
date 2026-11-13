@@ -85,7 +85,12 @@ export async function cadastrarMedicamentoCompleto(payload) {
   return resultado
 }
 
-export async function buscarAgendaMedicamentos(idUsuario, data) {
+
+export async function buscarAgendaMedicamentos(idUsuario, data, token) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
   const fuso = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   const parametros = new URLSearchParams({
@@ -94,19 +99,25 @@ export async function buscarAgendaMedicamentos(idUsuario, data) {
   })
 
   const resposta = await fetch(
-    `${API_URL}/agenda_medicamento/${idUsuario}?${parametros}`
+    `${API_URL}/agenda_medicamento/${idUsuario}?${parametros}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
   )
 
-  const resultado = await resposta.json()
+  const resultado = await resposta.json().catch(() => null)
 
-  if (!resposta.ok || resultado.status === false) {
+  if (!resposta.ok || resultado?.status === false) {
     throw new Error(
-      resultado.message || 'Erro ao carregar a agenda'
+      resultado?.message || 'Erro ao buscar a agenda.'
     )
   }
 
-  return resultado.response.agenda
+  return resultado?.response?.agenda ?? []
 }
+
 
 export async function buscarUsuarios() {
   const resposta = await fetch(`${API_URL}/usuario`)
@@ -332,9 +343,9 @@ export async function buscarTodasReceitasMedicas() {
   const resultado = await resposta.json()
 
   if (!resposta.ok || resultado.status === false) {
-      throw new Error(
-          resultado.message || 'Erro ao buscar medicamentos.'
-      )
+    throw new Error(
+      resultado.message || 'Erro ao buscar medicamentos.'
+    )
   }
 
   return resultado.response?.receita_medica ?? []
