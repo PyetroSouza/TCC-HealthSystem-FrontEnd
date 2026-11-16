@@ -425,7 +425,8 @@ function App() {
             cadastrarMedicamento={cadastrarMedicamento}
             medicamentoEmEdicao={medicamentoEmEdicao}
             atualizarMedicamento={atualizarMedicamento}
-            pacienteSelecionado={pacienteSelecionado} />
+            pacienteSelecionado={pacienteSelecionado}
+            token={usuarioAutenticado?.jwt} />
         )}
 
         {telaAtual === 'todos-medicamentos' && (
@@ -447,6 +448,7 @@ function App() {
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
             aoEditar={iniciarEdicaoMedicamento}
+            token={usuarioAutenticado?.jwt}
           />
         )}
 

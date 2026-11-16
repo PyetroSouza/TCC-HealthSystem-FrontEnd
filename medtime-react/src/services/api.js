@@ -1,8 +1,14 @@
 
 const API_URL = 'http://localhost:8080/v1/healthSystem/medtime'
 
-export async function buscarUnidadesMedida() {
-  const resposta = await fetch(`${API_URL}/unidade_medida`)
+export async function buscarUnidadesMedida(token) {
+  if (!token) throw new Error('Sessão não autenticada.')
+
+  const resposta = await fetch(`${API_URL}/unidade_medida`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
 
   if (!resposta.ok) {
     throw new Error('Erro ao buscar unidades de medida')
@@ -12,8 +18,14 @@ export async function buscarUnidadesMedida() {
   return dados.response.unidade_medida
 }
 
-export async function buscarTiposDosagem() {
-  const resposta = await fetch(`${API_URL}/tipo_dosagem`)
+export async function buscarTiposDosagem(token) {
+  if (!token) throw new Error('Sessão não autenticada.')
+
+  const resposta = await fetch(`${API_URL}/tipo_dosagem`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
 
   if (!resposta.ok) {
     throw new Error('Erro ao buscar tipos de dosagem')
@@ -47,8 +59,14 @@ export async function cadastrarMedicamentoAPI(dadosMedicamento) {
 }
 
 
-export async function buscarTiposIntervalo() {
-  const resposta = await fetch(`${API_URL}/tipo_intervalo`)
+export async function buscarTiposIntervalo(token) {
+  if (!token) throw new Error('Sessão não autenticada.')
+
+  const resposta = await fetch(`${API_URL}/tipo_intervalo`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
 
   if (!resposta.ok) {
     throw new Error('Erro ao buscar intervalos')
@@ -58,32 +76,46 @@ export async function buscarTiposIntervalo() {
   return dados.response.tipoIntervalo
 }
 
-export async function cadastrarMedicamentoCompleto(payload) {
+
+export async function cadastrarMedicamentoCompleto(
+  idPaciente,
+  payload,
+  token
+) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!Number.isSafeInteger(Number(idPaciente)) ||
+      Number(idPaciente) <= 0) {
+    throw new Error('Paciente inválido.')
+  }
+
   const resposta = await fetch(
-    `${API_URL}/cadastro_medicamento`,
+    `${API_URL}/cadastro_medicamento/${idPaciente}`,
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(payload)
     }
   )
 
-  const resultado = await resposta.json()
+  const resultado = await resposta.json().catch(() => null)
 
-  if (!resposta.ok) {
-    console.error('❌ Erros retornados pela API:', resultado)
-
+  if (!resposta.ok || resultado?.status === false) {
     throw new Error(
-      resultado.field?.join(', ') ||
-      resultado.message ||
-      'Não foi possível cadastrar o medicamento'
+      resultado?.field?.join(', ') ||
+      resultado?.message ||
+      'Não foi possível cadastrar o medicamento.'
     )
   }
 
   return resultado
 }
+
 
 
 export async function buscarAgendaMedicamentos(idUsuario, data, token) {
@@ -351,4 +383,32 @@ export async function buscarTodasReceitasMedicas() {
   return resultado.response?.receita_medica ?? []
 }
 
+export async function buscarReceitasDoPaciente(idPaciente, token) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
 
+  if (!Number.isSafeInteger(Number(idPaciente)) ||
+      Number(idPaciente) <= 0) {
+    throw new Error('Paciente inválido.')
+  }
+
+  const resposta = await fetch(
+    `${API_URL}/receita_medica/usuario/${idPaciente}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message || 'Erro ao buscar receitas médicas.'
+    )
+  }
+
+  return resultado.response?.receita_medica ?? []
+}

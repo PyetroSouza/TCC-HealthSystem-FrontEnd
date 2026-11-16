@@ -281,7 +281,11 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                     </div>
                     <EstoquePaciente
                         agenda={agenda}
-                        idUsuario={pacienteSelecionado?.id}
+                        idUsuario={
+                            pacienteSelecionado?.id_paciente ??
+                            pacienteSelecionado?.id
+                        }
+                        token={token}
                     />
                 </div>
             </div>

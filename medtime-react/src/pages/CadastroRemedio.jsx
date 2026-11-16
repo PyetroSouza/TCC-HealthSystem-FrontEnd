@@ -23,7 +23,13 @@ import { montarPayloadMedicamento } from '../utils/montarPayloadMedicamento'
 
 import './CadastroRemedio.css'
 
-function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarMedicamentoLocal, pacienteSelecionado, medicamentoEmEdicao }) {
+function CadastroRemedio({
+  voltarParaDashboard,
+  cadastrarMedicamento: cadastrarMedicamentoLocal,
+  pacienteSelecionado,
+  medicamentoEmEdicao,
+  token
+}) {
   const [imagemMedicamento, setImagemMedicamento] = useState(null)
   const [imagemAtual, setImagemAtual] = useState(
     medicamentoEmEdicao?.imagem ?? null
@@ -82,11 +88,12 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
   useEffect(() => {
     async function carregarOpcoes() {
       try {
-        const [unidadesAPI, dosagensAPI, intervalosAPI] = await Promise.all([
-          buscarUnidadesMedida(),
-          buscarTiposDosagem(),
-          buscarTiposIntervalo()
-        ])
+        const [unidadesAPI, dosagensAPI, intervalosAPI] =
+          await Promise.all([
+            buscarUnidadesMedida(token),
+            buscarTiposDosagem(token),
+            buscarTiposIntervalo(token)
+          ])
 
         setUnidades(unidadesAPI)
         setTiposDosagem(dosagensAPI)
@@ -98,7 +105,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
     }
 
     carregarOpcoes()
-  }, [])
+  }, [token])
 
   useEffect(() => {
     async function carregarDadosEdicao() {
@@ -264,12 +271,14 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
 
         toast.success('Dados do medicamento atualizados!')
       } else {
-        const payload = montarPayloadMedicamento(
-          medicamentoPreparado,
-          pacienteSelecionado.id
-        )
 
-        await cadastrarMedicamentoCompleto(payload)
+        const payload = montarPayloadMedicamento(medicamentoPreparado)
+
+        await cadastrarMedicamentoCompleto(
+          pacienteSelecionado.id_paciente ?? pacienteSelecionado.id,
+          payload,
+          token
+        )
 
 
         cadastrarMedicamentoLocal(medicamentoPreparado)
