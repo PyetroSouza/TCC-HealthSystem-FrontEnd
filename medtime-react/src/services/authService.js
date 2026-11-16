@@ -118,3 +118,64 @@ export async function solicitarCodigoVerificacao(email) {
 
   return resultado
 }
+
+const URL_RECUPERACAO =
+  'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email'
+
+export async function solicitarCodigoRecuperacao(email) {
+  const resposta = await fetch(
+    `${URL_RECUPERACAO}/redefinir_senha/gerar`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase()
+      })
+    }
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+      'Não foi possível solicitar a recuperação de senha.'
+    )
+  }
+
+  return resultado
+}
+
+export async function redefinirSenhaAPI({
+  email,
+  codigo,
+  novaSenha
+}) {
+  const resposta = await fetch(
+    `${URL_RECUPERACAO}/redefinir_senha`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        codigo,
+        nova_senha: novaSenha
+      })
+    }
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+      'Não foi possível redefinir a senha.'
+    )
+  }
+
+  return resultado
+}

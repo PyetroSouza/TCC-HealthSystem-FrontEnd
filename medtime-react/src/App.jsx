@@ -305,29 +305,39 @@ function App() {
 
   if (telaAtual === 'verificacao-recuperacao') {
     return (
-      <main className="login-pagina">
-        <div className="login-container">
+      <>
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+        />
 
-          <PainelAutenticacao
-            etiqueta="Verificação da conta"
-            titulo="Sua segurança é importante."
-            descricao="Confira as informações para proteger o acesso ao MedTime."
-          />
+        <main className="login-pagina">
+          <div className="login-container">
 
-          <section className="login-area-formulario">
-            <div className="login-formulario-conteudo">
-              <VerificacaoCodigo
-                finalidade="recuperacao"
-                email={emailRecuperacao}
-                aoVoltar={() =>
-                  setTelaAtual('recuperar-senha')
-                }
-              />
-            </div>
-          </section>
+            <PainelAutenticacao
+              etiqueta="Verificação da conta"
+              titulo="Sua segurança é importante."
+              descricao="Confira as informações para proteger o acesso ao MedTime."
+            />
 
-        </div>
-      </main>
+            <section className="login-area-formulario">
+              <div className="login-formulario-conteudo">
+                <VerificacaoCodigo
+                  finalidade="recuperacao"
+                  email={emailRecuperacao}
+                  aoVoltar={() => setTelaAtual('recuperar-senha')}
+                  aoConcluir={() => {
+                    setEmailRecuperacao('')
+                    setTelaAtual('login')
+                  }}
+                />
+              </div>
+            </section>
+
+          </div>
+        </main>
+      </>
     )
   }
 

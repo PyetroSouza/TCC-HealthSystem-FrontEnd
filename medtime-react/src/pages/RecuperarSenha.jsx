@@ -1,101 +1,131 @@
 
 import { useState } from 'react'
 import { ArrowLeft, Mail } from 'lucide-react'
+import { toast } from 'sonner'
+
 import PainelAutenticacao from '../components/auth/PainelAutenticacao'
+import { solicitarCodigoRecuperacao } from '../services/authService.js'
+
 import './Login.css'
 import './RecuperarSenha.css'
 
 function RecuperarSenha({
-    aoVoltarLogin,
-    aoVisualizarVerificacao
+  aoVoltarLogin,
+  aoVisualizarVerificacao
 }) {
-    const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
-    function avancar(evento) {
-        evento.preventDefault()
+  async function avancar(evento) {
+    evento.preventDefault()
 
-        if (!email.trim()) return
+    const emailNormalizado = email.trim().toLowerCase()
 
-        aoVisualizarVerificacao?.(email.trim())
+    if (!emailNormalizado || enviando) return
+
+    try {
+      setEnviando(true)
+
+      await solicitarCodigoRecuperacao(emailNormalizado)
+
+      toast.success(
+        'Se o e-mail estiver cadastrado, enviaremos um código.'
+      )
+
+      aoVisualizarVerificacao?.(emailNormalizado)
+
+    } catch (erro) {
+      toast.error(
+        erro.message ||
+        'Não foi possível solicitar a recuperação de senha.'
+      )
+    } finally {
+      setEnviando(false)
     }
+  }
 
-    return (
-        <main className="login-pagina">
-            <div className="login-container">
+  return (
+    <main className="login-pagina">
+      <div className="login-container">
 
-                <PainelAutenticacao
-                    etiqueta="Segurança da sua conta"
-                    titulo="Seu cuidado continua aqui."
-                    descricao="Recupere o acesso à sua conta e continue acompanhando os medicamentos com tranquilidade."
-                />
+        <PainelAutenticacao
+          etiqueta="Segurança da sua conta"
+          titulo="Seu cuidado continua aqui."
+          descricao="Recupere o acesso à sua conta e continue acompanhando os medicamentos com tranquilidade."
+        />
 
-                <section className="login-area-formulario">
-                    <div className="login-formulario-conteudo">
+        <section className="login-area-formulario">
+          <div className="login-formulario-conteudo">
 
-                        <button
-                            type="button"
-                            className="recuperar-voltar"
-                            onClick={aoVoltarLogin}
-                        >
-                            <ArrowLeft size={18} aria-hidden="true" />
-                            Voltar para o login
-                        </button>
+            <button
+              type="button"
+              className="recuperar-voltar"
+              onClick={aoVoltarLogin}
+              disabled={enviando}
+            >
+              <ArrowLeft size={18} aria-hidden="true" />
+              Voltar para o login
+            </button>
 
-                        <header className="login-cabecalho">
-                            <h2>Esqueceu sua senha?</h2>
+            <header className="login-cabecalho">
+              <h2>Esqueceu sua senha?</h2>
 
-                            <p>
-                                Informe seu e-mail cadastrado
-                                para recuperar o acesso à sua conta.
-                            </p>
-                        </header>
+              <p>
+                Informe seu e-mail cadastrado
+                para recuperar o acesso à sua conta.
+              </p>
+            </header>
 
-                        <form
-                            className="login-formulario"
-                            onSubmit={avancar}
-                        >
-                            <div className="login-campo">
-                                <label htmlFor="email-recuperacao">
-                                    E-mail
-                                </label>
+            <form
+              className="login-formulario"
+              onSubmit={avancar}
+            >
+              <div className="login-campo">
+                <label htmlFor="email-recuperacao">
+                  E-mail
+                </label>
 
-                                <div className="login-input-container">
-                                    <Mail size={20} aria-hidden="true" />
+                <div className="login-input-container">
+                  <Mail size={20} aria-hidden="true" />
 
-                                    <input
-                                        id="email-recuperacao"
-                                        type="email"
-                                        placeholder="seuemail@exemplo.com"
-                                        autoComplete="email"
-                                        value={email}
-                                        onChange={(evento) =>
-                                            setEmail(evento.target.value)
-                                        }
-                                        required
-                                    />
-                                </div>
-                            </div>
+                  <input
+                    id="email-recuperacao"
+                    type="email"
+                    placeholder="seuemail@exemplo.com"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(evento) =>
+                      setEmail(evento.target.value)
+                    }
+                    disabled={enviando}
+                    required
+                  />
+                </div>
+              </div>
 
-                            <button
-                                type="submit"
-                                className="login-botao-entrar"
-                            >
-                                Visualizar verificação
-                            </button>
+              <button
+                type="submit"
+                className="login-botao-entrar"
+                disabled={enviando}
+              >
+                {enviando
+                  ? 'Enviando código...'
+                  : 'Enviar código de recuperação'}
+              </button>
 
-                            <p className="login-aviso-desenvolvimento">
-                                Modo de demonstração:
-                                nenhum código será enviado
-                                por e-mail nesta etapa.
-                            </p>
-                        </form>
+              <p className="login-aviso-desenvolvimento">
+                Se o e-mail estiver cadastrado,
+                você receberá um código válido
+                por 10 minutos.
+              </p>
+            </form>
 
-                    </div>
-                </section>
+          </div>
+        </section>
 
-            </div>
-        </main>
-    )
+      </div>
+    </main>
+  )
 }
 
 export default RecuperarSenha
