@@ -1,16 +1,24 @@
 
+import { MailCheck } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { MailCheck, ArrowLeft } from 'lucide-react'
+import { toast } from 'sonner'
+import {
+    cadastrarUsuarioAPI,
+    solicitarCodigoVerificacao
+} from '../../services/authService.js'
 import './VerificacaoCodigo.css'
 
 function VerificacaoCodigo({
     finalidade = 'cadastro',
     email,
-    aoVoltar
+    dadosCadastro,
+    aoConcluir
 }) {
     const [codigo, setCodigo] = useState(
         Array(6).fill('')
     )
+    const [carregando, setCarregando] = useState(false)
+    const [reenviando, setReenviando] = useState(false)
 
     const inputsRef = useRef([])
 
@@ -67,6 +75,53 @@ function VerificacaoCodigo({
         inputsRef.current[Math.min(texto.length, 5)]?.focus()
     }
 
+    async function confirmarCodigo() {
+        const codigoCompleto = codigo.join('')
+
+        if (!/^\d{6}$/.test(codigoCompleto)) {
+            toast.warning('Digite os seis dígitos do código.')
+            return
+        }
+
+        if (finalidade !== 'cadastro') return
+
+        try {
+            setCarregando(true)
+
+            await cadastrarUsuarioAPI({
+                ...dadosCadastro,
+                codigo: codigoCompleto
+            })
+
+            toast.success('Conta criada com sucesso!')
+            aoConcluir()
+        } catch (erro) {
+            toast.error(erro.message || 'Código inválido ou expirado.')
+        } finally {
+            setCarregando(false)
+        }
+    }
+
+    async function reenviarCodigo() {
+        if (!email || reenviando) return
+
+        try {
+            setReenviando(true)
+
+            await solicitarCodigoVerificacao(email)
+
+            setCodigo(Array(6).fill(''))
+            toast.success('Novo código enviado!')
+            inputsRef.current[0]?.focus()
+        } catch (erro) {
+            toast.error(erro.message || 'Erro ao reenviar código.')
+        } finally {
+            setReenviando(false)
+        }
+    }
+
+
+
     return (
         <section className="verificacao-codigo">
             <div className="verificacao-codigo-icone">
@@ -113,28 +168,27 @@ function VerificacaoCodigo({
                     />
                 ))}
             </div>
-
-            <p className="verificacao-codigo-aviso" role="status">
-                A verificação por e-mail ainda não está
-                disponível nesta versão do MedTime.
-            </p>
-
             <div className="verificacao-codigo-acoes">
-                <button
-                    type="button"
-                    className="verificacao-codigo-voltar"
-                    onClick={aoVoltar}
-                >
-                    <ArrowLeft size={18} aria-hidden="true" />
-                    Voltar
-                </button>
-
+                {finalidade === 'cadastro' && (
+                    <button
+                        type="button"
+                        onClick={reenviarCodigo}
+                        disabled={reenviando || carregando}
+                    >
+                        {reenviando ? 'Enviando...' : 'Reenviar código'}
+                    </button>
+                )}
                 <button
                     type="button"
                     className="verificacao-codigo-confirmar"
-                    disabled
+                    onClick={confirmarCodigo}
+                    disabled={
+                        carregando ||
+                        codigo.join('').length !== 6 ||
+                        finalidade !== 'cadastro'
+                    }
                 >
-                    Verificar código
+                    {carregando ? 'Verificando...' : 'Verificar código'}
                 </button>
             </div>
         </section>

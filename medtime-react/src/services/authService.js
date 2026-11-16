@@ -92,3 +92,29 @@ export async function entrarUsuarioAPI(dados) {
     return resultado
   }
   
+
+export async function solicitarCodigoVerificacao(email) {
+  const response = await fetch(
+    'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email/gerar',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase()
+      })
+    }
+  )
+
+  const resultado = await response.json()
+
+  if (!response.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+        'Não foi possível enviar o código de verificação.'
+    )
+  }
+
+  return resultado
+}

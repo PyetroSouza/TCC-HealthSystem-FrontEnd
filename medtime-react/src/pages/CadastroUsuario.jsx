@@ -3,17 +3,20 @@ import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+
 import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
+import { solicitarCodigoVerificacao } from '../services/authService.js'
 import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
-import { cadastrarUsuarioAPI } from '../services/authService'
 import { formatarTelefone } from '../utils/formatarTelefone'
 import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
+
 import './CadastroUsuario.css'
 
 function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
     const [etapaAtual, setEtapaAtual] = useState(1)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false)
+    const [dadosPendentes, setDadosPendentes] = useState(null)
 
     const {
         register,
@@ -51,21 +54,22 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
 
 
 
-async function cadastrarUsuario(dados) {
-    try {
+    async function cadastrarUsuario(dados) {
+        try {
+            const payload = montarPayloadUsuario(dados, perfil)
 
-        const payload = montarPayloadUsuario(dados, perfil)
+            await solicitarCodigoVerificacao(payload.email)
 
-        await cadastrarUsuarioAPI(payload)
+            setDadosPendentes(payload)
+            setEtapaAtual(3)
 
-        toast.success('Conta cadastrada com sucesso!')
-        aoIrParaLogin()
-
-    } catch (erro) {
-        console.error('Erro no cadastro:', erro)
-        toast.error(erro.message || 'Erro ao cadastrar usuário.')
+            toast.success('Enviamos um código para seu e-mail!')
+        } catch (erro) {
+            toast.error(
+                erro.message || 'Não foi possível enviar o código.'
+            )
+        }
     }
-}
 
     return (
         <main className="cadastro-usuario-pagina">
@@ -466,11 +470,16 @@ async function cadastrarUsuario(dados) {
                                 </>
                             )}
 
-
-                            {etapaAtual === 3 && (
+                            {etapaAtual === 3 && dadosPendentes && (
                                 <VerificacaoCodigo
                                     finalidade="cadastro"
+                                    email={dadosPendentes.email}
+                                    dadosCadastro={dadosPendentes}
                                     aoVoltar={() => setEtapaAtual(2)}
+                                    aoConcluir={() => {
+                                        setDadosPendentes(null)
+                                        aoIrParaLogin()
+                                    }}
                                 />
                             )}
                         </form>
