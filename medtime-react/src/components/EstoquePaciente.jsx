@@ -146,15 +146,27 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
         setSalvando(true)
 
         try {
-            await atualizarEstoqueAPI(item.id_estoque, {
-                id_usuarios: Number(idUsuario),
-                id_medicamentos: Number(item.id_medicamento),
-                quantidade_em_estoque: quantidade
-            })
 
-            const atualizado = await buscarReceitasDoPaciente(
-                item.id_receita_medica
+            await atualizarEstoqueAPI(
+                item.id_receita_medica,
+                idUsuario,
+                novaQuantidade,
+                token
             )
+
+
+
+            const receitas = await buscarReceitasDoPaciente(
+                idUsuario,
+                token
+            )
+
+            const atualizado = receitas.find(
+                receita =>
+                    Number(receita.id_receita_medica) ===
+                    Number(item.id_receita_medica)
+            )
+
 
             if (!atualizado) {
                 throw new Error(

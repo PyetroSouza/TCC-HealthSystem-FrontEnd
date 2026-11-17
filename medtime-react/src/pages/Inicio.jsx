@@ -11,13 +11,14 @@ function Inicio({
   carregandoPacientes = false,
   erroPacientes = null,
   token,
+  nomeUsuario,
   alertasPendentes = 0
 }) {
 
 
   return (
     <>
-      <BoasVindas aoCadastrar={aoCadastrar} />
+      <BoasVindas aoCadastrar={aoCadastrar} nomeUsuario={nomeUsuario} />
 
       <div className="container">
         <section className="resumo">

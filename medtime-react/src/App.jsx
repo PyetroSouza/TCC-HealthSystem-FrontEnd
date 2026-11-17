@@ -224,8 +224,8 @@ function App() {
         <Login
           aoCadastrar={() => setTelaAtual('escolher-perfil')}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
-          aoEntrarDemo={() => setTelaAtual('inicio')}
           aoEntrar={(usuario) => {
+            console.log('Campos recebidos no login:', Object.keys(usuario))
             const perfil = obterPerfilUsuario(usuario.jwt)
 
             if (!perfil) {
@@ -343,7 +343,16 @@ function App() {
 
   return (
     <div className="aplicacao">
-      <Cabecalho />
+      <Cabecalho
+        usuario={usuarioAutenticado}
+        aoSair={() => {
+          setUsuarioAutenticado(null)
+          setPacienteSelecionado(null)
+          setPacientes([])
+          setListaMedicamentos([])
+          setTelaAtual('login')
+        }}
+      />
 
       <Toaster
         position="top-right"
@@ -356,6 +365,7 @@ function App() {
         {telaAtual === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
+            nomeUsuario={usuarioAutenticado?.nome}
             aoCadastrar={() => setTelaAtual('cadastro')}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}

@@ -18,7 +18,6 @@ const loginSchema = z.object({
 function Login({
   aoCadastrar,
   aoRecuperarSenha,
-  aoEntrarDemo,
   aoEntrar
 }) {
   const [mostrarSenha, setMostrarSenha] = useState(false)
@@ -170,16 +169,6 @@ function Login({
               >
                 {isSubmitting ? 'Verificando...' : 'Entrar'}
               </button>
-
-              {import.meta.env.DEV && (
-                <button
-                  type="button"
-                  className="login-botao-demo"
-                  onClick={aoEntrarDemo}
-                >
-                  Visualizar MedTime (demonstração)
-                </button>
-              )}
             </form>
 
             <div className="login-cadastro">

@@ -223,26 +223,25 @@ export async function atualizarReceitaMedicaAPI(idReceita, dados) {
 }
 
 
-export async function atualizarEstoqueAPI(idEstoque, dados) {
 
-  const resposta = await fetch(`${API_URL}/estoque/${idEstoque}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
+export async function atualizarEstoqueAPI(
+  idReceitaMedica,
+  idPaciente,
+  quantidade,
+  token
+) {
+  return editarMedicamentoCompleto(
+    idReceitaMedica,
+    idPaciente,
+    {
+      estoque: {
+        quantidade_em_estoque: Number(quantidade)
+      }
     },
-    body: JSON.stringify(dados)
-  })
-
-  const resultado = await resposta.json()
-
-  if (!resposta.ok || resultado.status === false) {
-    throw new Error(
-      resultado.message || 'Erro ao atualizar o estoque'
-    )
-  }
-
-  return resultado
+    token
+  )
 }
+
 
 
 export async function buscarProgramacaoPorReceita(idReceitaMedica) {
