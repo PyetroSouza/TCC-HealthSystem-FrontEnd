@@ -1,0 +1,139 @@
+
+.minha-conta {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 0 40px;
+  font-family: "Inter", sans-serif;
+}
+
+.minha-conta-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.minha-conta-voltar:hover {
+  color: #1c86bf;
+}
+
+.minha-conta-card {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+}
+
+.minha-conta-capa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px;
+  background: linear-gradient(110deg, #1c86bf, #4ea8d8);
+  color: #fff;
+  text-align: center;
+}
+
+.minha-conta-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  background: #374151;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.minha-conta-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.minha-conta-capa h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.minha-conta-capa p {
+  margin: 8px 0 0;
+  opacity: 0.9;
+}
+
+.minha-conta-conteudo {
+  padding: 30px;
+}
+
+.minha-conta-conteudo h2 {
+  margin: 0 0 24px;
+  color: #17394d;
+  font-size: 20px;
+}
+
+.minha-conta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.minha-conta-campo {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.minha-conta-campo svg {
+  flex-shrink: 0;
+  color: #1c86bf;
+}
+
+.minha-conta-campo div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.minha-conta-campo span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.minha-conta-campo strong {
+  overflow-wrap: anywhere;
+  color: #17394d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 650px) {
+  .minha-conta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .minha-conta-conteudo {
+    padding: 20px;
+  }
+
+  .minha-conta-capa h1 {
+    font-size: 21px;
+  }
+}

@@ -171,6 +171,25 @@
   min-width: 0;
 }
 
+button.perfil {
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.perfil:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+button.perfil:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 @media (max-width: 768px) {
   .acoes-cabecalho {
     gap: 10px;

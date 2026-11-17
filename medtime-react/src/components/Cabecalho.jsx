@@ -5,7 +5,7 @@ import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { LogOut } from 'lucide-react'
 import './Cabecalho.css'
 
-function Cabecalho({ aoSair, usuario }) {
+function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
   const [tempo, setTempo] = useState(new Date())
 
   useEffect(() => {
@@ -48,25 +48,32 @@ function Cabecalho({ aoSair, usuario }) {
       {/* Coluna 3: perfil e logout */}
       <div className="acoes-cabecalho">
 
-        <div className="perfil">
-          <div className="foto-perfil">
-            {usuario?.foto ? (
-              <img
-                src={usuario.foto}
-                alt={`Foto de ${nomeUsuario}`}
-                className="imagem-perfil"
-              />
-            ) : (
-              <h2>{gerarIniciais(nomeUsuario)}</h2>
-            )}
-          </div>
+        <button
+          type="button"
+          className="perfil"
+          onClick={aoAbrirPerfil}
+          aria-label="Abrir minha conta"
+          title="Minha Conta"
+        >
+          <div className="perfil">
+            <div className="foto-perfil">
+              {usuario?.foto ? (
+                <img
+                  src={usuario.foto}
+                  alt={`Foto de ${nomeUsuario}`}
+                  className="imagem-perfil"
+                />
+              ) : (
+                <h2>{gerarIniciais(nomeUsuario)}</h2>
+              )}
+            </div>
 
-          <div className="dados-perfil">
-            <p className="nome-perfil">{nomeUsuario}</p>
-            <p className="email-perfil">{emailUsuario}</p>
+            <div className="dados-perfil">
+              <p className="nome-perfil">{nomeUsuario}</p>
+              <p className="email-perfil">{emailUsuario}</p>
+            </div>
           </div>
-        </div>
-
+        </button>
         <button
           type="button"
           className="botao-logout"

@@ -179,3 +179,40 @@ export async function redefinirSenhaAPI({
 
   return resultado
 }
+
+export async function entrarComGoogleAPI(tokenGoogle) {
+  const resposta = await fetch(
+    `${API_URL}/usuario/google/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: tokenGoogle
+      })
+    }
+  )
+
+  const resultado = await resposta.json().catch(() => null)
+
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(
+      resultado?.message || 'Erro ao entrar com Google.'
+    )
+  }
+
+  if (resultado?.response?.cadastro_necessario) {
+    throw new Error(
+      'Esta conta Google ainda não está cadastrada no MedTime.'
+    )
+  }
+
+  const usuario = resultado?.response
+
+  if (!usuario?.id || !usuario?.jwt) {
+    throw new Error('Resposta de autenticação incompleta.')
+  }
+
+  return usuario
+}

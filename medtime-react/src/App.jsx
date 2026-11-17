@@ -21,6 +21,7 @@ import Pacientes from './pages/Pacientes.jsx'
 import RecuperarSenha from './pages/RecuperarSenha.jsx'
 import RedefinirSenha from './pages/RedefinirSenha.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
+import MinhaConta from './pages/MinhaConta.jsx'
 import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
@@ -345,6 +346,7 @@ function App() {
     <div className="aplicacao">
       <Cabecalho
         usuario={usuarioAutenticado}
+        aoAbrirPerfil={() => setTelaAtual('minha-conta')}
         aoSair={() => {
           setUsuarioAutenticado(null)
           setPacienteSelecionado(null)
@@ -461,6 +463,13 @@ function App() {
             aoVoltar={voltarParaDashboard}
             aoEditar={iniciarEdicaoMedicamento}
             token={usuarioAutenticado?.jwt}
+          />
+        )}
+
+        {telaAtual === 'minha-conta' && usuarioAutenticado?.jwt && (
+          <MinhaConta
+            usuario={usuarioAutenticado}
+            aoVoltar={() => setTelaAtual('inicio')}
           />
         )}
 

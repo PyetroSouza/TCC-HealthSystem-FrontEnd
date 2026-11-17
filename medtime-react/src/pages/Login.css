@@ -526,6 +526,18 @@
     outline-offset: 3px;
 }
 
+.login-google {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.login-google span {
+  color: #64748b;
+  font-size: 13px;
+}
 
 /* =========================================
    NOTEBOOKS COM POUCA ALTURA
