@@ -69,10 +69,13 @@ function MedicamentosPaciente({
         setExcluindoId(medicamento.id_receita_medica)
 
         try {
+
             await excluirMedicamentoCompleto(
                 medicamento.id_receita_medica,
-                idPaciente
+                idPaciente,
+                token
             )
+
 
             setMedicamentos(anteriores =>
                 anteriores.filter(item =>

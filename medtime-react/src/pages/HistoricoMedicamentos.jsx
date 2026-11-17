@@ -22,10 +22,18 @@ function formatarDataHora(valor) {
     })
 }
 
-function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
+function HistoricoMedicamentos({
+    pacienteSelecionado,
+    aoVoltar,
+    token
+}) {
     const [historico, setHistorico] = useState([])
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(null)
+    const idPaciente =
+        pacienteSelecionado?.id_paciente ??
+        pacienteSelecionado?.id
+
 
 
     useEffect(() => {
@@ -38,7 +46,8 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
 
             try {
                 const registros = await buscarHistoricoMedicamentos(
-                    pacienteSelecionado.id
+                    idPaciente,
+                    token
                 )
 
                 if (ativo) {
@@ -49,7 +58,9 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
                 if (ativo) {
                     console.error('Erro ao carregar histórico:', erro)
                     setHistorico([])
-                    setErro(erro.message || 'Erro ao carregar histórico')
+                    setErro(
+                        erro.message || 'Erro ao carregar histórico'
+                    )
                 }
 
             } finally {
@@ -59,17 +70,18 @@ function HistoricoMedicamentos({ pacienteSelecionado, aoVoltar }) {
             }
         }
 
-        if (pacienteSelecionado?.id) {
+        if (idPaciente && token) {
             carregarHistorico()
         }
 
         return () => {
             ativo = false
         }
-    }, [pacienteSelecionado?.id])
+    }, [idPaciente, token])
 
 
-    const pacienteIdentificado = Boolean(pacienteSelecionado?.id)
+
+    const pacienteIdentificado = Boolean(idPaciente)
 
     const historicoOrdenado = [...historico].sort(
         (a, b) =>

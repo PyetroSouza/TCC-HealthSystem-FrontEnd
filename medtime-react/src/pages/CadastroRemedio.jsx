@@ -8,8 +8,7 @@ import {
   medicamentoSchema
 } from '../schemas/medicamentoSchema'
 import {
-  buscarProgramacaoPorReceita,
-  buscarReceitaMedica,
+  buscarReceitasDoPaciente,
   cadastrarMedicamentoCompleto,
   editarMedicamentoCompleto
 } from '../services/api'
@@ -39,6 +38,10 @@ function CadastroRemedio({
   const [tiposIntervalo, setTiposIntervalo] = useState([])
   const [idEstoqueAtual, setIdEstoqueAtual] = useState(null)
   const [alterarProgramacao, setAlterarProgramacao] = useState(false)
+  const [nomeOriginal, setNomeOriginal] = useState('')
+  const idPaciente =
+    pacienteSelecionado?.id_paciente ??
+    pacienteSelecionado?.id
   const modoEdicao = Boolean(medicamentoEmEdicao)
   const {
     register,
@@ -85,6 +88,7 @@ function CadastroRemedio({
 
   })
 
+
   useEffect(() => {
     async function carregarOpcoes() {
       try {
@@ -94,6 +98,8 @@ function CadastroRemedio({
             buscarTiposDosagem(token),
             buscarTiposIntervalo(token)
           ])
+
+
 
         setUnidades(unidadesAPI)
         setTiposDosagem(dosagensAPI)
@@ -107,58 +113,96 @@ function CadastroRemedio({
     carregarOpcoes()
   }, [token])
 
+
   useEffect(() => {
+    let ativo = true
+
     async function carregarDadosEdicao() {
-      if (!modoEdicao || !medicamentoEmEdicao?.id_receita_medica) {
+      if (
+        !modoEdicao ||
+        !medicamentoEmEdicao?.id_receita_medica ||
+        !idPaciente ||
+        !token
+      ) {
         return
       }
 
       try {
-        const [receita, programacoes] = await Promise.all([
-          buscarReceitaMedica(medicamentoEmEdicao.id_receita_medica),
-          buscarProgramacaoPorReceita(medicamentoEmEdicao.id_receita_medica)
-        ])
 
-        const programacaoAtiva = programacoes.find(
-          (programacao) => programacao.data_hora_fim == null
+
+        const receitas = await buscarReceitasDoPaciente(
+          idPaciente,
+          token
         )
 
-        if (!programacaoAtiva) {
-          throw new Error('Programação ativa não encontrada')
-        }
+        if (!ativo) return
 
+        // 1. Encontrar a receita primeiro
+        const receita = receitas.find(
+          item =>
+            Number(item.id_receita_medica) ===
+            Number(medicamentoEmEdicao.id_receita_medica)
+        )
+
+        // 2. Verificar se ela existe
         if (!receita) {
-          throw new Error('Receita não encontrada')
+          throw new Error('Receita não encontrada.')
         }
 
-        if (receita.id_usuario !== pacienteSelecionado?.id) {
-          throw new Error('A receita não pertence ao paciente selecionado')
+        // 3. Verificar se pertence ao paciente
+        if (Number(receita.id_usuario) !== Number(idPaciente)) {
+          throw new Error(
+            'A receita não pertence ao paciente selecionado.'
+          )
         }
 
-        setImagemAtual(receita.imagem)
-        setIdEstoqueAtual(receita.id_estoque)
+        // 4. Agora podemos acessar os dados da receita
+        setNomeOriginal(receita.nome_medicamento ?? '')
+        setImagemAtual(receita.imagem ?? null)
+        setIdEstoqueAtual(receita.id_estoque ?? null)
+
+        // 5. Manter aqui o reset({...}) que já funciona
+
+
         reset({
-          nome: receita.nome_medicamento,
-          dose: String(receita.dosagem),
-          tipoDosagem: String(receita.id_tipo_dosagem),
-          unidadeDose: String(receita.id_unidade_medida),
-          concentracao: String(receita.concentracao),
-          unidadeConcentracao: String(receita.id_unidade_medida_embalagem),
-          quantidade: String(receita.quantidade_em_estoque),
+          nome: receita.nome_medicamento ?? '',
+          dose: String(receita.dosagem ?? ''),
+          tipoDosagem: String(receita.id_tipo_dosagem ?? ''),
+          unidadeDose: String(receita.id_unidade_medida ?? ''),
+          concentracao: String(receita.concentracao ?? ''),
+          unidadeConcentracao: String(
+            receita.id_unidade_medida_embalagem ?? ''
+          ),
+          quantidade: String(receita.quantidade_em_estoque ?? ''),
           descricao: receita.descricao ?? '',
-          frequencia: Number(programacaoAtiva.frequencia),
-          intervalo: String(programacaoAtiva.id_tipo_intervalo),
+          frequencia: undefined,
+          intervalo: '',
           horario: ''
         })
 
+
       } catch (erro) {
+        if (!ativo) return
+
         console.error('Erro ao carregar edição:', erro)
-        toast.error('Não foi possível carregar os dados da edição')
+        toast.error(erro.message)
       }
     }
 
     carregarDadosEdicao()
-  }, [modoEdicao, medicamentoEmEdicao?.id_receita_medica, pacienteSelecionado?.id, reset])
+
+
+    return () => {
+      ativo = false
+    }
+  }, [
+    modoEdicao,
+    medicamentoEmEdicao?.id_receita_medica,
+    idPaciente,
+    token,
+    reset
+  ])
+
 
   const frequencia = useWatch({
     control,
@@ -206,27 +250,24 @@ function CadastroRemedio({
           return
         }
 
-        const payload = {
-          medicamento: {
-            nome: medicamentoPreparado.nome,
-            imagem: imagemFinal,
-            concentracao: medicamentoPreparado.concentracao,
-            id_unidade_medida_embalagem:
-              medicamentoPreparado.id_unidade_medida_embalagem,
-            id_tipo_dosagem: medicamentoPreparado.id_tipo_dosagem
-          },
 
+        const payload = {
           receita_medica: {
             dosagem: Number(dados.dose),
             id_unidade_medida: Number(dados.unidadeDose),
-            descricao: dados.descricao || null
+            descricao: dados.descricao?.trim() ?? ''
           },
-
           estoque: {
             quantidade_em_estoque: Number(dados.quantidade)
           }
         }
 
+        // Atualiza o nome apenas quando ele foi alterado
+        if (dados.nome.trim() !== nomeOriginal.trim()) {
+          payload.medicamento = {
+            nome: dados.nome.trim()
+          }
+        }
 
         if (alterarProgramacao) {
           const {
@@ -262,11 +303,13 @@ function CadastroRemedio({
           }
         }
 
-
+        console.log('Dados do formulário:', dados)
+        console.log('Payload enviado:', payload)
         await editarMedicamentoCompleto(
           medicamentoEmEdicao.id_receita_medica,
-          pacienteSelecionado.id,
-          payload
+          idPaciente,
+          payload,
+          token
         )
 
         toast.success('Dados do medicamento atualizados!')

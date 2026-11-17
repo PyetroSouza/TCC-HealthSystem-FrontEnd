@@ -2,12 +2,13 @@
 import CardMedicamento from './CardMedicamento.jsx'
 
 function ListaMedicamentos({
-    medicamentos,
-    carregando,
-    erro,
-    aoAdicionar,
-    idUsuario,
-    aoConfirmarTomada
+  medicamentos,
+  carregando,
+  erro,
+  aoAdicionar,
+  idUsuario,
+  token,
+  aoConfirmarTomada
 }) {
     return (
         <div className="container-remedios">
@@ -44,6 +45,7 @@ function ListaMedicamentos({
                         medicamento={medicamento}
                         idUsuario={idUsuario}
                         aoConfirmarTomada={aoConfirmarTomada}
+                        token={token}
                     />
                 ))
             )}

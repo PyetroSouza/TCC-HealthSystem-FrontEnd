@@ -87,7 +87,7 @@ export async function cadastrarMedicamentoCompleto(
   }
 
   if (!Number.isSafeInteger(Number(idPaciente)) ||
-      Number(idPaciente) <= 0) {
+    Number(idPaciente) <= 0) {
     throw new Error('Paciente inválido.')
   }
 
@@ -261,79 +261,110 @@ export async function buscarProgramacaoPorReceita(idReceitaMedica) {
 
 export async function editarMedicamentoCompleto(
   idReceitaMedica,
-  idUsuario,
-  payload
+  idPaciente,
+  payload,
+  token
 ) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!idReceitaMedica || !idPaciente) {
+    throw new Error('Receita ou paciente não identificado.')
+  }
+
   const resposta = await fetch(
-    `http://localhost:8080/v1/healthSystem/medtime/editar_medicamento/${idReceitaMedica}/${idUsuario}`,
+    `${API_URL}/editar_medicamento/${idReceitaMedica}/${idPaciente}`,
     {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(payload)
     }
   )
 
-  const dados = await resposta.json()
+  const resultado = await resposta.json().catch(() => null)
 
-  if (!resposta.ok || !dados.status) {
-    throw new Error(dados.message || 'Erro ao editar medicamento')
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(
+      resultado?.message ||
+      `Erro ao editar medicamento (${resposta.status}).`
+    )
   }
 
-  return dados
+  return resultado
 }
+
+
 
 export async function confirmarIngestaoMedicamento(
   idReceitaMedica,
-  idUsuario,
-  horarioProgramado
+  horarioProgramado,
+  token
 ) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!idReceitaMedica || !horarioProgramado) {
+    throw new Error('Dados da tomada incompletos.')
+  }
+
   const resposta = await fetch(
-    `http://localhost:8080/v1/healthSystem/medtime/historico_medicamento/confirmar_ingestao/${idReceitaMedica}`,
+    `${API_URL}/historico_medicamento/confirmar_ingestao/${idReceitaMedica}`,
     {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        id_usuario: idUsuario,
         horario_programado: horarioProgramado
       })
     }
   )
 
-  const resultado = await resposta.json()
+  const resultado = await resposta.json().catch(() => null)
 
-
-  if (!resposta.ok || resultado.status === false) {
-    if (resultado.field?.includes('ESTOQUE_INSUFICIENTE')) {
-      throw new Error(
-        'Estoque insuficiente para a dose programada. Verifique a quantidade disponível no Controle de Estoque.'
-      )
-    }
-
-    const campo = resultado.field?.join(', ')
+  if (!resposta.ok || resultado?.status === false) {
+    const campo = Array.isArray(resultado?.field)
+      ? resultado.field.join(', ')
+      : null
 
     throw new Error(
-      campo
-        ? `${resultado.message} (${campo})`
-        : resultado.message || 'Não foi possível confirmar a tomada.'
+      resultado?.message
+        ? `${resultado.message}${campo ? ` (${campo})` : ''}`
+        : `Não foi possível confirmar a tomada (${resposta.status}).`
     )
   }
-
 
   return resultado
 }
 
+
+
 export async function excluirMedicamentoCompleto(
   idReceitaMedica,
-  idUsuario
+  idUsuario,
+  token
 ) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!idReceitaMedica || !idUsuario) {
+    throw new Error('Receita ou paciente não identificado.')
+  }
+
   const resposta = await fetch(
-    `http://localhost:8080/v1/healthSystem/medtime/excluir_medicamento/${idReceitaMedica}/${idUsuario}`,
+    `${API_URL}/excluir_medicamento/${idReceitaMedica}/${idUsuario}`,
     {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }
   )
 
@@ -345,28 +376,48 @@ export async function excluirMedicamentoCompleto(
 
   if (!resposta.ok || resultado?.status === false) {
     throw new Error(
-      resultado?.message || 'Não foi possível excluir o medicamento.'
+      resultado?.message ||
+      `Não foi possível excluir o medicamento (${resposta.status}).`
     )
   }
 
   return true
 }
 
-export async function buscarHistoricoMedicamentos(idUsuario) {
+
+export async function buscarHistoricoMedicamentos(idPaciente, token) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!idPaciente) {
+    throw new Error('Paciente não identificado.')
+  }
+
   const resposta = await fetch(
-    `${API_URL}/historico_medicamento/usuario/${idUsuario}`
+    `${API_URL}/historico_medicamento/usuario/${idPaciente}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
   )
 
-  const resultado = await resposta.json()
+  const resultado = await resposta.json().catch(() => null)
 
-  if (!resposta.ok || resultado.status === false) {
+  if (resposta.status === 404) {
+    return []
+  }
+
+  if (!resposta.ok || resultado?.status === false) {
     throw new Error(
-      resultado.message || 'Erro ao buscar o histórico'
+      resultado?.message || 'Erro ao buscar o histórico.'
     )
   }
 
-  return resultado.response?.historico_medicamento ?? []
+  return resultado?.response?.historico_medicamento ?? []
 }
+
 
 
 
@@ -389,7 +440,7 @@ export async function buscarReceitasDoPaciente(idPaciente, token) {
   }
 
   if (!Number.isSafeInteger(Number(idPaciente)) ||
-      Number(idPaciente) <= 0) {
+    Number(idPaciente) <= 0) {
     throw new Error('Paciente inválido.')
   }
 

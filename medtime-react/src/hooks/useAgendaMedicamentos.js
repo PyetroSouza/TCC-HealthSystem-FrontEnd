@@ -26,12 +26,18 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta, token) {
     const carregarAgenda = useCallback(async (silencioso = false) => {
         const requisicaoAtual = ++ultimaRequisicao.current
 
-        if (!idUsuario) {
-            setAgenda([])
-            setErroAgenda(null)
-            setCarregandoAgenda(false)
-            return
-        }
+
+if (!idUsuario || !token) {
+    setAgenda([])
+    setErroAgenda(
+        idUsuario && !token
+            ? 'Sessão não autenticada.'
+            : null
+    )
+    setCarregandoAgenda(false)
+    return
+}
+
 
         if (!silencioso) {
             setCarregandoAgenda(true)
@@ -81,21 +87,29 @@ export function useAgendaMedicamentos(idUsuario, dataConsulta, token) {
     }, [carregarAgenda])
 
 
-    useEffect(() => {
-        const controleRequisicoes = ultimaRequisicao
 
-        ultimaConsultaAutomatica.current = Date.now()
+useEffect(() => {
+    const controleRequisicoes = ultimaRequisicao
 
-        const timerInicial = setTimeout(() => {
+    if (!idUsuario || !token) {
+        setTimeout(() => {
             carregarAgenda(false)
         }, 0)
 
-        if (!idUsuario || !token) {
-            return () => {
-                clearTimeout(timerInicial)
-                controleRequisicoes.current++
-            }
+        return () => {
+            controleRequisicoes.current++
         }
+    }
+
+    ultimaConsultaAutomatica.current = Date.now()
+
+    const timerInicial = setTimeout(() => {
+        carregarAgenda(false)
+    }, 0)
+
+    // Mantenha aqui os listeners, o intervalo
+    // e o cleanup que já existem.
+
 
         function atualizarAutomaticamente() {
             if (document.visibilityState !== 'visible') {

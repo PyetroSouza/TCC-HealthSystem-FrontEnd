@@ -13,6 +13,7 @@ import './CardMedicamento.css'
 function CardMedicamento({
   medicamento,
   idUsuario,
+  token,
   aoConfirmarTomada
 }) {
   const [expandido, setExpandido] = useState(false)
@@ -63,8 +64,8 @@ function CardMedicamento({
     try {
       await confirmarIngestaoMedicamento(
         medicamento.id_receita_medica,
-        idUsuario,
-        horarioProgramado
+        horarioProgramado,
+        token
       )
 
       toast.success('Tomada registrada com sucesso!')
@@ -151,7 +152,7 @@ function CardMedicamento({
             <>
               <p>
                 {liberado
-                  ? 'Você já tomou este medicamento?'
+                  ? 'O paciente tomou este medicamento?'
                   : 'A confirmação estará disponível 30 minutos antes do horário programado.'}
               </p>
 
@@ -159,9 +160,9 @@ function CardMedicamento({
                 type="button"
                 className="botao-confirmar-tomada"
                 onClick={confirmarTomada}
-                disabled={!liberado || confirmando}
+                disabled={!liberado || confirmando || !token}
               >
-                {confirmando ? 'Confirmando...' : 'Já tomei'}
+                {confirmando ? 'Confirmando...' : 'Confirmar tomada'}
               </button>
             </>
           )}

@@ -433,6 +433,7 @@ function App() {
           <TodosMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
+            token={usuarioAutenticado?.jwt}
           />
         )}
 
@@ -440,6 +441,7 @@ function App() {
           <HistoricoMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
+            token={usuarioAutenticado?.jwt}
           />
         )}
 

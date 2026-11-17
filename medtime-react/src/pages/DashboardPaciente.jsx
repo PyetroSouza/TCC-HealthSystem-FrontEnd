@@ -123,6 +123,13 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
         return idade
     }
+    console.log('Diagnóstico agenda:', {
+        temToken: Boolean(token),
+        idPaciente:
+            pacienteSelecionado?.id_paciente ??
+            pacienteSelecionado?.id
+    })
+
 
     return (
         <div className="dashboard-conteudo">
