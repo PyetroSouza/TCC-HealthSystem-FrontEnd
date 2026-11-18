@@ -6,7 +6,6 @@ import PainelAutenticacao from './components/auth/PainelAutenticacao'
 import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
 import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
-import VincularCuidador from './components/vinculo/VincularCuidador.jsx'
 import { medicamentos as medicamentosIniciais } from './data/medicamentos'
 import CadastroIdoso from './pages/CadastroIdoso'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
@@ -21,6 +20,7 @@ import Pacientes from './pages/Pacientes.jsx'
 import RecuperarSenha from './pages/RecuperarSenha.jsx'
 import RedefinirSenha from './pages/RedefinirSenha.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
+import { useAuth } from './hooks/useAuth.js'
 import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
@@ -39,7 +39,14 @@ function App() {
   const [carregandoPacientes, setCarregandoPacientes] = useState(false)
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
-  const [usuarioAutenticado, setUsuarioAutenticado] = useState(null)
+
+  const {
+    usuario: usuarioAutenticado,
+    entrar,
+    sair
+  } = useAuth()
+
+
   const perfilAutenticado = obterPerfilUsuario(usuarioAutenticado?.jwt)
 
   const alertasVisiveis =
@@ -48,6 +55,8 @@ function App() {
       !erroPacientes
       ? alertasPendentes
       : 0
+
+
 
 
   useEffect(() => {
@@ -212,6 +221,23 @@ function App() {
   }
 
 
+  function encerrarSessao() {
+    sair()
+
+    setPacientes([])
+    setPacienteSelecionado(null)
+    setListaMedicamentos([])
+    setMedicamentoEmEdicao(null)
+    setAlertasPendentes(0)
+    setErroPacientes(null)
+    setCarregandoPacientes(false)
+    setPerfilCadastro(null)
+
+    setTelaAtual('login')
+  }
+
+
+
   if (telaAtual === 'login') {
     return (
       <>
@@ -224,7 +250,7 @@ function App() {
         <Login
           aoCadastrar={() => setTelaAtual('escolher-perfil')}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
-          aoEntrarDemo={() => setTelaAtual('inicio')}
+
           aoEntrar={(usuario) => {
             const perfil = obterPerfilUsuario(usuario.jwt)
 
@@ -233,14 +259,25 @@ function App() {
               return
             }
 
-            setUsuarioAutenticado(usuario)
+            if (perfil !== 'cuidador') {
+              sair()
 
-            if (perfil === 'cuidador') {
-              setTelaAtual('inicio')
-            } else {
-              setTelaAtual('inicio-paciente')
+              toast.info(
+                'O acesso web é destinado aos cuidadores. Utilize o aplicativo MedTime para pacientes.'
+              )
+
+              setTelaAtual('login')
+              return
             }
+
+            entrar(usuario)
+            setPacientes([])
+            setPacienteSelecionado(null)
+            setTelaAtual('inicio')
+
+            toast.success('Bem-vindo ao MedTime!')
           }}
+
         />
       </>
     )
@@ -333,7 +370,7 @@ function App() {
 
   return (
     <div className="aplicacao">
-      <Cabecalho />
+      <Cabecalho aoSair={encerrarSessao} />
 
       <Toaster
         position="top-right"
@@ -365,14 +402,6 @@ function App() {
           perfilAutenticado === 'cuidador' &&
           usuarioAutenticado?.jwt && (
             <GerarCodigoVinculo
-              token={usuarioAutenticado.jwt}
-            />
-          )}
-
-        {telaAtual === 'inicio-paciente' &&
-          perfilAutenticado === 'paciente' &&
-          usuarioAutenticado?.jwt && (
-            <VincularCuidador
               token={usuarioAutenticado.jwt}
             />
           )}
