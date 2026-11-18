@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft, Pill, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-    buscarTodasReceitasMedicas,
+    buscarReceitasDoPaciente,
     excluirMedicamentoCompleto
 } from '../services/api.js'
 import './MedicamentosPaciente.css'
@@ -12,7 +12,8 @@ import './DashboardPaciente.css'
 function MedicamentosPaciente({
     pacienteSelecionado,
     aoVoltar,
-    aoEditar
+    aoEditar,
+    token
 }) {
     const [medicamentos, setMedicamentos] = useState([])
     const [carregando, setCarregando] = useState(true)
@@ -22,7 +23,9 @@ function MedicamentosPaciente({
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
 
     const idPaciente =
-        pacienteSelecionado?.id ?? pacienteSelecionado?.id_usuario
+        pacienteSelecionado?.id_paciente ??
+        pacienteSelecionado?.id ??
+        pacienteSelecionado?.id_usuario
 
     useEffect(() => {
         let ativo = true
@@ -32,14 +35,15 @@ function MedicamentosPaciente({
             setErro(null)
 
             try {
-                const receitas = await buscarTodasReceitasMedicas()
+                const receitas = await buscarReceitasDoPaciente(
+                    idPaciente,
+                    token
+                )
 
                 if (!ativo) return
 
                 setMedicamentos(
-                    receitas.filter(receita =>
-                        Number(receita.id_usuario) === Number(idPaciente)
-                    )
+                    receitas
                 )
             } catch (erro) {
                 if (!ativo) return
@@ -56,7 +60,7 @@ function MedicamentosPaciente({
         return () => {
             ativo = false
         }
-    }, [idPaciente])
+    }, [idPaciente, token])
 
 
     async function excluirMedicamento(medicamento) {
@@ -65,10 +69,13 @@ function MedicamentosPaciente({
         setExcluindoId(medicamento.id_receita_medica)
 
         try {
+
             await excluirMedicamentoCompleto(
                 medicamento.id_receita_medica,
-                idPaciente
+                idPaciente,
+                token
             )
+
 
             setMedicamentos(anteriores =>
                 anteriores.filter(item =>
@@ -111,7 +118,7 @@ function MedicamentosPaciente({
                     {pacienteSelecionado?.nome}
                 </p>
             </header>
-            
+
             {idPaciente == null ? (
                 <p role="alert">Paciente não identificado.</p>
             ) : carregando ? (

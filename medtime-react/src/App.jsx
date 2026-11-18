@@ -20,6 +20,7 @@ import Pacientes from './pages/Pacientes.jsx'
 import RecuperarSenha from './pages/RecuperarSenha.jsx'
 import RedefinirSenha from './pages/RedefinirSenha.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
+import MinhaConta from './pages/MinhaConta.jsx'
 import { useAuth } from './hooks/useAuth.js'
 import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
@@ -250,8 +251,9 @@ function App() {
         <Login
           aoCadastrar={() => setTelaAtual('escolher-perfil')}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
-
+          aoEntrarDemo={() => setTelaAtual('inicio')}
           aoEntrar={(usuario) => {
+            console.log('Campos recebidos no login:', Object.keys(usuario))
             const perfil = obterPerfilUsuario(usuario.jwt)
 
             if (!perfil) {
@@ -342,35 +344,45 @@ function App() {
 
   if (telaAtual === 'verificacao-recuperacao') {
     return (
-      <main className="login-pagina">
-        <div className="login-container">
+      <>
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+        />
 
-          <PainelAutenticacao
-            etiqueta="Verificação da conta"
-            titulo="Sua segurança é importante."
-            descricao="Confira as informações para proteger o acesso ao MedTime."
-          />
+        <main className="login-pagina">
+          <div className="login-container">
 
-          <section className="login-area-formulario">
-            <div className="login-formulario-conteudo">
-              <VerificacaoCodigo
-                finalidade="recuperacao"
-                email={emailRecuperacao}
-                aoVoltar={() =>
-                  setTelaAtual('recuperar-senha')
-                }
-              />
-            </div>
-          </section>
+            <PainelAutenticacao
+              etiqueta="Verificação da conta"
+              titulo="Sua segurança é importante."
+              descricao="Confira as informações para proteger o acesso ao MedTime."
+            />
 
-        </div>
-      </main>
+            <section className="login-area-formulario">
+              <div className="login-formulario-conteudo">
+                <VerificacaoCodigo
+                  finalidade="recuperacao"
+                  email={emailRecuperacao}
+                  aoVoltar={() => setTelaAtual('recuperar-senha')}
+                  aoConcluir={() => {
+                    setEmailRecuperacao('')
+                    setTelaAtual('login')
+                  }}
+                />
+              </div>
+            </section>
+
+          </div>
+        </main>
+      </>
     )
   }
 
   return (
     <div className="aplicacao">
-      <Cabecalho aoSair={encerrarSessao} />
+      <Cabecalho />
 
       <Toaster
         position="top-right"
@@ -383,6 +395,7 @@ function App() {
         {telaAtual === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
+            nomeUsuario={usuarioAutenticado?.nome}
             aoCadastrar={() => setTelaAtual('cadastro')}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}
@@ -444,13 +457,15 @@ function App() {
             cadastrarMedicamento={cadastrarMedicamento}
             medicamentoEmEdicao={medicamentoEmEdicao}
             atualizarMedicamento={atualizarMedicamento}
-            pacienteSelecionado={pacienteSelecionado} />
+            pacienteSelecionado={pacienteSelecionado}
+            token={usuarioAutenticado?.jwt} />
         )}
 
         {telaAtual === 'todos-medicamentos' && (
           <TodosMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
+            token={usuarioAutenticado?.jwt}
           />
         )}
 
@@ -458,6 +473,7 @@ function App() {
           <HistoricoMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
+            token={usuarioAutenticado?.jwt}
           />
         )}
 
@@ -466,6 +482,14 @@ function App() {
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
             aoEditar={iniciarEdicaoMedicamento}
+            token={usuarioAutenticado?.jwt}
+          />
+        )}
+
+        {telaAtual === 'minha-conta' && usuarioAutenticado?.jwt && (
+          <MinhaConta
+            usuario={usuarioAutenticado}
+            aoVoltar={() => setTelaAtual('inicio')}
           />
         )}
 

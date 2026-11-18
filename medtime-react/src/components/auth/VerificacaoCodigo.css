@@ -119,6 +119,75 @@
     outline-offset: 3px;
 }
 
+
+.verificacao-codigo-senhas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.verificacao-codigo-senhas label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.verificacao-codigo-senhas input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.verificacao-codigo-senhas input:focus-visible {
+  outline: 2px solid #009951;
+  outline-offset: 2px;
+}
+
+.verificacao-codigo-senha-campo {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.verificacao-codigo-senha-campo input {
+  padding-right: 48px;
+}
+
+.verificacao-codigo-senha-campo button {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.verificacao-codigo-reenviar {
+  margin-top: 14px;
+  border: none;
+  background: transparent;
+  color: #009951;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.verificacao-codigo-reenviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 @media (max-width: 480px) {
     .verificacao-codigo-campos {
         gap: 6px;

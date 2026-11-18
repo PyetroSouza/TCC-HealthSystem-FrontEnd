@@ -14,13 +14,28 @@ function obterDataHoje() {
     ].join('-')
 }
 
-function TodosMedicamentos({ pacienteSelecionado, aoVoltar }) {
+function TodosMedicamentos({
+    pacienteSelecionado,
+    aoVoltar,
+    token
+}) {
     const [dataSelecionada, setDataSelecionada] = useState(obterDataHoje)
 
-    const { agenda, carregandoAgenda, erroAgenda } = useAgendaMedicamentos(
-        pacienteSelecionado?.id,
-        dataSelecionada
+
+    const idPaciente =
+        pacienteSelecionado?.id_paciente ??
+        pacienteSelecionado?.id
+
+    const {
+        agenda,
+        carregandoAgenda,
+        erroAgenda
+    } = useAgendaMedicamentos(
+        idPaciente,
+        dataSelecionada,
+        token
     )
+
 
     const medicamentosOrdenados = [...agenda].sort((a, b) =>
         a.horario_programado.localeCompare(b.horario_programado)

@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import PainelAutenticacao from '../components/auth/PainelAutenticacao'
 import LogoMedTime from '../components/LogoMedTime'
+import { GoogleLogin } from '@react-oauth/google'
+import { entrarComGoogleAPI } from '../services/authService'
 import { entrarUsuarioAPI } from '../services/authService'
 import './Login.css'
 
@@ -45,6 +47,24 @@ function Login({
       aoEntrar(usuario)
     } catch (erro) {
       toast.error(erro.message || 'Erro ao realizar login.')
+    }
+  }
+
+
+  async function realizarLoginGoogle(respostaGoogle) {
+    try {
+      if (!respostaGoogle.credential) {
+        throw new Error('O Google não retornou uma credencial.')
+      }
+
+      const usuario = await entrarComGoogleAPI(
+        respostaGoogle.credential
+      )
+
+      aoEntrar(usuario)
+      toast.success('Login com Google realizado!')
+    } catch (erro) {
+      toast.error(erro.message)
     }
   }
 
@@ -170,6 +190,24 @@ function Login({
                 {isSubmitting ? 'Verificando...' : 'Entrar'}
               </button>
             </form>
+
+
+            <div className="login-google">
+              <span>ou continue com</span>
+
+              <GoogleLogin
+                onSuccess={realizarLoginGoogle}
+                onError={() => {
+                  toast.error('Não foi possível autenticar com Google.')
+                }}
+                theme="outline"
+                size="large"
+                text="continue_with"
+                shape="rectangular"
+                width="320"
+              />
+            </div>
+
 
             <div className="login-cadastro">
               <span>Ainda não possui uma conta?</span>

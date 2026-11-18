@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
     atualizarEstoqueAPI,
-    buscarReceitaMedica
+    buscarReceitasDoPaciente
 } from '../services/api.js'
 import './EstoquePaciente.css'
 
-function EstoquePaciente({ agenda = [], idUsuario }) {
+function EstoquePaciente({ agenda = [], idUsuario, token }) {
     const [estoques, setEstoques] = useState([])
     const [carregando, setCarregando] = useState(false)
     const [erro, setErro] = useState(null)
@@ -39,6 +39,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             .join('|')
     }, [agenda])
 
+
     useEffect(() => {
         let ativo = true
 
@@ -47,7 +48,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             setErro(null)
             setEditandoId(null)
 
-            if (!idUsuario || !chaveReceitas) {
+            if (!idUsuario || !chaveReceitas || !token) {
                 setCarregando(false)
                 return
             }
@@ -55,32 +56,32 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
             setCarregando(true)
 
             try {
-                const resultados = await Promise.allSettled(
-                    chaveReceitas.split(',').map(id =>
-                        buscarReceitaMedica(id)
-                    )
+                const receitas = await buscarReceitasDoPaciente(
+                    idUsuario,
+                    token
                 )
 
                 if (!ativo) return
 
-                const encontrados = resultados
-                    .filter(resultado =>
-                        resultado.status === 'fulfilled' &&
-                        resultado.value != null
+                const idsAgenda = new Set(
+                    chaveReceitas.split(',').map(Number)
+                )
+
+                const estoquesEncontrados = receitas.filter(
+                    receita => idsAgenda.has(
+                        Number(receita.id_receita_medica)
                     )
-                    .map(resultado => resultado.value)
+                )
 
-                setEstoques(encontrados)
-
-                if (resultados.some(r => r.status === 'rejected')) {
-                    setErro('Alguns estoques não puderam ser consultados.')
-                }
-            } catch {
+                setEstoques(estoquesEncontrados)
+            } catch (erro) {
                 if (ativo) {
-                    setErro('Não foi possível consultar os estoques.')
+                    setErro(erro.message)
                 }
             } finally {
-                if (ativo) setCarregando(false)
+                if (ativo) {
+                    setCarregando(false)
+                }
             }
         }
 
@@ -89,7 +90,7 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
         return () => {
             ativo = false
         }
-    }, [idUsuario, chaveReceitas, chaveConfirmacoes])
+    }, [idUsuario, token, chaveReceitas, chaveConfirmacoes])
 
     function iniciarEdicao(item) {
         if (salvando || item.id_estoque == null) return
@@ -145,15 +146,27 @@ function EstoquePaciente({ agenda = [], idUsuario }) {
         setSalvando(true)
 
         try {
-            await atualizarEstoqueAPI(item.id_estoque, {
-                id_usuarios: Number(idUsuario),
-                id_medicamentos: Number(item.id_medicamento),
-                quantidade_em_estoque: quantidade
-            })
 
-            const atualizado = await buscarReceitaMedica(
-                item.id_receita_medica
+            await atualizarEstoqueAPI(
+                item.id_receita_medica,
+                idUsuario,
+                novaQuantidade,
+                token
             )
+
+
+
+            const receitas = await buscarReceitasDoPaciente(
+                idUsuario,
+                token
+            )
+
+            const atualizado = receitas.find(
+                receita =>
+                    Number(receita.id_receita_medica) ===
+                    Number(item.id_receita_medica)
+            )
+
 
             if (!atualizado) {
                 throw new Error(

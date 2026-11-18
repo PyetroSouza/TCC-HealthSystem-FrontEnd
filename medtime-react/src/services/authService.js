@@ -92,3 +92,127 @@ export async function entrarUsuarioAPI(dados) {
     return resultado
   }
   
+
+export async function solicitarCodigoVerificacao(email) {
+  const response = await fetch(
+    'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email/gerar',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase()
+      })
+    }
+  )
+
+  const resultado = await response.json()
+
+  if (!response.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+        'Não foi possível enviar o código de verificação.'
+    )
+  }
+
+  return resultado
+}
+
+const URL_RECUPERACAO =
+  'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email'
+
+export async function solicitarCodigoRecuperacao(email) {
+  const resposta = await fetch(
+    `${URL_RECUPERACAO}/redefinir_senha/gerar`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase()
+      })
+    }
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+      'Não foi possível solicitar a recuperação de senha.'
+    )
+  }
+
+  return resultado
+}
+
+export async function redefinirSenhaAPI({
+  email,
+  codigo,
+  novaSenha
+}) {
+  const resposta = await fetch(
+    `${URL_RECUPERACAO}/redefinir_senha`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        codigo,
+        nova_senha: novaSenha
+      })
+    }
+  )
+
+  const resultado = await resposta.json()
+
+  if (!resposta.ok || resultado.status === false) {
+    throw new Error(
+      resultado.message ||
+      'Não foi possível redefinir a senha.'
+    )
+  }
+
+  return resultado
+}
+
+export async function entrarComGoogleAPI(tokenGoogle) {
+  const resposta = await fetch(
+    `${API_URL}/usuario/google/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: tokenGoogle
+      })
+    }
+  )
+
+  const resultado = await resposta.json().catch(() => null)
+
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(
+      resultado?.message || 'Erro ao entrar com Google.'
+    )
+  }
+
+  if (resultado?.response?.cadastro_necessario) {
+    throw new Error(
+      'Esta conta Google ainda não está cadastrada no MedTime.'
+    )
+  }
+
+  const usuario = resultado?.response
+
+  if (!usuario?.id || !usuario?.jwt) {
+    throw new Error('Resposta de autenticação incompleta.')
+  }
+
+  return usuario
+}
