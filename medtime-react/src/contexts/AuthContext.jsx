@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { AuthContext } from './AuthContextDefinition.js'
 import { obterPerfilUsuario } from '../utils/obterPerfilUsuario.js'
 
@@ -13,13 +13,13 @@ export function AuthProvider({ children }) {
     [token]
   )
 
-  function entrar(dadosUsuario) {
+  const entrar = useCallback((dadosUsuario) => {
     setUsuario(dadosUsuario)
-  }
+  }, [])
 
-  function sair() {
+  const sair = useCallback(() => {
     setUsuario(null)
-  }
+  }, [])
 
   const valor = useMemo(
     () => ({
@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
       entrar,
       sair
     }),
-    [usuario, token, perfil]
+    [usuario, token, perfil, entrar, sair]
   )
 
   return (
