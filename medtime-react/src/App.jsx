@@ -382,7 +382,13 @@ function App() {
 
   return (
     <div className="aplicacao">
-      <Cabecalho />
+
+      <Cabecalho
+        usuario={usuarioAutenticado}
+        aoAbrirPerfil={() => setTelaAtual('minha-conta')}
+        aoSair={encerrarSessao}
+      />
+
 
       <Toaster
         position="top-right"
