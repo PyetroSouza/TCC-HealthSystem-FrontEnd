@@ -49,7 +49,8 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
             await excluirMedicamentoCompleto(
                 medicamentoParaExcluir.id_receita_medica,
-                idPaciente
+                idPaciente,
+                token
             )
 
             setMedicamentoParaExcluir(null)
