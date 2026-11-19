@@ -28,7 +28,17 @@ import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
 
 function App() {
-  const [telaAtual, setTelaAtual] = useState('login')
+  const [telaAtual, setTelaAtual] = useState(() => {
+    try {
+      const usuarioSalvo = JSON.parse(
+        sessionStorage.getItem('medtime_usuario') || 'null'
+      )
+
+      return usuarioSalvo?.jwt ? 'inicio' : 'login'
+    } catch {
+      return 'login'
+    }
+  })
   const [perfilCadastro, setPerfilCadastro] = useState(null)
   const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
@@ -49,6 +59,24 @@ function App() {
 
 
   const perfilAutenticado = obterPerfilUsuario(usuarioAutenticado?.jwt)
+
+  const autenticado =
+    Boolean(usuarioAutenticado?.jwt) &&
+    perfilAutenticado === 'cuidador'
+
+  const telasPublicas = [
+    'login',
+    'cadastro-usuario',
+    'escolher-perfil',
+    'recuperar-senha',
+    'verificacao-recuperacao',
+    'redefinir-senha'
+  ]
+
+  const telaExibida =
+    !autenticado && !telasPublicas.includes(telaAtual)
+      ? 'login'
+      : telaAtual
 
   const alertasVisiveis =
     telaAtual === 'inicio' &&
@@ -239,7 +267,7 @@ function App() {
 
 
 
-  if (telaAtual === 'login') {
+  if (telaExibida === 'login') {
     return (
       <>
         <Toaster
@@ -285,7 +313,7 @@ function App() {
     )
   }
 
-  if (telaAtual === 'cadastro-usuario') {
+  if (telaExibida === 'cadastro-usuario') {
     return (
       <>
         <Toaster
@@ -302,7 +330,7 @@ function App() {
       </>
     )
   }
-  if (telaAtual === 'escolher-perfil') {
+  if (telaExibida=== 'escolher-perfil') {
     return (
       <EscolherPerfil
         aoVoltar={() => setTelaAtual('login')}
@@ -313,7 +341,7 @@ function App() {
       />
     )
   }
-  if (telaAtual === 'redefinir-senha') {
+  if (telaExibida === 'redefinir-senha') {
     return (
       <>
         <Toaster position="top-right" richColors closeButton />
@@ -325,7 +353,7 @@ function App() {
     )
   }
 
-  if (telaAtual === 'recuperar-senha') {
+  if (telaExibida=== 'recuperar-senha') {
     return (
       <>
         <Toaster position="top-right" richColors closeButton />
@@ -342,7 +370,7 @@ function App() {
   }
 
 
-  if (telaAtual === 'verificacao-recuperacao') {
+  if (telaExibida === 'verificacao-recuperacao') {
     return (
       <>
         <Toaster
@@ -398,7 +426,7 @@ function App() {
       />
 
       <main className="conteudo">
-        {telaAtual === 'inicio' && (
+        {telaExibida === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
             nomeUsuario={usuarioAutenticado?.nome}
@@ -415,9 +443,9 @@ function App() {
             aoVerPacientes={() => setTelaAtual('pacientes')}
           />)}
 
-        {telaAtual === 'cadastro' && <CadastroIdoso />}
+        {telaExibida=== 'cadastro' && <CadastroIdoso />}
 
-        {telaAtual === 'inicio' &&
+        {telaExibida === 'inicio' &&
           perfilAutenticado === 'cuidador' &&
           usuarioAutenticado?.jwt && (
             <GerarCodigoVinculo
@@ -426,7 +454,7 @@ function App() {
           )}
 
 
-        {telaAtual === 'pacientes' && (
+        {telaExibida === 'pacientes' && (
           <Pacientes
             pacientes={pacientes}
             aoVoltar={() => setTelaAtual('inicio')}
@@ -438,7 +466,7 @@ function App() {
         )}
 
 
-        {telaAtual === 'dashboard' && (<DashboardPaciente
+        {telaExibida === 'dashboard' && (<DashboardPaciente
           pacienteSelecionado={pacienteSelecionado}
           setPacienteSelecionado={setPacienteSelecionado}
           voltarParaInicio={voltarParaInicio}
@@ -451,7 +479,7 @@ function App() {
           aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
           aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
         />)}
-        {telaAtual === 'cadastro-remedio' && (
+        {telaExibida === 'cadastro-remedio' && (
           <CadastroRemedio
             voltarParaDashboard={() => {
               if (medicamentoEmEdicao) {
@@ -467,7 +495,7 @@ function App() {
             token={usuarioAutenticado?.jwt} />
         )}
 
-        {telaAtual === 'todos-medicamentos' && (
+        {telaExibida === 'todos-medicamentos' && (
           <TodosMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
@@ -475,7 +503,7 @@ function App() {
           />
         )}
 
-        {telaAtual === 'historico-medicamentos' && (
+        {telaExibida === 'historico-medicamentos' && (
           <HistoricoMedicamentos
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
@@ -483,7 +511,7 @@ function App() {
           />
         )}
 
-        {telaAtual === 'medicamentos-paciente' && (
+        {telaExibida === 'medicamentos-paciente' && (
           <MedicamentosPaciente
             pacienteSelecionado={pacienteSelecionado}
             aoVoltar={voltarParaDashboard}
@@ -492,7 +520,7 @@ function App() {
           />
         )}
 
-        {telaAtual === 'minha-conta' && usuarioAutenticado?.jwt && (
+        {telaExibida === 'minha-conta' && usuarioAutenticado?.jwt && (
           <MinhaConta
             usuario={usuarioAutenticado}
             aoVoltar={() => setTelaAtual('inicio')}
