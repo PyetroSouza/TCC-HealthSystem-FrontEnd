@@ -209,6 +209,64 @@
     outline-offset: 2px;
 }
 
+
+.estoque-alerta-baixo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #FFF7E6;
+    border: 1px solid #F5C76E;
+    border-left: 4px solid #D97706;
+    border-radius: 8px;
+    color: #92400E;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.estoque-alerta-baixo svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* Acrescente ao final de src/components/EstoquePaciente.css */
+.estoque-alerta-baixo,
+.estoque-alerta-indeterminado {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #FFF7E6;
+    border: 1px solid #F5C76E;
+    border-left: 4px solid #D97706;
+    border-radius: 8px;
+    color: #92400E;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.estoque-alerta-baixo svg,
+.estoque-alerta-indeterminado svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.estoque-circulo-indeterminado {
+    border-color: #64748B;
+}
+
+.estoque-status-indeterminado {
+    color: #475569;
+}
+
+
+
 @media (max-width: 600px) {
     .estoque-paciente {
         padding: 16px;

@@ -1,5 +1,4 @@
-
-import { Check, Pencil, X } from 'lucide-react'
+import { AlertTriangle, Check, Pencil, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -7,26 +6,21 @@ import {
     buscarReceitasDoPaciente
 } from '../services/api.js'
 import './EstoquePaciente.css'
-
 function EstoquePaciente({ agenda = [], idUsuario, token }) {
     const [estoques, setEstoques] = useState([])
     const [carregando, setCarregando] = useState(false)
     const [erro, setErro] = useState(null)
-
     const [editandoId, setEditandoId] = useState(null)
     const [novaQuantidade, setNovaQuantidade] = useState('')
     const [salvando, setSalvando] = useState(false)
-
     const chaveReceitas = useMemo(() => {
         const ids = [...new Set(
             agenda
                 .map(item => item.id_receita_medica)
                 .filter(id => id != null)
         )]
-
         return ids.join(',')
     }, [agenda])
-
     const chaveConfirmacoes = useMemo(() => {
         return agenda
             .map(item => [
@@ -38,41 +32,31 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             .sort()
             .join('|')
     }, [agenda])
-
-
     useEffect(() => {
         let ativo = true
-
         async function carregarEstoques() {
             setEstoques([])
             setErro(null)
             setEditandoId(null)
-
             if (!idUsuario || !chaveReceitas || !token) {
                 setCarregando(false)
                 return
             }
-
             setCarregando(true)
-
             try {
                 const receitas = await buscarReceitasDoPaciente(
                     idUsuario,
                     token
                 )
-
                 if (!ativo) return
-
                 const idsAgenda = new Set(
                     chaveReceitas.split(',').map(Number)
                 )
-
                 const estoquesEncontrados = receitas.filter(
                     receita => idsAgenda.has(
                         Number(receita.id_receita_medica)
                     )
                 )
-
                 setEstoques(estoquesEncontrados)
             } catch (erro) {
                 if (ativo) {
@@ -84,37 +68,26 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                 }
             }
         }
-
         carregarEstoques()
-
         return () => {
             ativo = false
         }
     }, [idUsuario, token, chaveReceitas, chaveConfirmacoes])
-
     function iniciarEdicao(item) {
         if (salvando || item.id_estoque == null) return
-
         setEditandoId(item.id_estoque)
         setNovaQuantidade(
             String(item.quantidade_em_estoque ?? '')
         )
     }
-
     function cancelarEdicao() {
         if (salvando) return
-
         setEditandoId(null)
         setNovaQuantidade('')
     }
-
-
-
     async function salvarEstoque(item) {
         if (salvando) return
-
         const quantidade = Number(novaQuantidade)
-
         if (
             novaQuantidade.trim() === '' ||
             !Number.isFinite(quantidade) ||
@@ -127,12 +100,10 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             )
             return
         }
-
         if (item.id_estoque == null) {
             toast.error('Estoque não identificado.')
             return
         }
-
         if (
             !Number.isInteger(Number(idUsuario)) ||
             !Number.isInteger(Number(item.id_medicamento)) ||
@@ -142,38 +113,28 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             toast.error('Não foi possível identificar o paciente ou medicamento.')
             return
         }
-
         setSalvando(true)
-
         try {
-
             await atualizarEstoqueAPI(
                 item.id_receita_medica,
                 idUsuario,
                 novaQuantidade,
                 token
             )
-
-
-
             const receitas = await buscarReceitasDoPaciente(
                 idUsuario,
                 token
             )
-
             const atualizado = receitas.find(
                 receita =>
                     Number(receita.id_receita_medica) ===
                     Number(item.id_receita_medica)
             )
-
-
             if (!atualizado) {
                 throw new Error(
                     'Não foi possível consultar o estoque atualizado.'
                 )
             }
-
             setEstoques(anteriores =>
                 anteriores.map(estoque =>
                     Number(estoque.id_receita_medica) ===
@@ -182,12 +143,10 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                         : estoque
                 )
             )
-
             toast.success('Estoque atualizado com sucesso!')
             setEditandoId(null)
             setNovaQuantidade('')
-
-        } catch {
+        } catch (erro) {
             toast.error('Não foi possível concluir a atualização.', {
                 description: erro.message
             })
@@ -195,8 +154,6 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             setSalvando(false)
         }
     }
-
-
     return (
         <section className="estoque-paciente">
             <header className="estoque-cabecalho">
@@ -210,7 +167,6 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             ) : (
                 <>
                     {erro && <p role="alert">{erro}</p>}
-
                     {estoques.length === 0 ? (
                         <p>Nenhum estoque disponível para esta agenda.</p>
                     ) : (
@@ -219,55 +175,58 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                                 const editando = editandoId === item.id_estoque
                                 const quantidade = Number(item.quantidade_em_estoque)
                                 const dose = Number(item.dosagem)
-
                                 const quantidadeValida =
                                     item.quantidade_em_estoque != null &&
                                     item.quantidade_em_estoque !== '' &&
                                     Number.isFinite(quantidade) &&
                                     quantidade >= 0
-
                                 const unidadesCompativeis =
                                     item.id_unidade_medida != null &&
                                     item.id_unidade_medida_embalagem != null &&
                                     Number(item.id_unidade_medida) ===
                                     Number(item.id_unidade_medida_embalagem)
-
                                 const doseValida = Number.isFinite(dose) && dose > 0
-
                                 const esgotado = quantidadeValida && quantidade === 0
-
+                                // A dose e o estoque só podem ser comparados diretamente
+                                // quando usam a mesma unidade. Conversões exigem dados do backend.
+                                const calculoPossivel = unidadesCompativeis && doseValida
+                                const consumoPorTomada = calculoPossivel ? dose : null
+                                const estoqueIndeterminado = quantidadeValida && !esgotado && !calculoPossivel
                                 const estoqueBaixo =
                                     quantidadeValida &&
-                                    quantidade > 0 &&
-                                    unidadesCompativeis &&
-                                    doseValida &&
-                                    quantidade <= dose * 2
-
+                                    !esgotado &&
+                                    calculoPossivel &&
+                                    quantidade <= consumoPorTomada * 2
+                                const insuficiente =
+                                    quantidadeValida &&
+                                    !esgotado &&
+                                    calculoPossivel &&
+                                    quantidade < consumoPorTomada
                                 const statusEstoque = !quantidadeValida
                                     ? 'Não informado'
                                     : esgotado
                                         ? 'Estoque esgotado'
-                                        : estoqueBaixo
-                                            ? quantidade < dose
+                                        : estoqueIndeterminado
+                                            ? 'Estoque não calculável'
+                                            : insuficiente
                                                 ? 'Insuficiente para uma dose'
-                                                : 'Estoque baixo'
-                                            : 'Disponível'
-
+                                                : estoqueBaixo
+                                                    ? 'Estoque baixo'
+                                                    : 'Disponível'
                                 const classeStatus = !quantidadeValida
                                     ? ''
                                     : esgotado
                                         ? 'esgotado'
-                                        : estoqueBaixo
-                                            ? 'baixo'
-                                            : 'disponivel'
-
+                                        : estoqueIndeterminado
+                                            ? 'indeterminado'
+                                            : estoqueBaixo
+                                                ? 'baixo'
+                                                : 'disponivel'
                                 return (
-
                                     <article
                                         className="estoque-card"
                                         key={item.id_receita_medica}
                                     >
-
                                         <div className={`estoque-circulo estoque-circulo-${classeStatus}`}>
                                             <strong>
                                                 {item.quantidade_em_estoque == null
@@ -280,24 +239,35 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                                                     : 'Restante'}
                                             </span>
                                         </div>
-
-
                                         <h3>{item.nome_medicamento}</h3>
-
                                         {quantidadeValida && (
-
                                             <p className={`estoque-status ${classeStatus ? `estoque-status-${classeStatus}` : ''}`}>
                                                 {statusEstoque}
                                             </p>
-
                                         )}
-
+                                        {estoqueBaixo && (
+                                            <div className="estoque-alerta-baixo" role="status">
+                                                <AlertTriangle size={16} aria-hidden="true" />
+                                                <span>
+                                                    {insuficiente
+                                                        ? 'Estoque insuficiente para a próxima dose.'
+                                                        : 'Estoque baixo! Considere repor o medicamento.'}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {estoqueIndeterminado && (
+                                            <div className="estoque-alerta-indeterminado" role="status">
+                                                <AlertTriangle size={16} aria-hidden="true" />
+                                                <span>
+                                                    Não é possível calcular as doses restantes: confira as unidades da dose e do estoque.
+                                                </span>
+                                            </div>
+                                        )}
                                         {editando ? (
                                             <div className="estoque-edicao">
                                                 <label htmlFor={`estoque-${item.id_estoque}`}>
                                                     Nova quantidade disponível
                                                 </label>
-
                                                 <input
                                                     id={`estoque-${item.id_estoque}`}
                                                     type="number"
@@ -309,7 +279,6 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                                                     }
                                                     disabled={salvando}
                                                 />
-
                                                 <div className="estoque-edicao-acoes">
                                                     <button
                                                         type="button"
@@ -320,7 +289,6 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
                                                         <X size={16} aria-hidden="true" />
                                                         Cancelar
                                                     </button>
-
                                                     <button
                                                         type="button"
                                                         onClick={() => salvarEstoque(item)}
