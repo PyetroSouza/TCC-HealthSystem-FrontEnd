@@ -39,6 +39,7 @@ function CadastroRemedio({
   const [idEstoqueAtual, setIdEstoqueAtual] = useState(null)
   const [alterarProgramacao, setAlterarProgramacao] = useState(false)
   const [nomeOriginal, setNomeOriginal] = useState('')
+  const [dadosOriginais, setDadosOriginais] = useState(null)
   const idPaciente =
     pacienteSelecionado?.id_paciente ??
     pacienteSelecionado?.id
@@ -160,6 +161,7 @@ function CadastroRemedio({
         setNomeOriginal(receita.nome_medicamento ?? '')
         setImagemAtual(receita.imagem ?? null)
         setIdEstoqueAtual(receita.id_estoque ?? null)
+        setDadosOriginais(receita)
 
         // 5. Manter aqui o reset({...}) que já funciona
 
@@ -263,11 +265,68 @@ function CadastroRemedio({
         }
 
         // Atualiza o nome apenas quando ele foi alterado
-        if (dados.nome.trim() !== nomeOriginal.trim()) {
-          payload.medicamento = {
-            nome: dados.nome.trim()
-          }
+
+        if (!dadosOriginais) {
+          toast.error('Aguarde o carregamento da receita.')
+          return
         }
+
+        const alteracoesMedicamento = {}
+
+        const concentracao = Number(
+          String(dados.concentracao).replace(',', '.')
+        )
+
+        if (!Number.isFinite(concentracao) || concentracao < 0) {
+          toast.error('Concentração inválida.')
+          return
+        }
+
+        // Nome
+        if (dados.nome.trim() !== nomeOriginal.trim()) {
+          alteracoesMedicamento.nome = dados.nome.trim()
+        }
+
+        // Concentração
+        if (
+          concentracao !== Number(dadosOriginais.concentracao)
+        ) {
+          alteracoesMedicamento.concentracao = concentracao
+        }
+
+        // Unidade de concentração
+        if (
+          Number(dados.unidadeConcentracao) !==
+          Number(dadosOriginais.id_unidade_medida_embalagem)
+        ) {
+          alteracoesMedicamento.id_unidade_medida_embalagem =
+            Number(dados.unidadeConcentracao)
+        }
+
+        // Tipo de dosagem
+        if (
+          Number(dados.tipoDosagem) !==
+          Number(dadosOriginais.id_tipo_dosagem)
+        ) {
+          alteracoesMedicamento.id_tipo_dosagem =
+            Number(dados.tipoDosagem)
+        }
+
+        // Imagem: enviar apenas se foi selecionada uma nova
+        if (imagemMedicamento) {
+          if (!medicamentoPreparado.imagem) {
+            throw new Error('Falha ao enviar a nova imagem.')
+          }
+
+          alteracoesMedicamento.imagem =
+            medicamentoPreparado.imagem
+        }
+
+        // Incluir o bloco somente se houver alterações
+        if (Object.keys(alteracoesMedicamento).length > 0) {
+          payload.medicamento = alteracoesMedicamento
+        }
+
 
         if (alterarProgramacao) {
           const {
