@@ -1,4 +1,8 @@
 
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useAuth } from '../hooks/useAuth.js'
+import { atualizarPerfilAPI } from '../services/authService.js'
 import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard } from 'lucide-react'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import './MinhaConta.css'
@@ -15,9 +19,45 @@ function MinhaConta({ usuario, aoVoltar }) {
 
   const nascimento = usuario?.data_nascimento
     ? new Date(usuario.data_nascimento).toLocaleDateString('pt-BR', {
-        timeZone: 'UTC'
-      })
+      timeZone: 'UTC'
+    })
     : 'Não informado'
+
+  const { atualizarUsuario } = useAuth()
+
+  const [editando, setEditando] = useState(false)
+  const [salvando, setSalvando] = useState(false)
+  const [nomeEditado, setNomeEditado] = useState(usuario?.nome ?? '')
+  const [telefoneEditado, setTelefoneEditado] = useState(
+    usuario?.telefone ?? ''
+  )
+
+  async function salvarPerfil() {
+    const nome = nomeEditado.trim()
+    const telefone = telefoneEditado.trim()
+
+    if (nome.length < 2 || !telefone) {
+      toast.error('Informe nome e telefone válidos.')
+      return
+    }
+
+    setSalvando(true)
+
+    try {
+      await atualizarPerfilAPI(usuario.id, usuario.jwt, {
+        nome,
+        telefone
+      })
+
+      atualizarUsuario({ nome, telefone })
+      setEditando(false)
+      toast.success('Perfil atualizado!')
+    } catch (erro) {
+      toast.error(erro.message)
+    } finally {
+      setSalvando(false)
+    }
+  }
 
   return (
     <section className="minha-conta">
@@ -47,10 +87,70 @@ function MinhaConta({ usuario, aoVoltar }) {
         <div className="minha-conta-conteudo">
           <h2>Informações pessoais</h2>
 
+          <div className="minha-conta-acoes">
+            {!editando ? (
+              <button
+                type="button"
+                onClick={() => setEditando(true)}
+              >
+                Editar perfil
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNomeEditado(usuario?.nome ?? '')
+                    setTelefoneEditado(usuario?.telefone ?? '')
+                    setEditando(false)
+                  }}
+                  disabled={salvando}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={salvarPerfil}
+                  disabled={salvando}
+                >
+                  {salvando ? 'Salvando...' : 'Salvar alterações'}
+                </button>
+              </>
+            )}
+          </div>
+
           <div className="minha-conta-grid">
-            <Campo icon={UserRound} titulo="Nome completo" valor={nome} />
+            {editando ? (
+              <label className="minha-conta-campo">
+                <UserRound size={20} />
+                <span>Nome completo</span>
+                <input
+                  type="text"
+                  value={nomeEditado}
+                  onChange={(e) => setNomeEditado(e.target.value)}
+                  maxLength={100}
+                  disabled={salvando}
+                />
+              </label>
+            ) : (
+              <Campo icon={UserRound} titulo="Nome completo" valor={nome} />
+            )}
             <Campo icon={Mail} titulo="E-mail" valor={email} />
-            <Campo icon={Phone} titulo="Telefone" valor={telefone} />
+            {editando ? (
+              <label className="minha-conta-campo">
+                <Phone size={20} />
+                <span>Telefone</span>
+                <input
+                  type="tel"
+                  value={telefoneEditado}
+                  onChange={(e) => setTelefoneEditado(e.target.value)}
+                  disabled={salvando}
+                />
+              </label>
+            ) : (
+              <Campo icon={Phone} titulo="Telefone" valor={telefone} />
+            )}
             <Campo icon={CalendarDays} titulo="Nascimento" valor={nascimento} />
             <Campo icon={IdCard} titulo="CPF" valor={cpfMascarado} />
             <Campo
