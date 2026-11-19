@@ -1611,6 +1611,56 @@
     outline-offset: 3px;
 }
 
+.dashboard-estado-vazio {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 220px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.dashboard-estado-vazio-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(0, 153, 81, 0.09);
+  color: #009951;
+  margin-bottom: 4px;
+}
+
+.dashboard-estado-vazio h3 {
+  margin: 0;
+  color: #172b24;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.dashboard-estado-vazio p {
+  margin: 0;
+  max-width: 330px;
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dashboard-estado-vazio-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(0, 153, 81, 0.08);
+  color: #008247;
+  font-size: 12px;
+  font-weight: 600;
+}
 
 @media (max-width: 1100px) {
     .dashboard-inferior-grid {

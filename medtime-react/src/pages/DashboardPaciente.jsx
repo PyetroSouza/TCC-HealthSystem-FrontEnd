@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { CalendarCheck2 } from 'lucide-react'
 import { toast } from 'sonner'
 import EstoquePaciente from '../components/EstoquePaciente.jsx'
 import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
@@ -133,6 +134,13 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
             pacienteSelecionado?.id_paciente ??
             pacienteSelecionado?.id
     })
+
+    const todasTomadasConfirmadas =
+        !carregandoAgenda &&
+        !erroAgenda &&
+        medicamentosDaAgenda.length > 0 &&
+        proximosMedicamentos.length === 0
+
 
 
     return (
@@ -283,15 +291,34 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             </div>
                         </div>
 
-                        <ListaMedicamentos
-                            medicamentos={proximosMedicamentos}
-                            carregando={carregandoAgenda}
-                            erro={erroAgenda}
-                            aoAdicionar={aoClicarCadastrarRemedio}
-                            idUsuario={idPaciente}
-                            aoConfirmarTomada={recarregarAgenda}
-                            token={token}
-                        />
+                        {todasTomadasConfirmadas ? (
+                            <div className="dashboard-estado-vazio" role="status">
+                                <div className="dashboard-estado-vazio-icone">
+                                    <CalendarCheck2 size={30} strokeWidth={1.8} />
+                                </div>
+
+                                <h3>Agenda em dia!</h3>
+
+                                <p>
+                                    Todas as tomadas programadas para hoje
+                                    foram confirmadas.
+                                </p>
+
+                                <span className="dashboard-estado-vazio-status">
+                                    Nenhuma tomada pendente
+                                </span>
+                            </div>
+                        ) : (
+                            <ListaMedicamentos
+                                medicamentos={proximosMedicamentos}
+                                carregando={carregandoAgenda}
+                                erro={erroAgenda}
+                                aoAdicionar={aoClicarCadastrarRemedio}
+                                idUsuario={idPaciente}
+                                aoConfirmarTomada={recarregarAgenda}
+                                token={token}
+                            />
+                        )}
 
 
                     </div>
