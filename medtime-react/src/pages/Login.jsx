@@ -50,23 +50,38 @@ function Login({
     }
   }
 
+async function realizarLoginGoogle(respostaGoogle) {
+  try {
+    if (!respostaGoogle.credential) {
+      throw new Error('O Google não retornou uma credencial.')
+    }
 
-  async function realizarLoginGoogle(respostaGoogle) {
-    try {
-      if (!respostaGoogle.credential) {
-        throw new Error('O Google não retornou uma credencial.')
-      }
+    const resultado = await entrarComGoogleAPI(
+      respostaGoogle.credential
+    )
 
-      const usuario = await entrarComGoogleAPI(
-        respostaGoogle.credential
+    if (resultado.cadastroNecessario) {
+      toast.info(
+        'Conta Google reconhecida! Complete seu cadastro no MedTime.'
       )
 
-      aoEntrar(usuario)
-      toast.success('Login com Google realizado!')
-    } catch (erro) {
-      toast.error(erro.message)
+      console.log(
+        'Cadastro Google necessário:',
+        resultado.dadosGoogle
+      )
+
+      return
     }
+
+    aoEntrar(resultado.usuario)
+
+    toast.success('Login com Google realizado!')
+  } catch (erro) {
+    toast.error(
+      erro.message || 'Erro ao entrar com Google.'
+    )
   }
+}
 
 
   return (
@@ -222,10 +237,6 @@ function Login({
                 Cadastre-se
               </button>
             </div>
-
-            <p className="login-aviso-desenvolvimento">
-              Interface em desenvolvimento. A autenticação ainda não está habilitada.
-            </p>
 
           </div>
         </section>

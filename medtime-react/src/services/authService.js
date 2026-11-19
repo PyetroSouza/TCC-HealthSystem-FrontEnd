@@ -203,9 +203,14 @@ export async function entrarComGoogleAPI(tokenGoogle) {
   }
 
   if (resultado?.response?.cadastro_necessario) {
-    throw new Error(
-      'Esta conta Google ainda não está cadastrada no MedTime.'
-    )
+    return {
+      cadastroNecessario: true,
+      dadosGoogle: {
+        nome: resultado.response.nome,
+        email: resultado.response.email,
+        foto: resultado.response.foto
+      }
+    }
   }
 
   const usuario = resultado?.response
@@ -214,5 +219,29 @@ export async function entrarComGoogleAPI(tokenGoogle) {
     throw new Error('Resposta de autenticação incompleta.')
   }
 
-  return usuario
+  return {
+    cadastroNecessario: false,
+    usuario
+  }
+}
+
+export async function atualizarPerfilAPI(id, token, dados) {
+  const resposta = await fetch(`${API_URL}/usuario/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      usuario: dados
+    })
+  })
+
+  const resultado = await resposta.json().catch(() => null)
+
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(resultado?.message || 'Erro ao atualizar perfil.')
+  }
+
+  return resultado
 }
