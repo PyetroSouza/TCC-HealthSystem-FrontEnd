@@ -17,6 +17,10 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
     const [excluindo, setExcluindo] = useState(false)
     const botaoCancelarRef = useRef(null)
 
+    const idPaciente =
+        pacienteSelecionado?.id_paciente ??
+        pacienteSelecionado?.id
+
 
     useEffect(() => {
         if (!medicamentoParaExcluir) return
@@ -44,7 +48,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
             await excluirMedicamentoCompleto(
                 medicamentoParaExcluir.id_receita_medica,
-                pacienteSelecionado.id
+                idPaciente
             )
 
             setMedicamentoParaExcluir(null)
@@ -154,7 +158,9 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <h2>{gerarIniciais(pacienteSelecionado?.nome)}</h2>
                         </div>
                         <div className='dados-texto'>
-                            <h3 className="nome">{pacienteSelecionado?.nome || "Ana Maria De Jesus"}</h3>
+                            <h3 className="nome">
+                                {pacienteSelecionado?.nome || 'Paciente não identificado'}
+                            </h3>
                             <p className="idade">
                                 {pacienteSelecionado?.data_nascimento
                                     ? `${calcularIdade(pacienteSelecionado.data_nascimento)} anos`
@@ -187,8 +193,11 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <h1>Contato de emergência</h1>
                         </div>
                         <div className="nome-telefone">
-                            <span>Charles Haenke (Filho)</span>
-                            <p>(11) 97699-2487</p>
+                            <span>Contato não cadastrado</span>
+                            <p>
+                                As informações de emergência ainda não
+                                estão disponíveis neste painel.
+                            </p>
                         </div>
                         <div className="botoes">
                             <button
@@ -213,26 +222,25 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                     </div>
 
 
-
                     <div className="dados-pulseira">
                         <div className="temperatura">
-                            <span>37°C</span>
+                            <span>—</span>
                             <p>Temperatura Corporal</p>
                         </div>
 
                         <div className="frequencia-cardiaca">
-                            <span>70 BPM</span>
+                            <span>—</span>
                             <p>Frequência Cardíaca</p>
                         </div>
 
                         <div className="pressao-sanguinea">
-                            <span>120/80</span>
+                            <span>—</span>
                             <p>Pressão Sanguínea</p>
                         </div>
                     </div>
 
                     <p className="aviso-dados-pulseira">
-                        Dados demonstrativos da pulseira
+                        Dados da pulseira indisponíveis
                     </p>
 
 
@@ -280,7 +288,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             carregando={carregandoAgenda}
                             erro={erroAgenda}
                             aoAdicionar={aoClicarCadastrarRemedio}
-                            idUsuario={pacienteSelecionado.id}
+                            idUsuario={idPaciente}
                             aoConfirmarTomada={recarregarAgenda}
                             token={token}
                         />
