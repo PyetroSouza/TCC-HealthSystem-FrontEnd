@@ -1,12 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import AnexarImagem from '../components/AnexarImagem'
-import {
-  medicamentoEdicaoSchema,
-  medicamentoSchema
-} from '../schemas/medicamentoSchema'
+import { criarMedicamentoSchema } from '../schemas/medicamentoSchema'
 import {
   buscarReceitasDoPaciente,
   cadastrarMedicamentoCompleto,
@@ -44,6 +41,13 @@ function CadastroRemedio({
     pacienteSelecionado?.id_paciente ??
     pacienteSelecionado?.id
   const modoEdicao = Boolean(medicamentoEmEdicao)
+  const schema = useMemo(
+    () => criarMedicamentoSchema({
+      modoEdicao,
+      alterarProgramacao
+    }),
+    [modoEdicao, alterarProgramacao]
+  )
   const {
     register,
     handleSubmit,
@@ -51,10 +55,9 @@ function CadastroRemedio({
     reset,
     getValues,
     formState: { errors, isSubmitting }
+
   } = useForm({
-    resolver: zodResolver(
-      modoEdicao ? medicamentoEdicaoSchema : medicamentoSchema
-    ),
+    resolver: zodResolver(schema),
     mode: 'onTouched',
 
     defaultValues: {
@@ -215,6 +218,21 @@ function CadastroRemedio({
     control,
     name: 'intervalo'
   })
+
+  const unidadeDoseSelecionada = useWatch({
+    control,
+    name: 'unidadeDose'
+  })
+
+  const unidadeConcentracaoSelecionada = useWatch({
+    control,
+    name: 'unidadeConcentracao'
+  })
+
+  const unidadesDiferentes =
+    Boolean(unidadeDoseSelecionada) &&
+    Boolean(unidadeConcentracaoSelecionada) &&
+    unidadeDoseSelecionada !== unidadeConcentracaoSelecionada
 
   async function adicionarMedicamento(dados) {
 
@@ -588,6 +606,17 @@ function CadastroRemedio({
                   )}
                 </div>
               </div>
+
+              {unidadesDiferentes && (
+                <p className="aviso-unidades" role="status">
+                  Atenção: a unidade da dose é diferente da unidade
+                  informada para a concentração/embalagem.
+
+                  Verifique se os dados estão corretos.
+                  O cálculo automático do estoque pode exigir
+                  uma conversão adicional.
+                </p>
+              )}
 
               {(!modoEdicao || alterarProgramacao) && (
                 <div className="campo-formulario">
