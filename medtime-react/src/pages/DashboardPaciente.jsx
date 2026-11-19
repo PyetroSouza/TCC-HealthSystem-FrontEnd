@@ -282,6 +282,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             aoAdicionar={aoClicarCadastrarRemedio}
                             idUsuario={pacienteSelecionado.id}
                             aoConfirmarTomada={recarregarAgenda}
+                            token={token}
                         />
 
 

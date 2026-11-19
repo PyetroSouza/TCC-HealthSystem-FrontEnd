@@ -30,8 +30,9 @@ function CardMedicamento({
   const confirmacaoEmAndamento = useRef(false)
 
   const confirmado = Boolean(medicamento.confirmado)
-  const atrasado = !confirmado &&
-    medicamento.status === 'ATRASADO'
+  const atrasado =
+    !confirmado &&
+    String(medicamento.status).toUpperCase() === 'ATRASADO'
 
   const iconeDosagem = obterIconeDosagem(
     medicamento.tipo_dosagem
@@ -42,9 +43,14 @@ function CardMedicamento({
   const horarioValido = horarioProgramado &&
     !Number.isNaN(new Date(horarioProgramado).getTime())
 
-  const liberado = horarioValido &&
+
+const liberado =
+  atrasado ||
+  (
+    horarioValido &&
     agora >=
-    new Date(horarioProgramado).getTime() - 30 * 60 * 1000
+      new Date(horarioProgramado).getTime() - 30 * 60 * 1000
+  )
 
   async function confirmarTomada() {
     if (
