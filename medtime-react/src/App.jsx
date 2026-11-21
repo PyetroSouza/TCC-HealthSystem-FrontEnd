@@ -6,12 +6,10 @@ import PainelAutenticacao from './components/auth/PainelAutenticacao'
 import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
 import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
-import { medicamentos as medicamentosIniciais } from './data/medicamentos'
 import CadastroIdoso from './pages/CadastroIdoso'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
-import EscolherPerfil from './pages/EscolherPerfil.jsx'
 import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
 import Inicio from './pages/Inicio.jsx'
 import Login from './pages/Login.jsx'
@@ -42,14 +40,12 @@ function App() {
   const [perfilCadastro, setPerfilCadastro] = useState(null)
   const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
-  const [listaMedicamentos, setListaMedicamentos] = useState(
-    () => [...medicamentosIniciais]
-  )
   const [medicamentoEmEdicao, setMedicamentoEmEdicao] = useState(null)
   const [pacientes, setPacientes] = useState([])
   const [carregandoPacientes, setCarregandoPacientes] = useState(false)
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
+  const [dadosGoogle, setDadosGoogle] = useState(null)
 
   const {
     usuario: usuarioAutenticado,
@@ -109,11 +105,6 @@ function App() {
         )
 
         if (!ativo) return
-
-        console.log(
-          'Pacientes vinculados recebidos:',
-          pacientesRecebidos
-        )
 
         setPacientes(pacientesRecebidos)
       } catch (erro) {
@@ -211,42 +202,9 @@ function App() {
     setTelaAtual('cadastro-remedio')
   }
 
-  function cadastrarMedicamento(novoMedicamento) {
-    setListaMedicamentos((listaAnterior) => [
-      ...listaAnterior,
-      novoMedicamento
-    ])
-  }
-
-  function excluirMedicamento(idMedicamento) {
-    console.log('ID recebido para excluir:', idMedicamento)
-
-    setListaMedicamentos((listaAnterior) => {
-      console.log('Lista antes:', listaAnterior)
-
-      const novaLista = listaAnterior.filter(
-        (medicamento) => medicamento.id_medicamento !== idMedicamento
-      )
-
-      console.log('Lista depois:', novaLista)
-
-      return novaLista
-    })
-  }
-
   function iniciarEdicaoMedicamento(medicamento) {
     setMedicamentoEmEdicao(medicamento)
     setTelaAtual('cadastro-remedio')
-  }
-
-  function atualizarMedicamento(medicamentoAtualizado) {
-    setListaMedicamentos((listaAnterior) =>
-      listaAnterior.map((medicamento) =>
-        medicamento.id_medicamento === medicamentoAtualizado.id_medicamento
-          ? medicamentoAtualizado
-          : medicamento
-      )
-    )
   }
 
 
@@ -255,7 +213,6 @@ function App() {
 
     setPacientes([])
     setPacienteSelecionado(null)
-    setListaMedicamentos([])
     setMedicamentoEmEdicao(null)
     setAlertasPendentes(0)
     setErroPacientes(null)
@@ -264,8 +221,6 @@ function App() {
 
     setTelaAtual('login')
   }
-
-
 
   if (telaExibida === 'login') {
     return (
@@ -277,11 +232,14 @@ function App() {
         />
 
         <Login
-          aoCadastrar={() => setTelaAtual('escolher-perfil')}
+          aoCadastrar={() => {
+            setDadosGoogle(null)
+            setPerfilCadastro('cuidador')
+            setTelaAtual('cadastro-usuario')
+          }}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
           aoEntrarDemo={() => setTelaAtual('inicio')}
           aoEntrar={(usuario) => {
-            console.log('Campos recebidos no login:', Object.keys(usuario))
             const perfil = obterPerfilUsuario(usuario.jwt)
 
             if (!perfil) {
@@ -307,6 +265,11 @@ function App() {
 
             toast.success('Bem-vindo ao MedTime!')
           }}
+          aoCadastrarGoogle={(dados) => {
+            setDadosGoogle(dados)
+            setPerfilCadastro('cuidador')
+            setTelaAtual('cadastro-usuario')
+          }}
 
         />
       </>
@@ -321,24 +284,24 @@ function App() {
           richColors
           closeButton
         />
-
         <CadastroUsuario
           perfil={perfilCadastro}
-          aoVoltarLogin={() => setTelaAtual('escolher-perfil')}
-          aoIrParaLogin={() => setTelaAtual('login')}
+          dadosGoogle={dadosGoogle}
+          aoEntrar={(usuario) => {
+            entrar(usuario)
+            setDadosGoogle(null)
+            setTelaAtual('inicio')
+          }}
+          aoVoltarLogin={() => {
+            setDadosGoogle(null)
+            setTelaAtual('login')
+          }}
+          aoIrParaLogin={() => {
+            setDadosGoogle(null)
+            setTelaAtual('login')
+          }}
         />
       </>
-    )
-  }
-  if (telaExibida=== 'escolher-perfil') {
-    return (
-      <EscolherPerfil
-        aoVoltar={() => setTelaAtual('login')}
-        aoSelecionarPerfil={(perfil) => {
-          setPerfilCadastro(perfil)
-          setTelaAtual('cadastro-usuario')
-        }}
-      />
     )
   }
   if (telaExibida === 'redefinir-senha') {
@@ -353,7 +316,7 @@ function App() {
     )
   }
 
-  if (telaExibida=== 'recuperar-senha') {
+  if (telaExibida === 'recuperar-senha') {
     return (
       <>
         <Toaster position="top-right" richColors closeButton />
@@ -432,7 +395,6 @@ function App() {
             nomeUsuario={usuarioAutenticado?.nome}
             aoCadastrar={() => setTelaAtual('cadastro')}
             pacientes={pacientes}
-            medicamentos={listaMedicamentos}
             carregandoPacientes={carregandoPacientes}
             erroPacientes={erroPacientes}
             alertasPendentes={alertasVisiveis}
@@ -443,7 +405,7 @@ function App() {
             aoVerPacientes={() => setTelaAtual('pacientes')}
           />)}
 
-        {telaExibida=== 'cadastro' && <CadastroIdoso />}
+        {telaExibida === 'cadastro' && <CadastroIdoso />}
 
         {telaExibida === 'inicio' &&
           perfilAutenticado === 'cuidador' &&
@@ -471,10 +433,8 @@ function App() {
           setPacienteSelecionado={setPacienteSelecionado}
           voltarParaInicio={voltarParaInicio}
           aoVerAgenda={() => setTelaAtual('todos-medicamentos')}
-          excluirMedicamento={excluirMedicamento}
           aoClicarCadastrarRemedio={irParaCadastroRemedio}
           aoEditarMedicamento={iniciarEdicaoMedicamento}
-          medicamentos={listaMedicamentos}
           token={usuarioAutenticado?.jwt}
           aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
           aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
@@ -488,9 +448,7 @@ function App() {
                 setTelaAtual('dashboard')
               }
             }}
-            cadastrarMedicamento={cadastrarMedicamento}
             medicamentoEmEdicao={medicamentoEmEdicao}
-            atualizarMedicamento={atualizarMedicamento}
             pacienteSelecionado={pacienteSelecionado}
             token={usuarioAutenticado?.jwt} />
         )}

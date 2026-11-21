@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:8080/v1/healthSystem/medtime'
+import { API_URL as BASE_URL } from '../config.js'
 
 async function requisicaoAutenticada(caminho, token, opcoes = {}) {
   if (!token) {

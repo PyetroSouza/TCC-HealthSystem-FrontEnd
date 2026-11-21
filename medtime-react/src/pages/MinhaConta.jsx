@@ -5,12 +5,15 @@ import { useAuth } from '../hooks/useAuth.js'
 import { atualizarPerfilAPI } from '../services/authService.js'
 import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard } from 'lucide-react'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
+import { formatarTelefone } from '../utils/formatarTelefone.js'
 import './MinhaConta.css'
 
 function MinhaConta({ usuario, aoVoltar }) {
   const nome = usuario?.nome || 'Usuário'
   const email = usuario?.email || 'Não informado'
-  const telefone = usuario?.telefone || 'Não informado'
+  const telefone = usuario?.telefone
+    ? formatarTelefone(usuario.telefone)
+    : 'Não informado'
 
   const cpfLimpo = String(usuario?.cpf ?? '').replace(/\D/g, '')
   const cpfMascarado = cpfLimpo.length === 11
@@ -29,15 +32,20 @@ function MinhaConta({ usuario, aoVoltar }) {
   const [salvando, setSalvando] = useState(false)
   const [nomeEditado, setNomeEditado] = useState(usuario?.nome ?? '')
   const [telefoneEditado, setTelefoneEditado] = useState(
-    usuario?.telefone ?? ''
+    formatarTelefone(usuario?.telefone ?? '')
   )
 
   async function salvarPerfil() {
     const nome = nomeEditado.trim()
-    const telefone = telefoneEditado.trim()
+    const telefone = telefoneEditado.replace(/\D/g, '')
 
-    if (nome.length < 2 || !telefone) {
-      toast.error('Informe nome e telefone válidos.')
+    if (nome.length < 2) {
+      toast.error('Informe um nome válido.')
+      return
+    }
+
+    if (telefone.length < 10 || telefone.length > 11) {
+      toast.error('Informe um telefone com DDD (10 ou 11 dígitos).')
       return
     }
 
@@ -101,7 +109,7 @@ function MinhaConta({ usuario, aoVoltar }) {
                   type="button"
                   onClick={() => {
                     setNomeEditado(usuario?.nome ?? '')
-                    setTelefoneEditado(usuario?.telefone ?? '')
+                    setTelefoneEditado(formatarTelefone(usuario?.telefone ?? ''))
                     setEditando(false)
                   }}
                   disabled={salvando}
@@ -144,7 +152,9 @@ function MinhaConta({ usuario, aoVoltar }) {
                 <input
                   type="tel"
                   value={telefoneEditado}
-                  onChange={(e) => setTelefoneEditado(e.target.value)}
+                  onChange={(e) => setTelefoneEditado(formatarTelefone(e.target.value))}
+                  placeholder="(11) 91234-5678"
+                  inputMode="tel"
                   disabled={salvando}
                 />
               </label>

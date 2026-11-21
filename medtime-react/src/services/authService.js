@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8080/v1/healthSystem/medtime'
+import { API_URL } from '../config.js'
 
 export async function cadastrarUsuarioAPI(dados) {
     let resposta
@@ -95,7 +95,7 @@ export async function entrarUsuarioAPI(dados) {
 
 export async function solicitarCodigoVerificacao(email) {
   const response = await fetch(
-    'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email/gerar',
+    `${API_URL}/codigo_verificacao_email/gerar`,
     {
       method: 'POST',
       headers: {
@@ -120,7 +120,7 @@ export async function solicitarCodigoVerificacao(email) {
 }
 
 const URL_RECUPERACAO =
-  'http://localhost:8080/v1/healthSystem/medtime/codigo_verificacao_email'
+  `${API_URL}/codigo_verificacao_email`
 
 export async function solicitarCodigoRecuperacao(email) {
   const resposta = await fetch(
@@ -241,6 +241,53 @@ export async function atualizarPerfilAPI(id, token, dados) {
 
   if (!resposta.ok || resultado?.status === false) {
     throw new Error(resultado?.message || 'Erro ao atualizar perfil.')
+  }
+
+  return resultado
+}
+
+
+export async function cadastrarUsuarioGoogleAPI(dados) {
+  let resposta
+
+  try {
+    resposta = await fetch(
+      `${API_URL}/usuario/google/cadastro`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dados)
+      }
+    )
+  } catch {
+    throw new Error(
+      'Não foi possível conectar ao servidor do MedTime.'
+    )
+  }
+
+  const resultado = await resposta.json().catch(() => null)
+
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(
+      resultado?.message ||
+      'Não foi possível cadastrar sua conta Google.'
+    )
+  }
+
+  if (resultado?.response?.login_necessario) {
+    throw new Error(
+      resultado.response.tipo_login === 'tradicional'
+        ? 'Este e-mail já possui uma conta convencional. Entre com sua senha para continuar.'
+        : 'Esta conta Google já está cadastrada. Faça login.'
+    )
+  }
+
+  if (!resultado?.response?.id) {
+    throw new Error(
+      'O servidor não confirmou a criação da conta Google.'
+    )
   }
 
   return resultado

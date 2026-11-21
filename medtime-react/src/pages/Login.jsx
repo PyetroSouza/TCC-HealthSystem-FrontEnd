@@ -20,7 +20,8 @@ const loginSchema = z.object({
 function Login({
   aoCadastrar,
   aoRecuperarSenha,
-  aoEntrar
+  aoEntrar,
+  aoCadastrarGoogle
 }) {
   const [mostrarSenha, setMostrarSenha] = useState(false)
 
@@ -50,38 +51,35 @@ function Login({
     }
   }
 
-async function realizarLoginGoogle(respostaGoogle) {
-  try {
-    if (!respostaGoogle.credential) {
-      throw new Error('O Google não retornou uma credencial.')
-    }
+  async function realizarLoginGoogle(respostaGoogle) {
+    try {
+      if (!respostaGoogle.credential) {
+        throw new Error('O Google não retornou uma credencial.')
+      }
 
-    const resultado = await entrarComGoogleAPI(
-      respostaGoogle.credential
-    )
-
-    if (resultado.cadastroNecessario) {
-      toast.info(
-        'Conta Google reconhecida! Complete seu cadastro no MedTime.'
+      const resultado = await entrarComGoogleAPI(
+        respostaGoogle.credential
       )
 
-      console.log(
-        'Cadastro Google necessário:',
-        resultado.dadosGoogle
+      if (resultado.cadastroNecessario) {
+        aoCadastrarGoogle?.({
+          ...resultado.dadosGoogle,
+          token: respostaGoogle.credential
+        })
+
+        toast.info('Complete seu cadastro para continuar.')
+        return
+      }
+
+      aoEntrar(resultado.usuario)
+
+      toast.success('Login com Google realizado!')
+    } catch (erro) {
+      toast.error(
+        erro.message || 'Erro ao entrar com Google.'
       )
-
-      return
     }
-
-    aoEntrar(resultado.usuario)
-
-    toast.success('Login com Google realizado!')
-  } catch (erro) {
-    toast.error(
-      erro.message || 'Erro ao entrar com Google.'
-    )
   }
-}
 
 
   return (

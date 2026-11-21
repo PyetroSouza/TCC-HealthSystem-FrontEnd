@@ -42,16 +42,8 @@ export async function buscarProximoMedicamento(idUsuario, token) {
             )
 
         if (proximasDoses.length > 0) {
-            console.log(
-                '✅ Próximo medicamento encontrado:',
-                proximasDoses[0]
-            )
-
             return proximasDoses[0]
         }
     }
-    console.log(
-        `Nenhuma dose futura encontrada para o usuário ${idUsuario}`
-    )
     return null
 }

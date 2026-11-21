@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8080/v1/healthSystem/medtime'
+import { API_URL } from '../config.js'
 
 export async function apiRequest(
   caminho,

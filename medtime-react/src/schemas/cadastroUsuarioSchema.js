@@ -51,3 +51,9 @@ export const cadastroUsuarioSchema = z.object({
         path: ['confirmarSenha']
     }
 )
+
+export const cadastroGoogleSchema =
+  cadastroUsuarioSchema.safeExtend({
+    senha: z.string().optional(),
+    confirmarSenha: z.string().optional()
+  })

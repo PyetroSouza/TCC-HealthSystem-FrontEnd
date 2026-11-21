@@ -5,11 +5,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
 import App from './App.jsx'
-console.log('Google OAuth:', {
-  configurado: Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID),
-  formatoValido: import.meta.env.VITE_GOOGLE_CLIENT_ID
-    ?.endsWith('.apps.googleusercontent.com')
-})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

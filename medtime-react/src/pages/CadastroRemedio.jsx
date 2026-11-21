@@ -21,7 +21,6 @@ import './CadastroRemedio.css'
 
 function CadastroRemedio({
   voltarParaDashboard,
-  cadastrarMedicamento: cadastrarMedicamentoLocal,
   pacienteSelecionado,
   medicamentoEmEdicao,
   token
@@ -380,8 +379,6 @@ function CadastroRemedio({
           }
         }
 
-        console.log('Dados do formulário:', dados)
-        console.log('Payload enviado:', payload)
         await editarMedicamentoCompleto(
           medicamentoEmEdicao.id_receita_medica,
           idPaciente,
@@ -400,8 +397,6 @@ function CadastroRemedio({
           token
         )
 
-
-        cadastrarMedicamentoLocal(medicamentoPreparado)
 
         toast.success('Medicamento cadastrado com sucesso!')
       }

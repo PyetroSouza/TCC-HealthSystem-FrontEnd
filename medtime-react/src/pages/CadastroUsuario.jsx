@@ -1,30 +1,43 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
-import { solicitarCodigoVerificacao } from '../services/authService.js'
-import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
+import { solicitarCodigoVerificacao, cadastrarUsuarioGoogleAPI, entrarComGoogleAPI } from '../services/authService.js'
+import { cadastroUsuarioSchema, cadastroGoogleSchema } from '../schemas/cadastroUsuarioSchema'
 import { formatarTelefone } from '../utils/formatarTelefone'
 import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
 
 import './CadastroUsuario.css'
 
-function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
+
+function CadastroUsuario({
+    perfil,
+    dadosGoogle,
+    aoVoltarLogin,
+    aoIrParaLogin,
+    aoEntrar
+}) {
     const [etapaAtual, setEtapaAtual] = useState(1)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false)
     const [dadosPendentes, setDadosPendentes] = useState(null)
+    const cadastroPeloGoogle = Boolean(dadosGoogle?.token)
 
     const {
         register,
         handleSubmit,
         trigger,
+        setValue,
         formState: { errors, isSubmitting }
     } = useForm({
-        resolver: zodResolver(cadastroUsuarioSchema),
+        resolver: zodResolver(
+            cadastroPeloGoogle
+                ? cadastroGoogleSchema
+                : cadastroUsuarioSchema
+        ),
         mode: 'onBlur',
         shouldUnregister: false,
         defaultValues: {
@@ -40,6 +53,24 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
         }
     })
 
+    useEffect(() => {
+        if (!dadosGoogle) return
+
+        if (dadosGoogle.nome) {
+            setValue('nome', dadosGoogle.nome, {
+                shouldValidate: true,
+                shouldDirty: false
+            })
+        }
+
+        if (dadosGoogle.email) {
+            setValue('email', dadosGoogle.email, {
+                shouldValidate: true,
+                shouldDirty: false
+            })
+        }
+    }, [dadosGoogle, setValue])
+
     async function proximaEtapa() {
         const camposValidos = await trigger([
             'nome',
@@ -54,8 +85,39 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
 
 
 
+
     async function cadastrarUsuario(dados) {
         try {
+            if (cadastroPeloGoogle) {
+                const payload = {
+                    token: dadosGoogle.token,
+                    cpf: dados.cpf?.trim() || null,
+                    telefone: dados.telefone?.replace(/\D/g, '') || null,
+                    data_nascimento: dados.data_nascimento,
+                    usuario_role: {
+                        id_role: 1
+                    }
+                }
+
+                await cadastrarUsuarioGoogleAPI(payload)
+
+                toast.success('Conta Google cadastrada!')
+
+                const resultado = await entrarComGoogleAPI(
+                    dadosGoogle.token
+                )
+
+                if (resultado.cadastroNecessario) {
+                    throw new Error(
+                        'A conta foi criada, mas o login Google ainda não está disponível.'
+                    )
+                }
+
+                aoEntrar(resultado.usuario)
+                return
+            }
+
+            // Fluxo convencional permanece igual
             const payload = montarPayloadUsuario(dados, perfil)
 
             await solicitarCodigoVerificacao(payload.email)
@@ -66,10 +128,11 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
             toast.success('Enviamos um código para seu e-mail!')
         } catch (erro) {
             toast.error(
-                erro.message || 'Não foi possível enviar o código.'
+                erro.message || 'Não foi possível concluir o cadastro.'
             )
         }
     }
+
 
     return (
         <main className="cadastro-usuario-pagina">
@@ -105,7 +168,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                             onClick={aoVoltarLogin}
                         >
                             <ArrowLeft size={18} />
-                            Voltar para escolher perfil
+                            Voltar ao login
                         </button>
 
                         <header className="cadastro-usuario-cabecalho">
@@ -122,7 +185,9 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                 {[
                                     { numero: 1, titulo: 'Dados pessoais' },
                                     { numero: 2, titulo: 'Dados de acesso' },
-                                    { numero: 3, titulo: 'Verificação' }
+                                    ...(!cadastroPeloGoogle
+                                        ? [{ numero: 3, titulo: 'Verificação' }]
+                                        : [])
                                 ].map((etapa) => (
                                     <div
                                         key={etapa.numero}
@@ -178,6 +243,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                                 errors.nome ? 'erro-nome' : undefined
                                             }
                                             {...register('nome')}
+                                            readOnly={cadastroPeloGoogle}
                                         />
 
                                         {errors.nome && (
@@ -296,6 +362,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                             aria-describedby={
                                                 errors.email ? 'erro-email' : undefined
                                             }
+                                            readOnly={cadastroPeloGoogle}
                                             {...register('email')}
                                         />
 
@@ -337,104 +404,106 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                         />
                                     </div>
 
+                                    {!cadastroPeloGoogle && (
+                                        <>
+                                            <div className="cadastro-usuario-campo">
+                                                <label htmlFor="senha-cadastro">
+                                                    Senha
+                                                </label>
 
-                                    <div className="cadastro-usuario-campo">
-                                        <label htmlFor="senha-cadastro">
-                                            Senha
-                                        </label>
+                                                <div className="cadastro-usuario-input-senha">
+                                                    <input
+                                                        id="senha-cadastro"
+                                                        type={mostrarSenha ? 'text' : 'password'}
+                                                        placeholder="Crie uma senha"
+                                                        autoComplete="new-password"
+                                                        maxLength={70}
+                                                        aria-invalid={!!errors.senha}
+                                                        aria-describedby={
+                                                            errors.senha ? 'erro-senha' : undefined
+                                                        }
+                                                        {...register('senha')}
+                                                    />
 
-                                        <div className="cadastro-usuario-input-senha">
-                                            <input
-                                                id="senha-cadastro"
-                                                type={mostrarSenha ? 'text' : 'password'}
-                                                placeholder="Crie uma senha"
-                                                autoComplete="new-password"
-                                                maxLength={70}
-                                                aria-invalid={!!errors.senha}
-                                                aria-describedby={
-                                                    errors.senha ? 'erro-senha' : undefined
-                                                }
-                                                {...register('senha')}
-                                            />
+                                                    <button
+                                                        type="button"
+                                                        className="cadastro-usuario-mostrar-senha"
+                                                        onClick={() => setMostrarSenha(!mostrarSenha)}
+                                                        aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                                                        aria-pressed={mostrarSenha}
+                                                    >
+                                                        {mostrarSenha
+                                                            ? <EyeOff size={20} aria-hidden="true" />
+                                                            : <Eye size={20} aria-hidden="true" />
+                                                        }
+                                                    </button>
+                                                </div>
 
-                                            <button
-                                                type="button"
-                                                className="cadastro-usuario-mostrar-senha"
-                                                onClick={() => setMostrarSenha(!mostrarSenha)}
-                                                aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
-                                                aria-pressed={mostrarSenha}
-                                            >
-                                                {mostrarSenha
-                                                    ? <EyeOff size={20} aria-hidden="true" />
-                                                    : <Eye size={20} aria-hidden="true" />
-                                                }
-                                            </button>
-                                        </div>
-
-                                        {errors.senha && (
-                                            <p
-                                                id="erro-senha"
-                                                className="cadastro-usuario-erro"
-                                                role="alert"
-                                            >
-                                                {errors.senha.message}
-                                            </p>
-                                        )}
-                                    </div>
+                                                {errors.senha && (
+                                                    <p
+                                                        id="erro-senha"
+                                                        className="cadastro-usuario-erro"
+                                                        role="alert"
+                                                    >
+                                                        {errors.senha.message}
+                                                    </p>
+                                                )}
+                                            </div>
 
 
-                                    {/* Confirmar senha */}
+                                            {/* Confirmar senha */}
 
-                                    <div className="cadastro-usuario-campo">
-                                        <label htmlFor="confirmar-senha">
-                                            Confirmar senha
-                                        </label>
+                                            <div className="cadastro-usuario-campo">
+                                                <label htmlFor="confirmar-senha">
+                                                    Confirmar senha
+                                                </label>
 
-                                        <div className="cadastro-usuario-input-senha">
-                                            <input
-                                                id="confirmar-senha"
-                                                type={mostrarConfirmacao ? 'text' : 'password'}
-                                                placeholder="Digite sua senha novamente"
-                                                autoComplete="new-password"
-                                                maxLength={70}
-                                                aria-invalid={!!errors.confirmarSenha}
-                                                aria-describedby={
-                                                    errors.confirmarSenha
-                                                        ? 'erro-confirmar-senha'
-                                                        : undefined
-                                                }
-                                                {...register('confirmarSenha')}
-                                            />
+                                                <div className="cadastro-usuario-input-senha">
+                                                    <input
+                                                        id="confirmar-senha"
+                                                        type={mostrarConfirmacao ? 'text' : 'password'}
+                                                        placeholder="Digite sua senha novamente"
+                                                        autoComplete="new-password"
+                                                        maxLength={70}
+                                                        aria-invalid={!!errors.confirmarSenha}
+                                                        aria-describedby={
+                                                            errors.confirmarSenha
+                                                                ? 'erro-confirmar-senha'
+                                                                : undefined
+                                                        }
+                                                        {...register('confirmarSenha')}
+                                                    />
 
-                                            <button
-                                                type="button"
-                                                className="cadastro-usuario-mostrar-senha"
-                                                onClick={() => setMostrarConfirmacao(!mostrarConfirmacao)}
-                                                aria-label={
-                                                    mostrarConfirmacao
-                                                        ? 'Ocultar confirmação de senha'
-                                                        : 'Mostrar confirmação de senha'
-                                                }
-                                                aria-pressed={mostrarConfirmacao}
-                                            >
-                                                {mostrarConfirmacao
-                                                    ? <EyeOff size={20} aria-hidden="true" />
-                                                    : <Eye size={20} aria-hidden="true" />
-                                                }
-                                            </button>
-                                        </div>
+                                                    <button
+                                                        type="button"
+                                                        className="cadastro-usuario-mostrar-senha"
+                                                        onClick={() => setMostrarConfirmacao(!mostrarConfirmacao)}
+                                                        aria-label={
+                                                            mostrarConfirmacao
+                                                                ? 'Ocultar confirmação de senha'
+                                                                : 'Mostrar confirmação de senha'
+                                                        }
+                                                        aria-pressed={mostrarConfirmacao}
+                                                    >
+                                                        {mostrarConfirmacao
+                                                            ? <EyeOff size={20} aria-hidden="true" />
+                                                            : <Eye size={20} aria-hidden="true" />
+                                                        }
+                                                    </button>
+                                                </div>
 
-                                        {errors.confirmarSenha && (
-                                            <p
-                                                id="erro-confirmar-senha"
-                                                className="cadastro-usuario-erro"
-                                                role="alert"
-                                            >
-                                                {errors.confirmarSenha.message}
-                                            </p>
-                                        )}
-                                    </div>
-
+                                                {errors.confirmarSenha && (
+                                                    <p
+                                                        id="erro-confirmar-senha"
+                                                        className="cadastro-usuario-erro"
+                                                        role="alert"
+                                                    >
+                                                        {errors.confirmarSenha.message}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
                                     <div className="cadastro-usuario-termos">
                                         <label className="cadastro-usuario-termos-label">
                                             <input
@@ -470,7 +539,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                 </>
                             )}
 
-                            {etapaAtual === 3 && dadosPendentes && (
+                            {!cadastroPeloGoogle && etapaAtual === 3 && dadosPendentes && (
                                 <VerificacaoCodigo
                                     finalidade="cadastro"
                                     email={dadosPendentes.email}

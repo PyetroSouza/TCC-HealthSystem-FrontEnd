@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:8080/v1/healthSystem/medtime'
+import { API_URL } from '../config.js'
 
 export async function buscarUnidadesMedida(token) {
   if (!token) throw new Error('Sessão não autenticada.')
@@ -191,7 +191,6 @@ export async function atualizarMedicamentoAPI(idMedicamento, dados) {
   )
 
   const resultado = await resposta.json()
-  console.log('📨 Resposta completa do PUT:', resultado)
 
   if (!resposta.ok || resultado.status === false) {
     throw new Error(
@@ -246,7 +245,7 @@ export async function atualizarEstoqueAPI(
 
 export async function buscarProgramacaoPorReceita(idReceitaMedica) {
   const resposta = await fetch(
-    `http://localhost:8080/v1/healthSystem/medtime/programacao_medicamento/${idReceitaMedica}`
+    `${API_URL}/programacao_medicamento/${idReceitaMedica}`
   )
 
   const dados = await resposta.json()
