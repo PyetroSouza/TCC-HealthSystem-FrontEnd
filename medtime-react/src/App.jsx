@@ -40,6 +40,7 @@ function App() {
     }
   })
   const [perfilCadastro, setPerfilCadastro] = useState(null)
+  const [dadosGoogle, setDadosGoogle] = useState(null)
   const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [listaMedicamentos, setListaMedicamentos] = useState(
@@ -261,6 +262,7 @@ function App() {
     setErroPacientes(null)
     setCarregandoPacientes(false)
     setPerfilCadastro(null)
+    setDadosGoogle(null)
 
     setTelaAtual('login')
   }
@@ -277,7 +279,12 @@ function App() {
         />
 
         <Login
-          aoCadastrar={() => setTelaAtual('escolher-perfil')}
+          aoCadastrar={() => { setDadosGoogle(null); setTelaAtual('escolher-perfil') }}
+          aoCadastrarGoogle={(dados) => {
+            setDadosGoogle(dados)
+            setPerfilCadastro('cuidador')
+            setTelaAtual('cadastro-usuario')
+          }}
           aoRecuperarSenha={() => setTelaAtual('recuperar-senha')}
           aoEntrarDemo={() => setTelaAtual('inicio')}
           aoEntrar={(usuario) => {
@@ -324,8 +331,27 @@ function App() {
 
         <CadastroUsuario
           perfil={perfilCadastro}
-          aoVoltarLogin={() => setTelaAtual('escolher-perfil')}
-          aoIrParaLogin={() => setTelaAtual('login')}
+          dadosGoogle={dadosGoogle}
+          aoVoltarLogin={() => {
+            setDadosGoogle(null)
+            setTelaAtual('login')
+          }}
+          aoIrParaLogin={() => {
+            setDadosGoogle(null)
+            setTelaAtual('login')
+          }}
+          aoEntrar={(usuario) => {
+            const perfil = obterPerfilUsuario(usuario.jwt)
+            if (perfil !== 'cuidador') {
+              toast.error('O acesso web é destinado aos cuidadores.')
+              return
+            }
+            entrar(usuario)
+            setDadosGoogle(null)
+            setPacientes([])
+            setPacienteSelecionado(null)
+            setTelaAtual('inicio')
+          }}
         />
       </>
     )
