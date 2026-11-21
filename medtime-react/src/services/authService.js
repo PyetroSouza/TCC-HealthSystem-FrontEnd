@@ -245,3 +245,29 @@ export async function atualizarPerfilAPI(id, token, dados) {
 
   return resultado
 }
+export async function cadastrarUsuarioGoogleAPI(dados) {
+  let resposta
+  try {
+    resposta = await fetch(`${API_URL}/usuario/google/cadastro`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    })
+  } catch {
+    throw new Error('Não foi possível conectar ao servidor do MedTime.')
+  }
+
+  const resultado = await resposta.json().catch(() => null)
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(resultado?.message || 'Erro ao cadastrar com Google.')
+  }
+  if (resultado?.response?.login_necessario) {
+    throw new Error(resultado.response.tipo_login === 'tradicional'
+      ? 'Este e-mail já possui uma conta convencional. Entre com sua senha. A vinculação Google ainda precisa ser habilitada.'
+      : 'Esta conta Google já está cadastrada. Volte à tela de login.')
+  }
+  if (!resultado?.response?.id) {
+    throw new Error('Não foi possível confirmar o cadastro Google.')
+  }
+  return resultado
+}
