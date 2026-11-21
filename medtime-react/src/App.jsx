@@ -6,7 +6,6 @@ import PainelAutenticacao from './components/auth/PainelAutenticacao'
 import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
 import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
-import { medicamentos as medicamentosIniciais } from './data/medicamentos'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
@@ -42,9 +41,7 @@ function App() {
   const [dadosGoogle, setDadosGoogle] = useState(null)
   const [alertasPendentes, setAlertasPendentes] = useState(0)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
-  const [listaMedicamentos, setListaMedicamentos] = useState(
-    () => [...medicamentosIniciais]
-  )
+  const [listaMedicamentos, setListaMedicamentos] = useState([])
   const [medicamentoEmEdicao, setMedicamentoEmEdicao] = useState(null)
   const [pacientes, setPacientes] = useState([])
   const [carregandoPacientes, setCarregandoPacientes] = useState(false)
