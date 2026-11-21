@@ -1,11 +1,12 @@
 
 import BoasVindas from '../components/BoasVindas.jsx'
 import CardPaciente from '../components/CardPaciente.jsx'
+import VincularPaciente from '../components/vinculo/VincularPaciente.jsx'
 import './Inicio.css'
 
 function Inicio({
-  aoCadastrar,
   aoVerPacientes,
+  aoAtualizarPacientes,
   abrirDashboard,
   pacientes = [],
   carregandoPacientes = false,
@@ -18,7 +19,7 @@ function Inicio({
 
   return (
     <>
-      <BoasVindas aoCadastrar={aoCadastrar} nomeUsuario={nomeUsuario} />
+      <BoasVindas nomeUsuario={nomeUsuario} />
 
       <div className="container">
         <section className="resumo">
@@ -38,14 +39,21 @@ function Inicio({
           <div className="cabecalho-pacientes-inicio">
             <h2>Pacientes acompanhados</h2>
 
-            <button
-              type="button"
-              className="botao-ver-pacientes"
-              onClick={aoVerPacientes}
-            >
-              Ver todos
-              <span aria-hidden="true">→</span>
-            </button>
+            <div className="acoes-pacientes-inicio">
+              <VincularPaciente
+                token={token}
+                aoFechar={aoAtualizarPacientes}
+              />
+
+              <button
+                type="button"
+                className="botao-ver-pacientes"
+                onClick={aoVerPacientes}
+              >
+                Ver todos
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
           </div>
 
           <div className="lista_pacientes">
@@ -56,7 +64,13 @@ function Inicio({
                 Não foi possível carregar os pacientes. Tente novamente mais tarde.
               </p>
             ) : pacientes.length === 0 ? (
-              <p>Nenhum paciente cadastrado ainda.</p>
+              <div className="vp-vazio">
+                <p>Nenhum paciente vinculado ainda.</p>
+                <p className="vp-vazio-dica">
+                  Use o botão “Vincular paciente” para gerar um código e
+                  peça para a pessoa informá-lo no aplicativo MedTime.
+                </p>
+              </div>
             ) : (
               pacientes.slice(0, 3).map((paciente) => (
                 <CardPaciente
