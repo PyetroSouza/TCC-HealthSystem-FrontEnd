@@ -5,8 +5,6 @@ import './App.css'
 import PainelAutenticacao from './components/auth/PainelAutenticacao'
 import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
-import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
-import CadastroIdoso from './pages/CadastroIdoso'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
@@ -46,6 +44,7 @@ function App() {
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
   const [dadosGoogle, setDadosGoogle] = useState(null)
+  const [versaoPacientes, setVersaoPacientes] = useState(0)
 
   const {
     usuario: usuarioAutenticado,
@@ -128,7 +127,7 @@ function App() {
     return () => {
       ativo = false
     }
-  }, [telaAtual, usuarioAutenticado?.jwt, perfilAutenticado])
+  }, [telaAtual, usuarioAutenticado?.jwt, perfilAutenticado, versaoPacientes])
 
 
 
@@ -393,7 +392,7 @@ function App() {
           <Inicio
             token={usuarioAutenticado?.jwt}
             nomeUsuario={usuarioAutenticado?.nome}
-            aoCadastrar={() => setTelaAtual('cadastro')}
+            aoAtualizarPacientes={() => setVersaoPacientes(v => v + 1)}
             pacientes={pacientes}
             carregandoPacientes={carregandoPacientes}
             erroPacientes={erroPacientes}
@@ -404,16 +403,6 @@ function App() {
             }}
             aoVerPacientes={() => setTelaAtual('pacientes')}
           />)}
-
-        {telaExibida === 'cadastro' && <CadastroIdoso />}
-
-        {telaExibida === 'inicio' &&
-          perfilAutenticado === 'cuidador' &&
-          usuarioAutenticado?.jwt && (
-            <GerarCodigoVinculo
-              token={usuarioAutenticado.jwt}
-            />
-          )}
 
 
         {telaExibida === 'pacientes' && (

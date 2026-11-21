@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth.js'
@@ -7,6 +6,10 @@ import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard } 
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { formatarTelefone } from '../utils/formatarTelefone.js'
 import './MinhaConta.css'
+
+// Edição desativada enquanto o PUT /usuario/:id não estiver pronto no back.
+// Quando o back liberar, basta trocar para true.
+const EDICAO_HABILITADA = false
 
 function MinhaConta({ usuario, aoVoltar }) {
   const nome = usuario?.nome || 'Usuário'
@@ -95,38 +98,40 @@ function MinhaConta({ usuario, aoVoltar }) {
         <div className="minha-conta-conteudo">
           <h2>Informações pessoais</h2>
 
-          <div className="minha-conta-acoes">
-            {!editando ? (
-              <button
-                type="button"
-                onClick={() => setEditando(true)}
-              >
-                Editar perfil
-              </button>
-            ) : (
-              <>
+          {EDICAO_HABILITADA && (
+            <div className="minha-conta-acoes">
+              {!editando ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setNomeEditado(usuario?.nome ?? '')
-                    setTelefoneEditado(formatarTelefone(usuario?.telefone ?? ''))
-                    setEditando(false)
-                  }}
-                  disabled={salvando}
+                  onClick={() => setEditando(true)}
                 >
-                  Cancelar
+                  Editar perfil
                 </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNomeEditado(usuario?.nome ?? '')
+                      setTelefoneEditado(formatarTelefone(usuario?.telefone ?? ''))
+                      setEditando(false)
+                    }}
+                    disabled={salvando}
+                  >
+                    Cancelar
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={salvarPerfil}
-                  disabled={salvando}
-                >
-                  {salvando ? 'Salvando...' : 'Salvar alterações'}
-                </button>
-              </>
-            )}
-          </div>
+                  <button
+                    type="button"
+                    onClick={salvarPerfil}
+                    disabled={salvando}
+                  >
+                    {salvando ? 'Salvando...' : 'Salvar alterações'}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           <div className="minha-conta-grid">
             {editando ? (
