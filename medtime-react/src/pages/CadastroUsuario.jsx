@@ -5,14 +5,15 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
-import { solicitarCodigoVerificacao } from '../services/authService.js'
-import { cadastroUsuarioSchema } from '../schemas/cadastroUsuarioSchema'
+import { cadastrarUsuarioGoogleAPI, entrarComGoogleAPI, solicitarCodigoVerificacao } from '../services/authService.js'
+import { cadastroUsuarioSchema, cadastroGoogleSchema } from '../schemas/cadastroUsuarioSchema'
 import { formatarTelefone } from '../utils/formatarTelefone'
 import { montarPayloadUsuario } from '../utils/montarPlayloadUsuarios'
 
 import './CadastroUsuario.css'
 
-function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
+function CadastroUsuario({ perfil, dadosGoogle, aoVoltarLogin, aoIrParaLogin, aoEntrar }) {
+    const cadastroPeloGoogle = Boolean(dadosGoogle?.token)
     const [etapaAtual, setEtapaAtual] = useState(1)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false)
@@ -24,14 +25,14 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
         trigger,
         formState: { errors, isSubmitting }
     } = useForm({
-        resolver: zodResolver(cadastroUsuarioSchema),
+        resolver: zodResolver(cadastroPeloGoogle ? cadastroGoogleSchema : cadastroUsuarioSchema),
         mode: 'onBlur',
         shouldUnregister: false,
         defaultValues: {
-            nome: '',
+            nome: dadosGoogle?.nome ?? '',
             cpf: '',
             data_nascimento: '',
-            email: '',
+            email: dadosGoogle?.email ?? '',
             telefone: '',
             senha: '',
             confirmarSenha: '',
@@ -56,6 +57,25 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
 
     async function cadastrarUsuario(dados) {
         try {
+            if (cadastroPeloGoogle) {
+                const payloadGoogle = {
+                    token: dadosGoogle.token,
+                    cpf: dados.cpf?.trim() || null,
+                    telefone: dados.telefone?.replace(/\D/g, '') || null,
+                    data_nascimento: dados.data_nascimento,
+                    usuario_role: { id_role: 1 }
+                }
+
+                await cadastrarUsuarioGoogleAPI(payloadGoogle)
+                const resultado = await entrarComGoogleAPI(dadosGoogle.token)
+                if (resultado.cadastroNecessario) {
+                    throw new Error('Conta criada, mas não foi possível autenticar. Volte ao login Google.')
+                }
+                toast.success('Conta Google cadastrada!')
+                aoEntrar(resultado.usuario)
+                return
+            }
+
             const payload = montarPayloadUsuario(dados, perfil)
 
             await solicitarCodigoVerificacao(payload.email)
@@ -105,7 +125,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                             onClick={aoVoltarLogin}
                         >
                             <ArrowLeft size={18} />
-                            Voltar para escolher perfil
+                            Voltar
                         </button>
 
                         <header className="cadastro-usuario-cabecalho">
@@ -122,7 +142,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                 {[
                                     { numero: 1, titulo: 'Dados pessoais' },
                                     { numero: 2, titulo: 'Dados de acesso' },
-                                    { numero: 3, titulo: 'Verificação' }
+                                    ...(!cadastroPeloGoogle ? [{ numero: 3, titulo: 'Verificação' }] : [])
                                 ].map((etapa) => (
                                     <div
                                         key={etapa.numero}
@@ -177,6 +197,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                             aria-describedby={
                                                 errors.nome ? 'erro-nome' : undefined
                                             }
+                                            readOnly={cadastroPeloGoogle}
                                             {...register('nome')}
                                         />
 
@@ -296,6 +317,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                             aria-describedby={
                                                 errors.email ? 'erro-email' : undefined
                                             }
+                                            readOnly={cadastroPeloGoogle}
                                             {...register('email')}
                                         />
 
@@ -338,6 +360,8 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                     </div>
 
 
+                                    {!cadastroPeloGoogle && (
+                                        <>
                                     <div className="cadastro-usuario-campo">
                                         <label htmlFor="senha-cadastro">
                                             Senha
@@ -435,6 +459,8 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                         )}
                                     </div>
 
+                                        </>
+                                    )}
                                     <div className="cadastro-usuario-termos">
                                         <label className="cadastro-usuario-termos-label">
                                             <input
@@ -470,7 +496,7 @@ function CadastroUsuario({ perfil, aoVoltarLogin, aoIrParaLogin }) {
                                 </>
                             )}
 
-                            {etapaAtual === 3 && dadosPendentes && (
+                            {!cadastroPeloGoogle && etapaAtual === 3 && dadosPendentes && (
                                 <VerificacaoCodigo
                                     finalidade="cadastro"
                                     email={dadosPendentes.email}
