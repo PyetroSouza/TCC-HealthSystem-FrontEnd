@@ -9,6 +9,7 @@ import './Inicio.css'
 import './Pacientes.css'
 
 function Pacientes({
+    token,
     pacientes = [],
     abrirDashboard,
     aoVoltar
@@ -84,6 +85,7 @@ function Pacientes({
                         <CardPaciente
                             key={paciente.id ?? paciente.id_usuario}
                             paciente={paciente}
+                            token={token}
                             aoClicar={() => abrirDashboard(paciente)}
                         />
                     ))}
