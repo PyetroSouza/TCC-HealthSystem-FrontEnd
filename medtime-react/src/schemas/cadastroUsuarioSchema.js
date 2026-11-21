@@ -51,3 +51,10 @@ export const cadastroUsuarioSchema = z.object({
         path: ['confirmarSenha']
     }
 )
+
+
+// Cadastro federado: o backend valida a identidade Google e não utiliza senha local.
+export const cadastroGoogleSchema = cadastroUsuarioSchema.safeExtend({
+  senha: z.string().optional(),
+  confirmarSenha: z.string().optional()
+})
