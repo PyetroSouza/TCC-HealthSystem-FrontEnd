@@ -7,7 +7,6 @@ import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
 import GerarCodigoVinculo from './components/vinculo/GerarCodigoVinculo.jsx'
 import { medicamentos as medicamentosIniciais } from './data/medicamentos'
-import CadastroIdoso from './pages/CadastroIdoso'
 import CadastroRemedio from './pages/CadastroRemedio.jsx'
 import CadastroUsuario from './pages/CadastroUsuario.jsx'
 import DashboardPaciente from './pages/DashboardPaciente.jsx'
@@ -456,7 +455,10 @@ function App() {
           <Inicio
             token={usuarioAutenticado?.jwt}
             nomeUsuario={usuarioAutenticado?.nome}
-            aoCadastrar={() => setTelaAtual('cadastro')}
+            aoCadastrar={() => {
+              toast.info('Para adicionar um paciente, compartilhe o código de vínculo com ele no aplicativo MedTime.')
+              setTelaAtual('inicio')
+            }}
             pacientes={pacientes}
             medicamentos={listaMedicamentos}
             carregandoPacientes={carregandoPacientes}
@@ -469,7 +471,6 @@ function App() {
             aoVerPacientes={() => setTelaAtual('pacientes')}
           />)}
 
-        {telaExibida=== 'cadastro' && <CadastroIdoso />}
 
         {telaExibida === 'inicio' &&
           perfilAutenticado === 'cuidador' &&
@@ -482,6 +483,7 @@ function App() {
 
         {telaExibida === 'pacientes' && (
           <Pacientes
+            token={usuarioAutenticado?.jwt}
             pacientes={pacientes}
             aoVoltar={() => setTelaAtual('inicio')}
             abrirDashboard={(paciente) => {
