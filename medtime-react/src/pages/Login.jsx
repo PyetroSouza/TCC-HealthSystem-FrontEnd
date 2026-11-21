@@ -19,6 +19,7 @@ const loginSchema = z.object({
 
 function Login({
   aoCadastrar,
+  aoCadastrarGoogle,
   aoRecuperarSenha,
   aoEntrar
 }) {
@@ -65,10 +66,10 @@ async function realizarLoginGoogle(respostaGoogle) {
         'Conta Google reconhecida! Complete seu cadastro no MedTime.'
       )
 
-      console.log(
-        'Cadastro Google necessário:',
-        resultado.dadosGoogle
-      )
+      aoCadastrarGoogle?.({
+        ...resultado.dadosGoogle,
+        token: respostaGoogle.credential
+      })
 
       return
     }
