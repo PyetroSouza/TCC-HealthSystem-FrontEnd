@@ -11,7 +11,8 @@ import './Pacientes.css'
 function Pacientes({
     pacientes = [],
     abrirDashboard,
-    aoVoltar
+    aoVoltar,
+    token
 }) {
     const [busca, setBusca] = useState('')
 
@@ -84,6 +85,7 @@ function Pacientes({
                         <CardPaciente
                             key={paciente.id ?? paciente.id_usuario}
                             paciente={paciente}
+                            token={token}
                             aoClicar={() => abrirDashboard(paciente)}
                         />
                     ))}

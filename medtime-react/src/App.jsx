@@ -408,6 +408,7 @@ function App() {
         {telaExibida === 'pacientes' && (
           <Pacientes
             pacientes={pacientes}
+            token={usuarioAutenticado?.jwt}
             aoVoltar={() => setTelaAtual('inicio')}
             abrirDashboard={(paciente) => {
               setPacienteSelecionado(paciente)
