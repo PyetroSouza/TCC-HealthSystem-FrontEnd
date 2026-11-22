@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: command === 'serve' ? '/' : '/front_end/',
+  base: command === 'serve' ? '/' : '/TCC-HealthSystem-FrontEnd/',
 }))
