@@ -1,30 +1,30 @@
-import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useMemo, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
+import AnexarImagem from '../components/AnexarImagem'
+import { criarMedicamentoSchema } from '../schemas/medicamentoSchema'
 import {
-  medicamentoSchema,
-  medicamentoEdicaoSchema
-} from '../schemas/medicamentoSchema'
-import { prepararMedicamento } from '../services/medicamentoService'
-import { montarPayloadMedicamento } from '../utils/montarPayloadMedicamento'
-import {
+  buscarReceitasDoPaciente,
   cadastrarMedicamentoCompleto,
-  buscarReceitaMedica,
-  buscarProgramacaoPorReceita,
   editarMedicamentoCompleto
 } from '../services/api'
 import {
-  buscarUnidadesMedida,
   buscarTiposDosagem,
   buscarTiposIntervalo,
-  cadastrarMedicamentoAPI
+  buscarUnidadesMedida
 } from '../services/api.js'
-import { toast } from 'sonner'
-import AnexarImagem from '../components/AnexarImagem'
+import { prepararMedicamento } from '../services/medicamentoService'
+import { montarPayloadMedicamento } from '../utils/montarPayloadMedicamento'
 
 import './CadastroRemedio.css'
 
-function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarMedicamentoLocal, pacienteSelecionado, medicamentoEmEdicao, atualizarMedicamento }) {
+function CadastroRemedio({
+  voltarParaDashboard,
+  pacienteSelecionado,
+  medicamentoEmEdicao,
+  token
+}) {
   const [imagemMedicamento, setImagemMedicamento] = useState(null)
   const [imagemAtual, setImagemAtual] = useState(
     medicamentoEmEdicao?.imagem ?? null
@@ -34,18 +34,29 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
   const [tiposIntervalo, setTiposIntervalo] = useState([])
   const [idEstoqueAtual, setIdEstoqueAtual] = useState(null)
   const [alterarProgramacao, setAlterarProgramacao] = useState(false)
+  const [nomeOriginal, setNomeOriginal] = useState('')
+  const [dadosOriginais, setDadosOriginais] = useState(null)
+  const idPaciente =
+    pacienteSelecionado?.id_paciente ??
+    pacienteSelecionado?.id
   const modoEdicao = Boolean(medicamentoEmEdicao)
+  const schema = useMemo(
+    () => criarMedicamentoSchema({
+      modoEdicao,
+      alterarProgramacao
+    }),
+    [modoEdicao, alterarProgramacao]
+  )
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     getValues,
     formState: { errors, isSubmitting }
+
   } = useForm({
-    resolver: zodResolver(
-      modoEdicao ? medicamentoEdicaoSchema : medicamentoSchema
-    ),
+    resolver: zodResolver(schema),
     mode: 'onTouched',
 
     defaultValues: {
@@ -80,14 +91,18 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
 
   })
 
+
   useEffect(() => {
     async function carregarOpcoes() {
       try {
-        const [unidadesAPI, dosagensAPI, intervalosAPI] = await Promise.all([
-          buscarUnidadesMedida(),
-          buscarTiposDosagem(),
-          buscarTiposIntervalo()
-        ])
+        const [unidadesAPI, dosagensAPI, intervalosAPI] =
+          await Promise.all([
+            buscarUnidadesMedida(token),
+            buscarTiposDosagem(token),
+            buscarTiposIntervalo(token)
+          ])
+
+
 
         setUnidades(unidadesAPI)
         setTiposDosagem(dosagensAPI)
@@ -99,63 +114,124 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
     }
 
     carregarOpcoes()
-  }, [])
+  }, [token])
+
 
   useEffect(() => {
+    let ativo = true
+
     async function carregarDadosEdicao() {
-      if (!modoEdicao || !medicamentoEmEdicao?.id_receita_medica) {
+      if (
+        !modoEdicao ||
+        !medicamentoEmEdicao?.id_receita_medica ||
+        !idPaciente ||
+        !token
+      ) {
         return
       }
 
       try {
-        const [receita, programacoes] = await Promise.all([
-          buscarReceitaMedica(medicamentoEmEdicao.id_receita_medica),
-          buscarProgramacaoPorReceita(medicamentoEmEdicao.id_receita_medica)
-        ])
 
-        const programacaoAtiva = programacoes.find(
-          (programacao) => programacao.data_hora_fim == null
+
+        const receitas = await buscarReceitasDoPaciente(
+          idPaciente,
+          token
         )
 
-        if (!programacaoAtiva) {
-          throw new Error('Programação ativa não encontrada')
-        }
+        if (!ativo) return
 
+        // 1. Encontrar a receita primeiro
+        const receita = receitas.find(
+          item =>
+            Number(item.id_receita_medica) ===
+            Number(medicamentoEmEdicao.id_receita_medica)
+        )
+
+        // 2. Verificar se ela existe
         if (!receita) {
-          throw new Error('Receita não encontrada')
+          throw new Error('Receita não encontrada.')
         }
 
-        if (receita.id_usuario !== pacienteSelecionado?.id) {
-          throw new Error('A receita não pertence ao paciente selecionado')
+        // 3. Verificar se pertence ao paciente
+        if (Number(receita.id_usuario) !== Number(idPaciente)) {
+          throw new Error(
+            'A receita não pertence ao paciente selecionado.'
+          )
         }
 
-        setImagemAtual(receita.imagem)
-        setIdEstoqueAtual(receita.id_estoque)
+        // 4. Agora podemos acessar os dados da receita
+        setNomeOriginal(receita.nome_medicamento ?? '')
+        setImagemAtual(receita.imagem ?? null)
+        setIdEstoqueAtual(receita.id_estoque ?? null)
+        setDadosOriginais(receita)
+
+        // 5. Manter aqui o reset({...}) que já funciona
+
+
         reset({
-          nome: receita.nome_medicamento,
-          dose: String(receita.dosagem),
-          tipoDosagem: String(receita.id_tipo_dosagem),
-          unidadeDose: String(receita.id_unidade_medida),
-          concentracao: String(receita.concentracao),
-          unidadeConcentracao: String(receita.id_unidade_medida_embalagem),
-          quantidade: String(receita.quantidade_em_estoque),
+          nome: receita.nome_medicamento ?? '',
+          dose: String(receita.dosagem ?? ''),
+          tipoDosagem: String(receita.id_tipo_dosagem ?? ''),
+          unidadeDose: String(receita.id_unidade_medida ?? ''),
+          concentracao: String(receita.concentracao ?? ''),
+          unidadeConcentracao: String(
+            receita.id_unidade_medida_embalagem ?? ''
+          ),
+          quantidade: String(receita.quantidade_em_estoque ?? ''),
           descricao: receita.descricao ?? '',
-          frequencia: Number(programacaoAtiva.frequencia),
-          intervalo: String(programacaoAtiva.id_tipo_intervalo),
+          frequencia: undefined,
+          intervalo: '',
           horario: ''
         })
 
+
       } catch (erro) {
+        if (!ativo) return
+
         console.error('Erro ao carregar edição:', erro)
-        toast.error('Não foi possível carregar os dados da edição')
+        toast.error(erro.message)
       }
     }
 
     carregarDadosEdicao()
-  }, [modoEdicao, medicamentoEmEdicao?.id_receita_medica, pacienteSelecionado?.id])
 
-  const frequencia = watch('frequencia')
-  const intervalo = watch('intervalo')
+
+    return () => {
+      ativo = false
+    }
+  }, [
+    modoEdicao,
+    medicamentoEmEdicao?.id_receita_medica,
+    idPaciente,
+    token,
+    reset
+  ])
+
+
+  const frequencia = useWatch({
+    control,
+    name: 'frequencia'
+  })
+
+  const intervalo = useWatch({
+    control,
+    name: 'intervalo'
+  })
+
+  const unidadeDoseSelecionada = useWatch({
+    control,
+    name: 'unidadeDose'
+  })
+
+  const unidadeConcentracaoSelecionada = useWatch({
+    control,
+    name: 'unidadeConcentracao'
+  })
+
+  const unidadesDiferentes =
+    Boolean(unidadeDoseSelecionada) &&
+    Boolean(unidadeConcentracaoSelecionada) &&
+    unidadeDoseSelecionada !== unidadeConcentracaoSelecionada
 
   async function adicionarMedicamento(dados) {
 
@@ -165,7 +241,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
     }
 
     if (!modoEdicao && !imagemMedicamento) {
-      toast.warning('Selecione uma imagem primeiro.')
+      toast.warning('Selecione a imagem')
       return
     }
 
@@ -193,25 +269,79 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
           return
         }
 
-        const payload = {
-          medicamento: {
-            nome: medicamentoPreparado.nome,
-            imagem: imagemFinal,
-            concentracao: medicamentoPreparado.concentracao,
-            id_unidade_medida_embalagem:
-              medicamentoPreparado.id_unidade_medida_embalagem,
-            id_tipo_dosagem: medicamentoPreparado.id_tipo_dosagem
-          },
 
+        const payload = {
           receita_medica: {
             dosagem: Number(dados.dose),
             id_unidade_medida: Number(dados.unidadeDose),
-            descricao: dados.descricao || null
+            descricao: dados.descricao?.trim() ?? ''
           },
-
           estoque: {
             quantidade_em_estoque: Number(dados.quantidade)
           }
+        }
+
+        // Atualiza o nome apenas quando ele foi alterado
+
+        if (!dadosOriginais) {
+          toast.error('Aguarde o carregamento da receita.')
+          return
+        }
+
+        const alteracoesMedicamento = {}
+
+        const concentracao = Number(
+          String(dados.concentracao).replace(',', '.')
+        )
+
+        if (!Number.isFinite(concentracao) || concentracao < 0) {
+          toast.error('Concentração inválida.')
+          return
+        }
+
+        // Nome
+        if (dados.nome.trim() !== nomeOriginal.trim()) {
+          alteracoesMedicamento.nome = dados.nome.trim()
+        }
+
+        // Concentração
+        if (
+          concentracao !== Number(dadosOriginais.concentracao)
+        ) {
+          alteracoesMedicamento.concentracao = concentracao
+        }
+
+        // Unidade de concentração
+        if (
+          Number(dados.unidadeConcentracao) !==
+          Number(dadosOriginais.id_unidade_medida_embalagem)
+        ) {
+          alteracoesMedicamento.id_unidade_medida_embalagem =
+            Number(dados.unidadeConcentracao)
+        }
+
+        // Tipo de dosagem
+        if (
+          Number(dados.tipoDosagem) !==
+          Number(dadosOriginais.id_tipo_dosagem)
+        ) {
+          alteracoesMedicamento.id_tipo_dosagem =
+            Number(dados.tipoDosagem)
+        }
+
+        // Imagem: enviar apenas se foi selecionada uma nova
+        if (imagemMedicamento) {
+          if (!medicamentoPreparado.imagem) {
+            throw new Error('Falha ao enviar a nova imagem.')
+          }
+
+          alteracoesMedicamento.imagem =
+            medicamentoPreparado.imagem
+        }
+
+        // Incluir o bloco somente se houver alterações
+        if (Object.keys(alteracoesMedicamento).length > 0) {
+          payload.medicamento = alteracoesMedicamento
         }
 
 
@@ -249,24 +379,24 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
           }
         }
 
-
         await editarMedicamentoCompleto(
           medicamentoEmEdicao.id_receita_medica,
-          pacienteSelecionado.id,
-          payload
+          idPaciente,
+          payload,
+          token
         )
 
         toast.success('Dados do medicamento atualizados!')
       } else {
-        const payload = montarPayloadMedicamento(
-          medicamentoPreparado,
-          pacienteSelecionado.id
+
+        const payload = montarPayloadMedicamento(medicamentoPreparado)
+
+        await cadastrarMedicamentoCompleto(
+          pacienteSelecionado.id_paciente ?? pacienteSelecionado.id,
+          payload,
+          token
         )
 
-        const resultado = await cadastrarMedicamentoCompleto(payload)
-
-
-        cadastrarMedicamentoLocal(medicamentoPreparado)
 
         toast.success('Medicamento cadastrado com sucesso!')
       }
@@ -421,7 +551,7 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
               <div className="campo-formulario">
                 <label htmlFor="concentracao">Concentração</label>
                 <input
-                  type="text"
+                  type="number"
                   id="concentracao"
                   aria-invalid={!!errors.concentracao}
                   aria-describedby={errors.concentracao ? 'erro-concentracao' : undefined}
@@ -471,6 +601,17 @@ function CadastroRemedio({ voltarParaDashboard, cadastrarMedicamento: cadastrarM
                   )}
                 </div>
               </div>
+
+              {unidadesDiferentes && (
+                <p className="aviso-unidades" role="status">
+                  Atenção: a unidade da dose é diferente da unidade
+                  informada para a concentração/embalagem.
+
+                  Verifique se os dados estão corretos.
+                  O cálculo automático do estoque pode exigir
+                  uma conversão adicional.
+                </p>
+              )}
 
               {(!modoEdicao || alterarProgramacao) && (
                 <div className="campo-formulario">

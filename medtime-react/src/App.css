@@ -1,8 +1,10 @@
 .aplicacao {
-  min-height: calc(100vh - 10px);
-  background-color: #F9F9F9;
-  font-family: "Inter", sans-serif;
-  color: #252525;
+    min-height: 100dvh;
+    padding: 10px 2% 0;
+    box-sizing: border-box;
+    background-color: #F9F9F9;
+    font-family: "Inter", sans-serif;
+    color: #252525;
 }
 
 /* Navegação entre as telas */

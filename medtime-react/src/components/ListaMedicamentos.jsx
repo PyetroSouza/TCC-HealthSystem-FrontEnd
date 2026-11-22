@@ -2,14 +2,13 @@
 import CardMedicamento from './CardMedicamento.jsx'
 
 function ListaMedicamentos({
-    medicamentos,
-    carregando,
-    erro,
-    aoAdicionar,
-    aoEditar,
-    aoExcluir,
-    idUsuario,
-    aoConfirmarTomada
+  medicamentos,
+  carregando,
+  erro,
+  aoAdicionar,
+  idUsuario,
+  token,
+  aoConfirmarTomada
 }) {
     return (
         <div className="container-remedios">
@@ -42,12 +41,11 @@ function ListaMedicamentos({
             ) : (
                 medicamentos.map((medicamento) => (
                     <CardMedicamento
-                        key={`${medicamento.id_programacao_medicamento}-${medicamento.proximo_horario}`}
+                    key={`${medicamento.id_receita_medica}-${medicamento.horario_programado}-${medicamento.id_programacao_medicamento ?? 'sem-programacao'}`}
                         medicamento={medicamento}
                         idUsuario={idUsuario}
-                        aoEditar={aoEditar}
-                        aoExcluir={aoExcluir}
                         aoConfirmarTomada={aoConfirmarTomada}
+                        token={token}
                     />
                 ))
             )}

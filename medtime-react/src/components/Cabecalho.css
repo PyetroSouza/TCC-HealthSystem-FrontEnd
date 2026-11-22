@@ -1,146 +1,294 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
-.logo-app h1 {
-    margin: 0;
-}
-
-.data-hora h2 {
-    margin: 0;
-}
-
-.foto-perfil h2 {
-    margin: 0;
-}
-
-.dados-perfil p {
-    margin: 0;
-}
-
 
 .cabecalho-original {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
 
-    width: 100%;
-    max-width: none;
-    height: 67px;
-    margin: 0 0 21px;
-    box-sizing: border-box;
+  width: 100%;
+  min-height: 67px;
+  margin-bottom: 21px;
+  padding: 10px 20px;
+  box-sizing: border-box;
 
-    background: linear-gradient(to right, #1C86BF, #4EA8D8);
-    border-radius: 15px;
-    color: #FFFFFF;
-    text-align: left;
+  background: linear-gradient(to right, #1c86bf, #4ea8d8);
+  border-radius: 15px;
+  color: #fff;
 }
 
+/* Logo */
+
 .logo-app {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 19px;
-    font-family: "Inter", sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  font-family: "Inter", sans-serif;
 }
 
 .logo-app img {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .logo-app h1 {
-    font-size: 24px;
-    font-weight: 600;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .logo-app span {
-    color: #FFFFFF;
+  color: #fff;
 }
 
+/* Data e horário */
+
 .data-hora {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: "Inter", sans-serif;
 }
 
 .data-hora h2 {
-    font-size: 16px;
-    font-weight: 400;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
 }
 
+/* Área direita */
+
 .perfil {
-    display: flex;
-    align-items: center;
-    padding-right: 43px;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 320px;
 }
 
 .perfil .foto-perfil {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 44px;
-    height: 44px;
-    background-color: #374151;
-    border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  background: #374151;
+  border-radius: 50%;
 }
 
 .perfil .foto-perfil h2 {
-    font-size: 16px;
-    font-weight: 400;
-    font-family: 'Roboto', sans-serif;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
 }
 
-.perfil .dados-perfil {
-    display: flex;
-    flex-direction: column;
+.imagem-perfil {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
-.perfil .dados-perfil .nome-perfil {
+.dados-perfil {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dados-perfil p {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+}
+
+.nome-perfil {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.email-perfil {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* Logout */
+
+.botao-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  min-width: 88px;
+  min-height: 38px;
+  padding: 8px 12px;
+
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botao-logout:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: #fff;
+}
+
+.botao-logout:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.botao-logout svg {
+  flex-shrink: 0;
+}
+
+.acoes-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 0;
+}
+
+button.perfil {
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.perfil:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+button.perfil:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .acoes-cabecalho {
+    gap: 10px;
+  }
+}
+
+/* Responsividade */
+
+@media (max-width: 1050px) {
+  .cabecalho-original {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 14px;
+  }
+
+  .data-hora {
     font-size: 14px;
-    font-weight: 500;
-    font-family: 'Roboto', sans-serif;
-    color: #FFFFFF;
+  }
+
+  .data-hora h2 {
+    font-size: 13px;
+  }
+
+  .perfil {
+    max-width: 240px;
+  }
 }
 
-.perfil .dados-perfil .email-perfil {
-    font-size: 12px;
-    font-weight: 400;
-    font-family: 'Roboto', sans-serif;
-    color: #FFFFFF;
+@media (max-width: 768px) {
+  .cabecalho-original {
+    grid-template-columns: 1fr auto;
+  }
+
+  .data-hora {
+    display: none;
+  }
+
+  .botao-logout {
+    min-width: 42px;
+    min-height: 42px;
+    padding: 10px;
+  }
+
+  .botao-logout span {
+    display: none;
+  }
 }
 
+
+.botao-logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    color: #374151;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .botao-logout:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .botao-logout:focus-visible {
+    outline: 2px solid #009951;
+    outline-offset: 3px;
+  }
+
+  
 @media (max-width: 480px) {
-    .cabecalho-original {
-        height: 67px;
-        padding: 0 16px;
-    }
+  .cabecalho-original {
+    padding: 10px 16px;
+    gap: 10px;
+  }
 
-    .logo-app {
-        padding: 0;
-        gap: 8px;
-    }
+  .logo-app {
+    gap: 8px;
+  }
 
-    .logo-app h1 {
-        font-size: 22px;
-    }
+  .logo-app h1 {
+    font-size: 20px;
+  }
 
-    .data-hora {
-        display: none;
-    }
+  .perfil {
+    max-width: none;
+  }
 
-    .perfil {
-        padding-right: 0;
-    }
+  .dados-perfil {
+    display: none;
+  }
 
-    .perfil .dados-perfil {
-        display: none;
-    }
-
-    .perfil .foto-perfil {
-        width: 40px;
-        height: 40px;
-        flex-shrink: 0;
-    }
+  .perfil .foto-perfil {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
 }

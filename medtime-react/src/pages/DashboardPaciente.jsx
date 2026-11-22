@@ -1,27 +1,27 @@
-import './DashboardPaciente.css'
-import { useRef, useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { CalendarCheck2 } from 'lucide-react'
+import { toast } from 'sonner'
+import EstoquePaciente from '../components/EstoquePaciente.jsx'
 import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
 import { useAgendaMedicamentos } from '../hooks/useAgendaMedicamentos.js'
-import { gerarIniciais } from '../utils/gerarIniciais.js'
-import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
 import { excluirMedicamentoCompleto } from '../services/api.js'
-import { toast } from 'sonner'
+import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
+import { gerarIniciais } from '../utils/gerarIniciais.js'
+import './DashboardPaciente.css'
 
 
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, medicamentos, excluirMedicamento, aoEditarMedicamento, aoVerTodosMedicamentos }) {
+function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda, token }) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
 
     const [medicamentoParaExcluir, setMedicamentoParaExcluir] = useState(null)
     const [excluindo, setExcluindo] = useState(false)
     const botaoCancelarRef = useRef(null)
 
+    const idPaciente =
+        pacienteSelecionado?.id_paciente ??
+        pacienteSelecionado?.id
 
-
-
-    function confirmarExclusao(medicamento) {
-        setMedicamentoParaExcluir(medicamento)
-    }
 
     useEffect(() => {
         if (!medicamentoParaExcluir) return
@@ -49,7 +49,8 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
             await excluirMedicamentoCompleto(
                 medicamentoParaExcluir.id_receita_medica,
-                pacienteSelecionado.id
+                idPaciente,
+                token
             )
 
             setMedicamentoParaExcluir(null)
@@ -66,17 +67,16 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         }
     }
 
-
-
     const {
         agenda,
         carregandoAgenda,
         erroAgenda,
         recarregarAgenda
-    } = useAgendaMedicamentos(pacienteSelecionado?.id)
-
-    console.log('📋 Agenda do Dashboard:', agenda)
-
+    } = useAgendaMedicamentos(
+        pacienteSelecionado?.id_paciente ?? pacienteSelecionado?.id,
+        undefined,
+        token
+    )
 
     const medicamentosDaAgenda = agenda.map((item) => ({
         id_medicamento: item.id_medicamento,
@@ -84,21 +84,27 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         id_receita_medica: item.id_receita_medica,
         nome: item.nome_medicamento,
         quantidade_dose: Number(item.dosagem),
-
-
+        tipo_dosagem: item.tipo_dosagem,
         horario_programado: item.horario_programado,
-
-
         proximo_horario: new Date(
             item.horario_programado
         ).toLocaleTimeString('pt-BR', {
             hour: '2-digit',
             minute: '2-digit'
         }),
-
-
-        confirmado: item.confirmado
+        confirmado: item.confirmado,
+        status: item.status,
     }))
+
+
+    const proximosMedicamentos = medicamentosDaAgenda
+        .filter(medicamento => !medicamento.confirmado)
+        .sort((a, b) =>
+            new Date(a.horario_programado) -
+            new Date(b.horario_programado)
+        )
+        .slice(0, 3)
+
 
 
     const calcularIdade = (dataNascimento) => {
@@ -120,6 +126,14 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
         return idade
     }
+
+    const todasTomadasConfirmadas =
+        !carregandoAgenda &&
+        !erroAgenda &&
+        medicamentosDaAgenda.length > 0 &&
+        proximosMedicamentos.length === 0
+
+
 
     return (
         <div className="dashboard-conteudo">
@@ -144,7 +158,9 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <h2>{gerarIniciais(pacienteSelecionado?.nome)}</h2>
                         </div>
                         <div className='dados-texto'>
-                            <h3 className="nome">{pacienteSelecionado?.nome || "Ana Maria De Jesus"}</h3>
+                            <h3 className="nome">
+                                {pacienteSelecionado?.nome || 'Paciente não identificado'}
+                            </h3>
                             <p className="idade">
                                 {pacienteSelecionado?.data_nascimento
                                     ? `${calcularIdade(pacienteSelecionado.data_nascimento)} anos`
@@ -177,8 +193,11 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <h1>Contato de emergência</h1>
                         </div>
                         <div className="nome-telefone">
-                            <span>Charles Haenke (Filho)</span>
-                            <p>(11) 97699-2487</p>
+                            <span>Contato não cadastrado</span>
+                            <p>
+                                As informações de emergência ainda não
+                                estão disponíveis neste painel.
+                            </p>
                         </div>
                         <div className="botoes">
                             <button
@@ -194,8 +213,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <button
                                 type="button"
                                 className="historico"
-                                disabled
-                                title="Funcionalidade em desenvolvimento"
+                                onClick={aoVerHistorico}
                             >
                                 <img src="/assets/historico.svg" alt="" />
                                 <span>Histórico</span>
@@ -204,26 +222,25 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                     </div>
 
 
-
                     <div className="dados-pulseira">
                         <div className="temperatura">
-                            <span>37°C</span>
+                            <span>—</span>
                             <p>Temperatura Corporal</p>
                         </div>
 
                         <div className="frequencia-cardiaca">
-                            <span>70 BPM</span>
+                            <span>—</span>
                             <p>Frequência Cardíaca</p>
                         </div>
 
                         <div className="pressao-sanguinea">
-                            <span>120/80</span>
+                            <span>—</span>
                             <p>Pressão Sanguínea</p>
                         </div>
                     </div>
 
                     <p className="aviso-dados-pulseira">
-                        Dados demonstrativos da pulseira
+                        Dados da pulseira indisponíveis
                     </p>
 
 
@@ -234,35 +251,77 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                 <div className="conteudo-principal-direita">
 
                     <div className="proximos-medicamentos-placeholder">
+
                         <div className="header-proximos-medicamentos">
-                            <div className="proximos-remedios">
-                                <img src="/assets/prancheta.svg" alt="prancheta de remédios" />
-                                <span>Próximos Medicamentos</span>
+                            <div className="proximos-cabecalho">
+                                <div className="proximos-remedios">
+                                    <img
+                                        src="/assets/prancheta.svg"
+                                        alt=""
+                                        aria-hidden="true"
+                                    />
+                                    <h2>Próximos Medicamentos</h2>
+                                </div>
+
+                                <div className="proximos-acoes">
+                                    <button
+                                        type="button"
+                                        className="proximos-link"
+                                        onClick={aoVerAgenda}
+                                    >
+                                        Ver agenda completa
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="proximos-link"
+                                        onClick={aoVerTodosMedicamentos}
+                                    >
+                                        Ver todos medicamentos
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                className="menu-medicamentos botao-ver-todos"
-                                onClick={aoVerTodosMedicamentos}
-                            >
-                                <img src="/assets/menu.svg" alt="" aria-hidden="true" />
-                                Ver todos medicamentos
-                            </button>
                         </div>
 
-                        <ListaMedicamentos
-                            medicamentos={medicamentosDaAgenda}
-                            carregando={carregandoAgenda}
-                            erro={erroAgenda}
-                            aoAdicionar={aoClicarCadastrarRemedio}
-                            aoEditar={aoEditarMedicamento}
-                            aoExcluir={confirmarExclusao}
-                            idUsuario={pacienteSelecionado.id}
-                            aoConfirmarTomada={recarregarAgenda}
-                        />
+                        {todasTomadasConfirmadas ? (
+                            <div className="dashboard-estado-vazio" role="status">
+                                <div className="dashboard-estado-vazio-icone">
+                                    <CalendarCheck2 size={30} strokeWidth={1.8} />
+                                </div>
+
+                                <h3>Agenda em dia!</h3>
+
+                                <p>
+                                    Todas as tomadas programadas para hoje
+                                    foram confirmadas.
+                                </p>
+
+                                <span className="dashboard-estado-vazio-status">
+                                    Nenhuma tomada pendente
+                                </span>
+                            </div>
+                        ) : (
+                            <ListaMedicamentos
+                                medicamentos={proximosMedicamentos}
+                                carregando={carregandoAgenda}
+                                erro={erroAgenda}
+                                aoAdicionar={aoClicarCadastrarRemedio}
+                                idUsuario={idPaciente}
+                                aoConfirmarTomada={recarregarAgenda}
+                                token={token}
+                            />
+                        )}
 
 
                     </div>
-
+                    <EstoquePaciente
+                        agenda={agenda}
+                        idUsuario={
+                            pacienteSelecionado?.id_paciente ??
+                            pacienteSelecionado?.id
+                        }
+                        token={token}
+                    />
                 </div>
             </div>
 

@@ -1,0 +1,120 @@
+
+.pagina-pacientes {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+}
+
+.pacientes-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+
+    border: none;
+    background: transparent;
+    color: #1D6FA4;
+
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pacientes-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.pacientes-cabecalho h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    color: #20344A;
+}
+
+.pacientes-cabecalho p {
+    margin: 0;
+    color: #64748B;
+    line-height: 1.6;
+}
+
+.pacientes-adicionar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 48px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+
+    background: #1D6FA4;
+    color: white;
+
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pacientes-adicionar:hover {
+    background: #155A87;
+}
+
+.pacientes-resultado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748B;
+    font-size: 14px;
+}
+
+.pacientes-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-height: 240px;
+    padding: 30px;
+    border: 1px dashed #CBD5E1;
+    border-radius: 14px;
+
+    background: #FFFFFF;
+    color: #64748B;
+    text-align: center;
+}
+
+.pacientes-vazio h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #20344A;
+}
+
+.pacientes-vazio p {
+    margin: 0;
+}
+
+.pacientes-voltar:focus-visible,
+.pacientes-adicionar:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    .pacientes-cabecalho {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .pacientes-cabecalho h1 {
+        font-size: 24px;
+    }
+
+    .pacientes-adicionar {
+        width: 100%;
+    }
+}

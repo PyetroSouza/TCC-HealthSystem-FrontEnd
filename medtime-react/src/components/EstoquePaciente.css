@@ -1,0 +1,307 @@
+.estoque-paciente {
+    margin-top: 0;
+    padding: 24px;
+    background: #FFFFFF;
+    border: 1px solid #E4EBF0;
+    border-radius: 16px;
+}
+
+.estoque-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.estoque-cabecalho h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #183B4F;
+}
+
+.estoque-cabecalho p {
+    margin: 0;
+    font-size: 14px;
+    color: #667785;
+}
+
+.estoque-responsavel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #1D6FA4;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+
+.estoque-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,
+            minmax(min(100%, 200px), 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.estoque-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 20px 14px;
+    border: 1px solid #E4EBF0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    min-width: 0;
+}
+
+
+.estoque-circulo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 100px;
+    height: 100px;
+    margin: 0 0 4px;
+    border: 6px solid #1D6FA4;
+    border-radius: 50%;
+    box-sizing: border-box;
+
+    color: #183B4F;
+}
+
+.estoque-circulo strong {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.estoque-circulo span {
+    font-size: 12px;
+    color: #667785;
+}
+
+.estoque-card h3 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.estoque-status {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.estoque-circulo-disponivel {
+    border-color: #16803C;
+}
+
+.estoque-circulo-baixo {
+    border-color: #D97706;
+}
+
+.estoque-circulo-esgotado {
+    border-color: #DC2626;
+}
+
+.estoque-status-disponivel {
+    color: #16803C;
+}
+
+.estoque-status-baixo {
+    color: #B45309;
+}
+
+.estoque-status-esgotado {
+    color: #DC2626;
+}
+
+.estoque-edicao {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.estoque-edicao label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.estoque-edicao input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #BFDFF1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.estoque-edicao-acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.estoque-edicao-acoes button {
+    width: 100%;
+    min-height: 40px;
+    flex: none;
+}
+
+.estoque-edicao-acoes button,
+.estoque-gerenciar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.estoque-gerenciar {
+    margin-top: 4px;
+    background: #EAF3F9;
+    border: 1px solid #BFDFF1;
+    color: #1D6FA4;
+}
+
+.estoque-salvar {
+    background: #007A40;
+    border: 1px solid #007A40;
+    color: white;
+}
+
+.estoque-cancelar {
+    background: white;
+    border: 1px solid #CBD5E1;
+    color: #374151;
+}
+
+.estoque-edicao button:disabled,
+.estoque-gerenciar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.estoque-paciente button:focus-visible,
+.estoque-paciente input:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 2px;
+}
+
+
+.estoque-alerta-baixo {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #FFF7E6;
+    border: 1px solid #F5C76E;
+    border-left: 4px solid #D97706;
+    border-radius: 8px;
+    color: #92400E;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.estoque-alerta-baixo svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* Acrescente ao final de src/components/EstoquePaciente.css */
+.estoque-alerta-baixo,
+.estoque-alerta-indeterminado {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #FFF7E6;
+    border: 1px solid #F5C76E;
+    border-left: 4px solid #D97706;
+    border-radius: 8px;
+    color: #92400E;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.estoque-alerta-baixo svg,
+.estoque-alerta-indeterminado svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.estoque-circulo-indeterminado {
+    border-color: #64748B;
+}
+
+.estoque-status-indeterminado {
+    color: #475569;
+}
+
+
+
+@media (max-width: 600px) {
+    .estoque-paciente {
+        padding: 16px;
+    }
+
+    .estoque-cabecalho {
+        flex-direction: column;
+    }
+
+    .estoque-grid {
+        gap: 12px;
+    }
+
+    .estoque-card {
+        padding: 16px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .estoque-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .estoque-card {
+        padding: 18px;
+        gap: 10px;
+    }
+
+    .estoque-gerenciar {
+        width: 100%;
+        max-width: 260px;
+    }
+
+    .estoque-edicao {
+        max-width: 320px;
+    }
+}

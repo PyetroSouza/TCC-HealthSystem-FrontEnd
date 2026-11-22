@@ -1,10 +1,18 @@
-export function montarPayloadMedicamento(medicamento, idUsuario) {
+export function montarPayloadMedicamento(medicamento) {
     const hoje = new Date()
     const data = [
         hoje.getFullYear(),
         String(hoje.getMonth() + 1).padStart(2, '0'),
         String(hoje.getDate()).padStart(2, '0')
     ].join('-')
+
+    const dataHoraInicio = new Date(
+        `${data}T${medicamento.proximo_horario}:00`
+    )
+    
+    if (Number.isNaN(dataHoraInicio.getTime())) {
+        throw new Error('Data ou horário inicial inválido')
+    }
 
     return {
         medicamento: {
@@ -17,7 +25,6 @@ export function montarPayloadMedicamento(medicamento, idUsuario) {
         },
 
         receita_medica: {
-            id_usuario: idUsuario,
             dosagem: medicamento.quantidade_dose,
             id_unidade_medida: medicamento.id_unidade_medida_dose,
             descricao: medicamento.descricao?.trim() || 'Sem observações'
@@ -25,7 +32,7 @@ export function montarPayloadMedicamento(medicamento, idUsuario) {
 
         programacao_medicamento: {
             frequencia: medicamento.frequencia,
-            data_hora_inicio: `${data} ${medicamento.proximo_horario}:00`,
+            data_hora_inicio: dataHoraInicio.toISOString(),
             id_tipo_intervalo: medicamento.id_tipo_intervalo
         },
 
