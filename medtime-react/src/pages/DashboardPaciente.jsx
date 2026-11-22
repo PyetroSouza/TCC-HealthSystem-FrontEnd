@@ -78,9 +78,6 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
         token
     )
 
-    console.log('📋 Agenda do Dashboard:', agenda)
-
-
     const medicamentosDaAgenda = agenda.map((item) => ({
         id_medicamento: item.id_medicamento,
         id_programacao_medicamento: item.id_programacao_medicamento,
@@ -129,12 +126,6 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
         return idade
     }
-    console.log('Diagnóstico agenda:', {
-        temToken: Boolean(token),
-        idPaciente:
-            pacienteSelecionado?.id_paciente ??
-            pacienteSelecionado?.id
-    })
 
     const todasTomadasConfirmadas =
         !carregandoAgenda &&
