@@ -19,7 +19,7 @@ function ListaMedicamentos({
             ) : medicamentos.length === 0 ? (
                 <div className="sem-medicamentos">
                     <img
-                        src="/assets/remedio.svg"
+                        src={import.meta.env.BASE_URL + 'assets/remedio.svg'}
                         alt=""
                         aria-hidden="true"
                     />

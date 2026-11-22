@@ -93,7 +93,7 @@ function CardPaciente({ paciente, aoClicar, token }) {
             </div>
 
             <p className="proximo_remedio">
-                <img src="/assets/relogio.svg" alt="" />
+                <img src={import.meta.env.BASE_URL + 'assets/relogio.svg'} alt="" />
                 Próx. Med.: {
                     carregando
                         ? 'Carregando...'

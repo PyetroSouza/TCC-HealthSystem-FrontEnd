@@ -3,7 +3,7 @@ import './Buscar.css'
 function Buscar({ busca, setBusca }) {
   return (
     <div className="search">
-      <img src="/assets/pesquisar.svg" alt="Ícone de pesquisa" />
+      <img src={import.meta.env.BASE_URL + 'assets/pesquisar.svg'} alt="Ícone de pesquisa" />
 
       <div className="buscar">
         <input

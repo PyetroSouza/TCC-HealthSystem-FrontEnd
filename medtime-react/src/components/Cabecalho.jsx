@@ -32,7 +32,7 @@ function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
 
       {/* Coluna 1: logo */}
       <div className="logo-app">
-        <img src="/assets/logo.png" alt="Logo MedTime" />
+        <img src={import.meta.env.BASE_URL + 'assets/logo.png'} alt="Logo MedTime" />
 
         <h1>
           <span>Med</span>Time

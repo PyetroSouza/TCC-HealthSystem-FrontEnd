@@ -176,7 +176,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                     </div>
 
                     <button type='button' className='botao-medicamento' onClick={aoClicarCadastrarRemedio}>
-                        <img src="/assets/cadastrar.svg" alt="adicionar medicamento" />
+                        <img src={import.meta.env.BASE_URL + 'assets/cadastrar.svg'} alt="adicionar medicamento" />
                         Adicionar Medicamento
                     </button>
                 </div>
@@ -189,7 +189,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
                     <div className="contato-de-emergencia">
                         <div className="titulo">
-                            <img src="/assets/telefone.svg" alt="telefone" />
+                            <img src={import.meta.env.BASE_URL + 'assets/telefone.svg'} alt="telefone" />
                             <h1>Contato de emergência</h1>
                         </div>
                         <div className="nome-telefone">
@@ -206,7 +206,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                                 disabled
                                 title="Funcionalidade em desenvolvimento"
                             >
-                                <img src="/assets/localizacao.svg" alt="" />
+                                <img src={import.meta.env.BASE_URL + 'assets/localizacao.svg'} alt="" />
                                 <span>Localização</span>
                             </button>
 
@@ -215,7 +215,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                                 className="historico"
                                 onClick={aoVerHistorico}
                             >
-                                <img src="/assets/historico.svg" alt="" />
+                                <img src={import.meta.env.BASE_URL + 'assets/historico.svg'} alt="" />
                                 <span>Histórico</span>
                             </button>
                         </div>
@@ -256,7 +256,7 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             <div className="proximos-cabecalho">
                                 <div className="proximos-remedios">
                                     <img
-                                        src="/assets/prancheta.svg"
+                                        src={import.meta.env.BASE_URL + 'assets/prancheta.svg'}
                                         alt=""
                                         aria-hidden="true"
                                     />
