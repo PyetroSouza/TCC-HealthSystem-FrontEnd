@@ -1,7 +1,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -24,6 +24,26 @@ function Login({
   aoCadastrarGoogle
 }) {
   const [mostrarSenha, setMostrarSenha] = useState(false)
+  const areaGoogleRef = useRef(null)
+  const [larguraGoogle, setLarguraGoogle] = useState(320)
+
+  // O botão do Google só aceita largura em px: mede o espaço disponível
+  useEffect(() => {
+    const elemento = areaGoogleRef.current
+    if (!elemento) return
+
+    const medir = () => {
+      const largura = Math.floor(elemento.clientWidth)
+      setLarguraGoogle(Math.min(400, Math.max(200, largura)))
+    }
+
+    medir()
+
+    const observador = new ResizeObserver(medir)
+    observador.observe(elemento)
+
+    return () => observador.disconnect()
+  }, [])
 
   const {
     register,
@@ -97,8 +117,7 @@ function Login({
           <div className="login-formulario-conteudo">
 
             <div className="login-topo-mobile">
-              <LogoMedTime largura={200} />
-              <strong>MedTime</strong>
+              <LogoMedTime largura={150} />
             </div>
 
             <div className="login-cabecalho">
@@ -206,19 +225,25 @@ function Login({
 
 
             <div className="login-google">
-              <span>ou continue com</span>
+              <div className="login-divisor">
+                <span>ou</span>
+              </div>
 
-              <GoogleLogin
-                onSuccess={realizarLoginGoogle}
-                onError={() => {
-                  toast.error('Não foi possível autenticar com Google.')
-                }}
-                theme="outline"
-                size="large"
-                text="continue_with"
-                shape="rectangular"
-                width="320"
-              />
+              <div ref={areaGoogleRef} className="login-google-botao">
+                <GoogleLogin
+                  onSuccess={realizarLoginGoogle}
+                  onError={() => {
+                    toast.error('Não foi possível autenticar com Google.')
+                  }}
+                  theme="outline"
+                  size="large"
+                  text="continue_with"
+                  shape="rectangular"
+                  logo_alignment="center"
+                  locale="pt-BR"
+                  width={larguraGoogle}
+                />
+              </div>
             </div>
 
 

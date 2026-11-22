@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -181,6 +181,9 @@ function CadastroUsuario({
                             <nav
                                 className="cadastro-usuario-progresso"
                                 aria-label="Progresso do cadastro"
+                                style={{
+                                    '--total-etapas': cadastroPeloGoogle ? 2 : 3
+                                }}
                             >
                                 {[
                                     { numero: 1, titulo: 'Dados pessoais' },
@@ -192,7 +195,7 @@ function CadastroUsuario({
                                     <div
                                         key={etapa.numero}
                                         className={`cadastro-usuario-progresso-item ${etapa.numero === etapaAtual ? 'ativo' : ''
-                                            }`}
+                                            } ${etapa.numero <= etapaAtual ? 'alcancada' : ''}`}
                                         aria-current={
                                             etapa.numero === etapaAtual ? 'step' : undefined
                                         }
@@ -205,7 +208,9 @@ function CadastroUsuario({
                                                     : ''
                                                 }`}
                                         >
-                                            {etapa.numero < etapaAtual ? '✓' : etapa.numero}
+                                            {etapa.numero < etapaAtual
+                                                ? <Check size={18} strokeWidth={3} aria-hidden="true" />
+                                                : etapa.numero}
                                         </span>
 
                                         <span className="cadastro-usuario-etapa-titulo">
