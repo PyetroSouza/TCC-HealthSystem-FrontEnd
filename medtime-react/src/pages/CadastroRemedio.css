@@ -306,6 +306,26 @@
   line-height: 1.5;
 }
 
+.anexar-imagem {
+    position: relative;
+}
+
+.anexar-imagem input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    opacity: 0;
+}
+
+.anexar-imagem input:focus-visible + .area-upload {
+    border-style: solid;
+    border-color: #1D6FA4;
+    background-color: #F0F7FF;
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
 
 
 @media (max-width: 800px) {

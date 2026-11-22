@@ -138,6 +138,28 @@
     margin-bottom: 0;
 }
 
+.card_paciente {
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card_paciente:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+}
+
+.card_paciente:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card_paciente {
+        transition: none;
+        transform: none;
+    }
+}
+
 
 @media (max-width: 600px) {
     .cabecalho-pacientes-inicio {

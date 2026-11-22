@@ -51,6 +51,18 @@ function CardPaciente({ paciente, aoClicar, token }) {
         <article
             className="card_paciente"
             onClick={aoClicar}
+            onKeyDown={(evento) => {
+                // Só reage ao teclado quando o foco está no próprio card
+                if (evento.target !== evento.currentTarget) return
+
+                if (evento.key === 'Enter' || evento.key === ' ') {
+                    evento.preventDefault()
+                    aoClicar?.()
+                }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Abrir dashboard de ${paciente.nome}`}
         >
             <div
                 className="avatar"
