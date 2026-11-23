@@ -95,9 +95,9 @@ function MinhaConta({ usuario, aoVoltar, aoSair }) {
 
           <h1>{nome}</h1>
           <p>Minha Conta • Cuidador</p>
-        </div>
+        </motion.div>
 
-        <div className="minha-conta-conteudo">
+        <motion.div className="minha-conta-conteudo" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.14 }}>
           <div className="minha-conta-cabecalho-acoes">
             <h2>Informações pessoais</h2>
             <button type="button" className="minha-conta-sair" onClick={aoSair}>
