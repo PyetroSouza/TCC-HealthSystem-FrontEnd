@@ -61,6 +61,7 @@ function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
                 <img
                   src={usuario.foto}
                   alt={`Foto de ${nomeUsuario}`}
+                  referrerPolicy="no-referrer"
                   className="imagem-perfil"
                 />
               ) : (
