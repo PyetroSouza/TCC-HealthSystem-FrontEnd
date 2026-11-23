@@ -186,13 +186,6 @@ function App() {
     }
   }, [usuarioAutenticado?.jwt])
 
-  // Invalida respostas pendentes quando a tela muda.
-  useEffect(() => {
-    return () => {
-      requisicaoDadosRef.current += 1
-    }
-  }, [telaAtual])
-
   useAutoRefresh(atualizarDados, {
     enabled:
       Boolean(usuarioAutenticado?.jwt) &&
