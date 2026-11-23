@@ -11,25 +11,48 @@ import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
-const PainelAutenticacao = lazy(() => import('./components/auth/PainelAutenticacao'))
-const VerificacaoCodigo = lazy(() => import('./components/auth/VerificacaoCodigo'))
-const CadastroRemedio = lazy(() => import('./pages/CadastroRemedio.jsx'))
-const CadastroUsuario = lazy(() => import('./pages/CadastroUsuario.jsx'))
-const DashboardPaciente = lazy(() => import('./pages/DashboardPaciente.jsx'))
-const HistoricoMedicamentos = lazy(() => import('./pages/HistoricoMedicamentos.jsx'))
-const Inicio = lazy(() => import('./pages/Inicio.jsx'))
-const Login = lazy(() => import('./pages/Login.jsx'))
-const MedicamentosPaciente = lazy(() => import('./pages/MedicamentosPaciente.jsx'))
-const Pacientes = lazy(() => import('./pages/Pacientes.jsx'))
-const RecuperarSenha = lazy(() => import('./pages/RecuperarSenha.jsx'))
-const RedefinirSenha = lazy(() => import('./pages/RedefinirSenha.jsx'))
-const TodosMedicamentos = lazy(() => import('./pages/TodosMedicamentos.jsx'))
-const MinhaConta = lazy(() => import('./pages/MinhaConta.jsx'))
+const carregadoresTelas = {
+  'painel-autenticacao': () => import('./components/auth/PainelAutenticacao'),
+  'verificacao-codigo': () => import('./components/auth/VerificacaoCodigo'),
+  'cadastro-remedio': () => import('./pages/CadastroRemedio.jsx'),
+  'cadastro-usuario': () => import('./pages/CadastroUsuario.jsx'),
+  dashboard: () => import('./pages/DashboardPaciente.jsx'),
+  'historico-medicamentos': () => import('./pages/HistoricoMedicamentos.jsx'),
+  inicio: () => import('./pages/Inicio.jsx'),
+  login: () => import('./pages/Login.jsx'),
+  'medicamentos-paciente': () => import('./pages/MedicamentosPaciente.jsx'),
+  pacientes: () => import('./pages/Pacientes.jsx'),
+  'recuperar-senha': () => import('./pages/RecuperarSenha.jsx'),
+  'redefinir-senha': () => import('./pages/RedefinirSenha.jsx'),
+  'todos-medicamentos': () => import('./pages/TodosMedicamentos.jsx'),
+  'minha-conta': () => import('./pages/MinhaConta.jsx')
+}
+
+const preCarregarTela = (tela) => {
+  const carregar = carregadoresTelas[tela]
+  if (carregar) void carregar().catch(() => {})
+}
+
+const PainelAutenticacao = lazy(carregadoresTelas['painel-autenticacao'])
+const VerificacaoCodigo = lazy(carregadoresTelas['verificacao-codigo'])
+const CadastroRemedio = lazy(carregadoresTelas['cadastro-remedio'])
+const CadastroUsuario = lazy(carregadoresTelas['cadastro-usuario'])
+const DashboardPaciente = lazy(carregadoresTelas.dashboard)
+const HistoricoMedicamentos = lazy(carregadoresTelas['historico-medicamentos'])
+const Inicio = lazy(carregadoresTelas.inicio)
+const Login = lazy(carregadoresTelas.login)
+const MedicamentosPaciente = lazy(carregadoresTelas['medicamentos-paciente'])
+const Pacientes = lazy(carregadoresTelas.pacientes)
+const RecuperarSenha = lazy(carregadoresTelas['recuperar-senha'])
+const RedefinirSenha = lazy(carregadoresTelas['redefinir-senha'])
+const TodosMedicamentos = lazy(carregadoresTelas['todos-medicamentos'])
+const MinhaConta = lazy(carregadoresTelas['minha-conta'])
 
 function CarregandoTela() {
   return (
-    <div className="carregando-tela" role="status" aria-live="polite">
-      Carregando...
+    <div className="carregando-tela" role="status" aria-live="polite" aria-label="Carregando tela">
+      <span className="carregando-indicador" aria-hidden="true" />
+      <span>Preparando sua tela...</span>
     </div>
   )
 }
@@ -227,6 +250,45 @@ function App() {
   })
 
   useAppVersion(telaAtual)
+
+  // Antecipamos somente as próximas telas mais prováveis, em tempo ocioso.
+  useEffect(() => {
+    const conexao = navigator.connection
+    if (conexao?.saveData || ['slow-2g', '2g'].includes(conexao?.effectiveType)) return
+
+    const proximasTelas = telaExibida === 'login'
+      ? ['cadastro-usuario', 'recuperar-senha']
+      : telaExibida === 'inicio'
+        ? ['pacientes', 'dashboard']
+        : telaExibida === 'dashboard'
+          ? ['cadastro-remedio', 'medicamentos-paciente', 'historico-medicamentos', 'todos-medicamentos']
+          : []
+
+    if (proximasTelas.length === 0) return
+
+    let cancelado = false
+    let idleId
+    let timeoutId
+
+    const carregarEmSegundoPlano = () => {
+      if (cancelado) return
+      proximasTelas.forEach(preCarregarTela)
+    }
+
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(carregarEmSegundoPlano, { timeout: 2500 })
+    } else {
+      timeoutId = window.setTimeout(carregarEmSegundoPlano, 1200)
+    }
+
+    return () => {
+      cancelado = true
+      if (idleId !== undefined && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
+  }, [telaExibida])
 
   function voltarParaInicio() {
     setTelaAtual('inicio')
