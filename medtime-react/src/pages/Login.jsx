@@ -1,5 +1,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { motion, MotionConfig } from 'motion/react'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -103,7 +104,8 @@ function Login({
 
 
   return (
-    <main className="login-pagina">
+    <MotionConfig reducedMotion="user">
+    <motion.main className="login-pagina" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="login-container">
 
 
@@ -113,17 +115,17 @@ function Login({
           descricao="Organize medicamentos e acompanhe cada cuidado com mais tranquilidade."
         />
 
-        <section className="login-area-formulario">
-          <div className="login-formulario-conteudo">
+        <motion.section className="login-area-formulario" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.08, ease: "easeOut" }}>
+          <motion.div className="login-formulario-conteudo" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.12 } } }}>
 
             <div className="login-topo-mobile">
               <LogoMedTime largura={150} />
             </div>
 
-            <div className="login-cabecalho">
+            <motion.div className="login-cabecalho" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.35 }}>
               <h2>Bem-vindo de volta!</h2>
               <p>Entre com seus dados para acessar sua conta.</p>
-            </div>
+            </motion.div>
 
             <form
               className="login-formulario"
@@ -214,13 +216,15 @@ function Login({
                 </button>
               </div>
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.985 }}
+                transition={{ duration: 0.15 }}
                 className="login-botao-entrar"
                 type="submit"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Verificando...' : 'Entrar'}
-              </button>
+              </motion.button>
             </form>
 
 
@@ -261,10 +265,11 @@ function Login({
               </button>
             </div>
 
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </div>
-    </main>
+    </motion.main>
+    </MotionConfig>
   )
 }
 
