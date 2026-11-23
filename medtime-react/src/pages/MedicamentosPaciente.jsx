@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { MotionConfig, motion, AnimatePresence } from 'motion/react'
 import { ArrowLeft, Pill, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -121,7 +122,8 @@ function MedicamentosPaciente({
 
 
     return (
-        <section className="medicamentos-paciente">
+        <MotionConfig reducedMotion="user">
+        <motion.section className="medicamentos-paciente" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
             <button
                 type="button"
                 className="medicamentos-voltar"
@@ -131,13 +133,13 @@ function MedicamentosPaciente({
                 Voltar ao Dashboard
             </button>
 
-            <header className="medicamentos-cabecalho">
+            <motion.header className="medicamentos-cabecalho" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.06 }}>
                 <h1>Medicamentos cadastrados</h1>
                 <p>
                     Consulte e gerencie os medicamentos de{' '}
                     {pacienteSelecionado?.nome}
                 </p>
-            </header>
+            </motion.header>
 
             {idPaciente == null ? (
                 <p role="alert">Paciente não identificado.</p>
@@ -151,14 +153,14 @@ function MedicamentosPaciente({
                     <p>Nenhum medicamento cadastrado para este paciente.</p>
                 </div>
             ) : (
-                <div className="medicamentos-grid">
+                <motion.div className="medicamentos-grid" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.055 } } }}>
                     {medicamentos.map(medicamento => {
                         const id = medicamento.id_receita_medica
                         const expandido = expandidoId === id
                         const excluindo = excluindoId === id
 
                         return (
-                            <article className="medicamento-item" key={id}>
+                            <motion.article className="medicamento-item" key={id} variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.28 }}>
                                 <button
                                     type="button"
                                     className="medicamento-visualizar"
@@ -193,8 +195,8 @@ function MedicamentosPaciente({
                                     </div>
                                 </button>
 
-                                {expandido && (
-                                    <div className="medicamento-detalhes">
+                                <AnimatePresence initial={false}>{expandido && (
+                                    <motion.div className="medicamento-detalhes" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}>
                                         <p>
                                             <strong>Apresentação:</strong>{' '}
                                             {medicamento.tipo_dosagem || 'Não informada'}
@@ -212,8 +214,8 @@ function MedicamentosPaciente({
                                             <strong>Observações:</strong>{' '}
                                             {medicamento.descricao || 'Nenhuma'}
                                         </p>
-                                    </div>
-                                )}
+                                    </motion.div>
+                                )}</AnimatePresence>
 
                                 <div className="medicamento-acoes">
                                     <button
@@ -235,16 +237,19 @@ function MedicamentosPaciente({
                                         {excluindo ? 'Excluindo...' : 'Excluir'}
                                     </button>
                                 </div>
-                            </article>
+                            </motion.article>
                         )
                     })}
-                </div>
+                </motion.div>
             )}
 
             {medicamentoParaExcluir && (
-                <div className="modal-exclusao-overlay">
-                    <div
+                <motion.div className="modal-exclusao-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <motion.div
                         className="modal-exclusao"
+                        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96 }}
                         role="alertdialog"
                         aria-modal="true"
                         aria-labelledby="titulo-exclusao"
@@ -289,11 +294,12 @@ function MedicamentosPaciente({
                                     : 'Excluir medicamento'}
                             </button>
                         </div>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             )}
 
-        </section>
+        </motion.section>
+        </MotionConfig>
     )
 }
 
