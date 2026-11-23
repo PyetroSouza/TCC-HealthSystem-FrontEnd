@@ -122,7 +122,7 @@ function HistoricoMedicamentos({
                         {pacienteSelecionado?.nome}
                     </p>
                 </div>
-            </header>
+            </motion.header>
 
             {!pacienteIdentificado ? (
                 <p role="alert">Paciente não identificado.</p>
