@@ -24,8 +24,11 @@ export function useAppVersion(telaAtual) {
   useEffect(() => {
     alteracoesPendentes.current = false
 
-    function registrarAlteracao() {
-      alteracoesPendentes.current = true
+    function registrarAlteracao(evento) {
+      // Campos de busca não pertencem a formulários e não devem bloquear deploys.
+      if (evento.target?.closest?.('form')) {
+        alteracoesPendentes.current = true
+      }
     }
 
     document.addEventListener('input', registrarAlteracao, true)
