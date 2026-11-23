@@ -75,36 +75,19 @@ body {
     background: var(--color-background);
   }
 
-/* Microinterações globais e acessíveis */
-:where(button, a, input, select, textarea) {
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+
+/* Feedback visual consistente sem impor movimento a todos os elementos */
+:where(button, a) {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
-:where(button, a):focus-visible,
-:where(input, select, textarea):focus-visible {
+:where(button, a, input, select, textarea):focus-visible {
   outline: 3px solid color-mix(in srgb, var(--color-primary) 55%, white);
   outline-offset: 3px;
 }
 
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  :where(button:not(:disabled), a):active {
-    transform: scale(0.98);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  :where(button, a) {
+    transition: none;
   }
 }
-
