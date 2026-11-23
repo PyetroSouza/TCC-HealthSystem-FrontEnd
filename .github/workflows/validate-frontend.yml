@@ -1,0 +1,42 @@
+name: Validate MedTime frontend
+
+on:
+  push:
+    branches:
+      - feature/atualizacao-automatica
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "medtime-react/**"
+      - ".github/workflows/validate-frontend.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: medtime-react/package-lock.json
+
+      - name: Install dependencies
+        working-directory: medtime-react
+        run: npm ci
+
+      - name: Build production bundle
+        working-directory: medtime-react
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
+          VITE_CLOUDINARY_CLOUD_NAME: ${{ vars.VITE_CLOUDINARY_CLOUD_NAME }}
+          VITE_CLOUDINARY_UPLOAD_PRESET: ${{ vars.VITE_CLOUDINARY_UPLOAD_PRESET }}
