@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { MotionConfig, motion } from 'motion/react'
 import { ArrowLeft, History, CheckCircle2 } from 'lucide-react'
 import { buscarHistoricoMedicamentos } from '../services/api.js'
 import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
@@ -101,8 +102,8 @@ function HistoricoMedicamentos({
     )
 
     return (
-
-        <section className="historico-pagina">
+        <MotionConfig reducedMotion="user">
+        <motion.section className="historico-pagina" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: "easeOut" }}>
             <button
                 type="button"
                 className="historico-voltar"
@@ -112,7 +113,7 @@ function HistoricoMedicamentos({
                 Voltar ao Dashboard
             </button>
 
-            <header className="historico-cabecalho">
+            <motion.header className="historico-cabecalho" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.05 }}>
                 <History size={28} />
                 <div>
                     <h1>Histórico de Medicamentos</h1>
@@ -146,9 +147,12 @@ function HistoricoMedicamentos({
                     )}
 
                     {!carregando && !erro && historicoOrdenado.map((registro) => (
-                        <article
+                        <motion.article
                             className="historico-card"
                             key={registro.id_historico_medicamento}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.28 }}
                         >
                             <div className="historico-card-topo">
                                 <div>
@@ -183,11 +187,12 @@ function HistoricoMedicamentos({
                                     </strong>
                                 </div>
                             </div>
-                        </article>
+                        </motion.article>
                     ))}
                 </>
             )}
-        </section>
+        </motion.section>
+        </MotionConfig>
     )
 }
 
