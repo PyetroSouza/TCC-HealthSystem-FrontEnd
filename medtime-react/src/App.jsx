@@ -166,8 +166,8 @@ function App() {
     } finally {
       if (requisicaoAtual === requisicaoDadosRef.current) {
         setCarregandoPacientes(false)
+        consultaEmAndamentoRef.current = false
       }
-      consultaEmAndamentoRef.current = false
     }
   }, [
     telaAtual,
