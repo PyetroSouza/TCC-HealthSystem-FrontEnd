@@ -8,7 +8,8 @@ const TELAS_COM_DADOS_NAO_SALVOS = new Set([
   'cadastro-remedio',
   'recuperar-senha',
   'verificacao-recuperacao',
-  'redefinir-senha'
+  'redefinir-senha',
+  'minha-conta'
 ])
 
 /**
@@ -25,8 +26,11 @@ export function useAppVersion(telaAtual) {
     alteracoesPendentes.current = false
 
     function registrarAlteracao(evento) {
-      // Campos de busca não pertencem a formulários e não devem bloquear deploys.
-      if (evento.target?.closest?.('form')) {
+      const alvo = evento.target
+      const campoDeBusca = alvo?.closest?.('.search, .pacientes-pesquisa')
+
+      // Campos de dados, inclusive edições fora de <form>, protegem o usuário.
+      if (!campoDeBusca) {
         alteracoesPendentes.current = true
       }
     }
