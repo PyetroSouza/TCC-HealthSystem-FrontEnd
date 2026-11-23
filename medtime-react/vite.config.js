@@ -1,5 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+const appDirectory = dirname(fileURLToPath(import.meta.url))
+const envDirectory = resolve(appDirectory, '..')
 
 const buildId =
   process.env.RENDER_GIT_COMMIT ||
@@ -22,6 +27,7 @@ function manifestoDeVersao() {
 export default defineConfig({
   plugins: [react(), manifestoDeVersao()],
   base: './',
+  envDir: envDirectory,
   define: {
     'import.meta.env.VITE_APP_BUILD_ID': JSON.stringify(buildId)
   },
