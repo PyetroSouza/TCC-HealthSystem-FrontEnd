@@ -1,10 +1,11 @@
 import { AlertTriangle, Check, Pencil, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import {
     atualizarEstoqueAPI,
     buscarReceitasDoPaciente
 } from '../services/api.js'
+import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
 import './EstoquePaciente.css'
 function EstoquePaciente({ agenda = [], idUsuario, token }) {
     const [estoques, setEstoques] = useState([])
@@ -32,49 +33,96 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             .sort()
             .join('|')
     }, [agenda])
-    useEffect(() => {
-        let ativo = true
-        async function carregarEstoques() {
+    const estoquesCarregadosRef = useRef(false)
+    const requisicaoEstoqueRef = useRef(0)
+
+    const carregarEstoques = useCallback(async () => {
+        if (!idUsuario || !token) {
+            setEstoques([])
+            setCarregando(false)
+            setEditandoId(null)
+            return
+        }
+
+        if (!chaveReceitas) {
             setEstoques([])
             setErro(null)
+            setCarregando(false)
             setEditandoId(null)
-            if (!idUsuario || !chaveReceitas || !token) {
-                setCarregando(false)
-                return
-            }
+            return
+        }
+
+        if (editandoId !== null || salvando) return
+
+        const requisicaoAtual = ++requisicaoEstoqueRef.current
+        const primeiraCarga = !estoquesCarregadosRef.current
+
+        if (primeiraCarga) {
             setCarregando(true)
-            try {
-                const receitas = await buscarReceitasDoPaciente(
-                    idUsuario,
-                    token
+            setErro(null)
+        }
+
+        try {
+            const receitas = await buscarReceitasDoPaciente(
+                idUsuario,
+                token
+            )
+
+            if (requisicaoAtual !== requisicaoEstoqueRef.current) return
+
+            const idsAgenda = new Set(
+                chaveReceitas.split(',').map(Number)
+            )
+            const estoquesEncontrados = receitas.filter(
+                receita => idsAgenda.has(
+                    Number(receita.id_receita_medica)
                 )
-                if (!ativo) return
-                const idsAgenda = new Set(
-                    chaveReceitas.split(',').map(Number)
-                )
-                const estoquesEncontrados = receitas.filter(
-                    receita => idsAgenda.has(
-                        Number(receita.id_receita_medica)
-                    )
-                )
-                setEstoques(estoquesEncontrados)
-            } catch (erro) {
-                if (ativo) {
-                    setErro(erro.message)
-                }
-            } finally {
-                if (ativo) {
-                    setCarregando(false)
-                }
+            )
+
+            setEstoques(estoquesEncontrados)
+            setErro(null)
+            estoquesCarregadosRef.current = true
+        } catch (erro) {
+            if (requisicaoAtual !== requisicaoEstoqueRef.current) return
+
+            if (primeiraCarga) {
+                setErro(erro.message)
+            } else {
+                console.warn('Falha ao atualizar o estoque:', erro)
+            }
+        } finally {
+            if (requisicaoAtual === requisicaoEstoqueRef.current) {
+                setCarregando(false)
             }
         }
-        carregarEstoques()
+    }, [
+        idUsuario,
+        token,
+        chaveReceitas,
+        editandoId,
+        salvando
+    ])
+
+    useEffect(() => {
+        estoquesCarregadosRef.current = false
+        requisicaoEstoqueRef.current += 1
+
         return () => {
-            ativo = false
+            requisicaoEstoqueRef.current += 1
         }
-    }, [idUsuario, token, chaveReceitas, chaveConfirmacoes])
+    }, [idUsuario, token])
+
+    useAutoRefresh(carregarEstoques, {
+        enabled: Boolean(idUsuario && chaveReceitas && token),
+        intervalMs: 5 * 60_000,
+        minFocusIntervalMs: 30_000,
+        refreshKey: `${idUsuario}:${chaveReceitas}:${chaveConfirmacoes}`
+    })
+
+
     function iniciarEdicao(item) {
         if (salvando || item.id_estoque == null) return
+        requisicaoEstoqueRef.current += 1
         setEditandoId(item.id_estoque)
         setNovaQuantidade(
             String(item.quantidade_em_estoque ?? '')
@@ -113,6 +161,7 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
             toast.error('Não foi possível identificar o paciente ou medicamento.')
             return
         }
+        requisicaoEstoqueRef.current += 1
         setSalvando(true)
         try {
             await atualizarEstoqueAPI(

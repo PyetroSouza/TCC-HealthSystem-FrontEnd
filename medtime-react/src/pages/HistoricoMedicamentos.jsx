@@ -1,7 +1,8 @@
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, History, CheckCircle2 } from 'lucide-react'
 import { buscarHistoricoMedicamentos } from '../services/api.js'
+import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
 import './HistoricoMedicamento.css'
 
 function formatarDataHora(valor) {
@@ -28,57 +29,68 @@ function HistoricoMedicamentos({
     token
 }) {
     const [historico, setHistorico] = useState([])
-    const [carregando, setCarregando] = useState(true)
+    const [carregando, setCarregando] = useState(false)
     const [erro, setErro] = useState(null)
     const idPaciente =
         pacienteSelecionado?.id_paciente ??
         pacienteSelecionado?.id
 
+    const historicoCarregadoRef = useRef(false)
+    const requisicaoRef = useRef(0)
 
+    const carregarHistorico = useCallback(async () => {
+        if (!idPaciente || !token) return
 
-    useEffect(() => {
-        let ativo = true
+        const requisicaoAtual = ++requisicaoRef.current
+        const primeiraCarga = !historicoCarregadoRef.current
 
-        async function carregarHistorico() {
+        if (primeiraCarga) {
             setCarregando(true)
             setErro(null)
-            setHistorico([])
+        }
 
-            try {
-                const registros = await buscarHistoricoMedicamentos(
-                    idPaciente,
-                    token
-                )
+        try {
+            const registros = await buscarHistoricoMedicamentos(
+                idPaciente,
+                token
+            )
 
-                if (ativo) {
-                    setHistorico(registros)
-                }
+            if (requisicaoAtual !== requisicaoRef.current) return
 
-            } catch (erro) {
-                if (ativo) {
-                    console.error('Erro ao carregar histórico:', erro)
-                    setHistorico([])
-                    setErro(
-                        erro.message || 'Erro ao carregar histórico'
-                    )
-                }
+            setHistorico(registros)
+            setErro(null)
+            historicoCarregadoRef.current = true
+        } catch (erro) {
+            if (requisicaoAtual !== requisicaoRef.current) return
 
-            } finally {
-                if (ativo) {
-                    setCarregando(false)
-                }
+            if (primeiraCarga) {
+                setHistorico([])
+                setErro(erro.message || 'Erro ao carregar histórico')
+            } else {
+                console.warn('Falha ao atualizar o histórico:', erro)
             }
-        }
-
-        if (idPaciente && token) {
-            carregarHistorico()
-        }
-
-        return () => {
-            ativo = false
+        } finally {
+            if (requisicaoAtual === requisicaoRef.current) {
+                setCarregando(false)
+            }
         }
     }, [idPaciente, token])
 
+    useEffect(() => {
+        historicoCarregadoRef.current = false
+        requisicaoRef.current += 1
+
+        return () => {
+            requisicaoRef.current += 1
+        }
+    }, [idPaciente, token])
+
+    useAutoRefresh(carregarHistorico, {
+        enabled: Boolean(idPaciente && token),
+        intervalMs: 60_000,
+        minFocusIntervalMs: 10_000,
+        refreshKey: idPaciente
+    })
 
 
     const pacienteIdentificado = Boolean(idPaciente)

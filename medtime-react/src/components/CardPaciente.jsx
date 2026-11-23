@@ -1,9 +1,10 @@
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { buscarProximoMedicamento } from '../services/proximoMedicamentoService.js'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
 import { calcularIdade } from '../utils/calcularIdade.js'
+import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
 
 function CardPaciente({ paciente, aoClicar, token }) {
     const corAvatar = gerarCorAvatar(paciente.nome)
@@ -12,39 +13,50 @@ function CardPaciente({ paciente, aoClicar, token }) {
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(false)
 
-    useEffect(() => {
-        let ativo = true
+    const idPaciente = paciente.id_paciente ?? paciente.id
+    const requisicaoRef = useRef(0)
 
-        async function carregarProximoMedicamento() {
+    const carregarProximoMedicamento = useCallback(async ({ inicial = false } = {}) => {
+        const requisicaoAtual = ++requisicaoRef.current
+
+        if (inicial) {
             setCarregando(true)
             setErro(false)
             setProximoMedicamento(null)
+        }
 
-            try {
-                const medicamento = await buscarProximoMedicamento(paciente.id_paciente ?? paciente.id,
-                    token)
+        try {
+            const medicamento = await buscarProximoMedicamento(idPaciente, token)
 
-                if (ativo) {
-                    setProximoMedicamento(medicamento)
-                }
-            } catch (erro) {
-                if (ativo) {
-                    console.error('Erro ao buscar próximo medicamento:', erro)
-                    setErro(true)
-                }
-            } finally {
-                if (ativo) {
-                    setCarregando(false)
-                }
+            if (requisicaoAtual !== requisicaoRef.current) return
+
+            setProximoMedicamento(medicamento)
+            setErro(false)
+        } catch (erro) {
+            if (requisicaoAtual !== requisicaoRef.current) return
+
+            console.error('Erro ao buscar próximo medicamento:', erro)
+            setErro(true)
+        } finally {
+            if (requisicaoAtual === requisicaoRef.current) {
+                setCarregando(false)
             }
         }
+    }, [idPaciente, token])
 
-        carregarProximoMedicamento()
-
+    useEffect(() => {
         return () => {
-            ativo = false
+            requisicaoRef.current += 1
         }
-    }, [paciente.id_paciente, paciente.id, token])
+    }, [])
+
+    useAutoRefresh(carregarProximoMedicamento, {
+        enabled: Boolean(idPaciente && token),
+        intervalMs: 5 * 60_000,
+        minFocusIntervalMs: 30_000,
+        refreshKey: idPaciente
+    })
+
 
 
     return (

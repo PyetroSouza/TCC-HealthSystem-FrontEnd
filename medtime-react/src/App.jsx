@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast, Toaster } from 'sonner'
 import './App.css'
 import PainelAutenticacao from './components/auth/PainelAutenticacao'
@@ -18,6 +18,8 @@ import RedefinirSenha from './pages/RedefinirSenha.jsx'
 import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
 import MinhaConta from './pages/MinhaConta.jsx'
 import { useAuth } from './hooks/useAuth.js'
+import { useAutoRefresh } from './hooks/useAutoRefresh.js'
+import { useAppVersion } from './hooks/useAppVersion.js'
 import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
@@ -44,7 +46,6 @@ function App() {
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
   const [dadosGoogle, setDadosGoogle] = useState(null)
-  const [versaoPacientes, setVersaoPacientes] = useState(0)
 
   const {
     usuario: usuarioAutenticado,
@@ -83,109 +84,119 @@ function App() {
 
 
 
-  useEffect(() => {
-    if (
-      telaAtual !== 'inicio' ||
-      !usuarioAutenticado?.jwt ||
-      perfilAutenticado !== 'cuidador'
-    ) {
-      return
-    }
+  const requisicaoDadosRef = useRef(0)
+  const consultaEmAndamentoRef = useRef(false)
+  const dadosCarregadosRef = useRef(false)
+  const telasComDadosAtualizaveis = ['inicio', 'pacientes']
 
-    let ativo = true
+  const atualizarDados = useCallback(async () => {
+    if (consultaEmAndamentoRef.current) return
 
-    async function carregarPacientes() {
+    const requisicaoAtual = ++requisicaoDadosRef.current
+    const telaDaRequisicao = telaAtual
+    const token = usuarioAutenticado?.jwt
+    const primeiraCarga = !dadosCarregadosRef.current
+
+    if (!token || perfilAutenticado !== 'cuidador') return
+
+    consultaEmAndamentoRef.current = true
+
+    if (primeiraCarga) {
       setCarregandoPacientes(true)
       setErroPacientes(null)
+    }
 
-      try {
-        const pacientesRecebidos = await buscarMeusPacientes(
-          usuarioAutenticado.jwt
-        )
+    try {
+      const pacientesRecebidos = await buscarMeusPacientes(token)
 
-        if (!ativo) return
+      if (requisicaoAtual !== requisicaoDadosRef.current) return
 
-        setPacientes(pacientesRecebidos)
-      } catch (erro) {
-        if (!ativo) return
+      setPacientes(pacientesRecebidos)
+      setErroPacientes(null)
+      dadosCarregadosRef.current = true
 
-        console.error(
-          'Erro ao carregar pacientes vinculados:',
-          erro
-        )
+      if (telaDaRequisicao !== 'inicio') return
 
-        setErroPacientes(erro.message)
-      } finally {
-        if (ativo) {
-          setCarregandoPacientes(false)
-        }
+      if (pacientesRecebidos.length === 0) {
+        setAlertasPendentes(0)
+        return
       }
-    }
 
-    carregarPacientes()
-
-    return () => {
-      ativo = false
-    }
-  }, [telaAtual, usuarioAutenticado?.jwt, perfilAutenticado, versaoPacientes])
-
-
-
-  useEffect(() => {
-    if (
-      telaAtual !== 'inicio' ||
-      pacientes.length === 0 ||
-      erroPacientes ||
-      !usuarioAutenticado?.jwt
-    ) {
-      return
-    }
-
-    let ativo = true
-
-    async function carregarAlertas() {
       try {
-        const resultados = await Promise.all(
+        const hoje = new Date()
+        const dataLocal = [
+          hoje.getFullYear(),
+          String(hoje.getMonth() + 1).padStart(2, '0'),
+          String(hoje.getDate()).padStart(2, '0')
+        ].join('-')
 
-          pacientes.map(paciente => {
-            const hoje = new Date()
-
-            const dataLocal = [
-              hoje.getFullYear(),
-              String(hoje.getMonth() + 1).padStart(2, '0'),
-              String(hoje.getDate()).padStart(2, '0')
-            ].join('-')
-
-            return buscarAgendaMedicamentos(
+        const agendas = await Promise.all(
+          pacientesRecebidos.map(paciente =>
+            buscarAgendaMedicamentos(
               paciente.id_paciente ?? paciente.id,
               dataLocal,
-              usuarioAutenticado.jwt
+              token
             )
-          })
-
+          )
         )
 
-        const total = resultados
-          .flatMap(resultado =>
-            Array.isArray(resultado) ? resultado : []
-          )
+        if (requisicaoAtual !== requisicaoDadosRef.current) return
+
+        const totalAlertas = agendas
+          .flatMap(agenda => Array.isArray(agenda) ? agenda : [])
           .filter(item =>
             String(item.status ?? '').toUpperCase() === 'ATRASADO' &&
             !item.confirmado
           ).length
 
-        if (ativo) setAlertasPendentes(total)
+        setAlertasPendentes(totalAlertas)
       } catch (erro) {
-        console.error('Erro ao carregar alertas:', erro)
+        console.error('Não foi possível atualizar os alertas:', erro)
+      }
+    } catch (erro) {
+      if (requisicaoAtual !== requisicaoDadosRef.current) return
+
+      if (primeiraCarga) {
+        setErroPacientes(
+          erro.message || 'Não foi possível carregar os pacientes.'
+        )
+      } else {
+        console.warn('Falha na atualização automática dos pacientes:', erro)
+      }
+    } finally {
+      if (requisicaoAtual === requisicaoDadosRef.current) {
+        setCarregandoPacientes(false)
+        consultaEmAndamentoRef.current = false
       }
     }
+  }, [
+    telaAtual,
+    usuarioAutenticado?.jwt,
+    perfilAutenticado
+  ])
 
-    carregarAlertas()
+  // Uma nova sessão deve carregar os dados do novo usuário.
+  useEffect(() => {
+    dadosCarregadosRef.current = false
+    requisicaoDadosRef.current += 1
+    consultaEmAndamentoRef.current = false
 
     return () => {
-      ativo = false
+      requisicaoDadosRef.current += 1
     }
-  }, [telaAtual, pacientes, erroPacientes, usuarioAutenticado?.jwt])
+  }, [usuarioAutenticado?.jwt])
+
+  useAutoRefresh(atualizarDados, {
+    enabled:
+      Boolean(usuarioAutenticado?.jwt) &&
+      perfilAutenticado === 'cuidador' &&
+      telasComDadosAtualizaveis.includes(telaAtual),
+    intervalMs: 60_000,
+    minFocusIntervalMs: 10_000,
+    refreshKey: telaAtual
+  })
+
+  useAppVersion(telaAtual)
 
   function voltarParaInicio() {
     setTelaAtual('inicio')
@@ -211,6 +222,7 @@ function App() {
     sair()
 
     setPacientes([])
+    dadosCarregadosRef.current = false
     setPacienteSelecionado(null)
     setMedicamentoEmEdicao(null)
     setAlertasPendentes(0)
@@ -392,7 +404,7 @@ function App() {
           <Inicio
             token={usuarioAutenticado?.jwt}
             nomeUsuario={usuarioAutenticado?.nome}
-            aoAtualizarPacientes={() => setVersaoPacientes(v => v + 1)}
+            aoAtualizarPacientes={() => { void atualizarDados() }}
             pacientes={pacientes}
             carregandoPacientes={carregandoPacientes}
             erroPacientes={erroPacientes}

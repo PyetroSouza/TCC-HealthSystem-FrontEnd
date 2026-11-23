@@ -1,11 +1,12 @@
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Pill, Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
     buscarReceitasDoPaciente,
     excluirMedicamentoCompleto
 } from '../services/api.js'
+import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
 import './MedicamentosPaciente.css'
 import './DashboardPaciente.css'
 
@@ -16,7 +17,7 @@ function MedicamentosPaciente({
     token
 }) {
     const [medicamentos, setMedicamentos] = useState([])
-    const [carregando, setCarregando] = useState(true)
+    const [carregando, setCarregando] = useState(false)
     const [erro, setErro] = useState(null)
     const [expandidoId, setExpandidoId] = useState(null)
     const [excluindoId, setExcluindoId] = useState(null)
@@ -27,45 +28,64 @@ function MedicamentosPaciente({
         pacienteSelecionado?.id ??
         pacienteSelecionado?.id_usuario
 
-    useEffect(() => {
-        let ativo = true
+    const medicamentosCarregadosRef = useRef(false)
+    const requisicaoRef = useRef(0)
 
-        async function carregarMedicamentos() {
+    const carregarMedicamentos = useCallback(async () => {
+        if (!idPaciente || !token || excluindoId !== null) return
+
+        const requisicaoAtual = ++requisicaoRef.current
+        const primeiraCarga = !medicamentosCarregadosRef.current
+
+        if (primeiraCarga) {
             setCarregando(true)
             setErro(null)
+        }
 
-            try {
-                const receitas = await buscarReceitasDoPaciente(
-                    idPaciente,
-                    token
-                )
+        try {
+            const receitas = await buscarReceitasDoPaciente(idPaciente, token)
 
-                if (!ativo) return
+            if (requisicaoAtual !== requisicaoRef.current) return
 
-                setMedicamentos(
-                    receitas
-                )
-            } catch (erro) {
-                if (!ativo) return
+            setMedicamentos(receitas)
+            setErro(null)
+            medicamentosCarregadosRef.current = true
+        } catch (erro) {
+            if (requisicaoAtual !== requisicaoRef.current) return
 
-                setErro(erro.message)
-            } finally {
-                if (ativo) setCarregando(false)
+            if (primeiraCarga) {
+                setErro(erro.message || 'Erro ao carregar medicamentos.')
+            } else {
+                console.warn('Falha ao atualizar medicamentos:', erro)
+            }
+        } finally {
+            if (requisicaoAtual === requisicaoRef.current) {
+                setCarregando(false)
             }
         }
+    }, [idPaciente, token, excluindoId])
 
-        if (idPaciente != null) {
-            carregarMedicamentos()
-        }
+    useEffect(() => {
+        medicamentosCarregadosRef.current = false
+        requisicaoRef.current += 1
+
         return () => {
-            ativo = false
+            requisicaoRef.current += 1
         }
     }, [idPaciente, token])
+
+    useAutoRefresh(carregarMedicamentos, {
+        enabled: Boolean(idPaciente && token),
+        intervalMs: 60_000,
+        minFocusIntervalMs: 10_000,
+        refreshKey: idPaciente
+    })
 
 
     async function excluirMedicamento(medicamento) {
         if (excluindoId !== null) return false
 
+        requisicaoRef.current += 1
         setExcluindoId(medicamento.id_receita_medica)
 
         try {
