@@ -26,6 +26,24 @@ import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
 
+function TransicaoTelaPublica({ tela, children }) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={tela}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </MotionConfig>
+  )
+}
+
 function App() {
   const [telaAtual, setTelaAtual] = useState(() => {
     try {
@@ -236,7 +254,7 @@ function App() {
 
   if (telaExibida === 'login') {
     return (
-      <>
+      <TransicaoTelaPublica tela={telaExibida}>
         <Toaster
           position="top-right"
           richColors
@@ -284,13 +302,13 @@ function App() {
           }}
 
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
   if (telaExibida === 'cadastro-usuario') {
     return (
-      <>
+      <TransicaoTelaPublica tela={telaExibida}>
         <Toaster
           position="top-right"
           richColors
@@ -313,24 +331,24 @@ function App() {
             setTelaAtual('login')
           }}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
   if (telaExibida === 'redefinir-senha') {
     return (
-      <>
+      <TransicaoTelaPublica tela={telaExibida}>
         <Toaster position="top-right" richColors closeButton />
 
         <RedefinirSenha
           aoVoltarLogin={() => setTelaAtual('login')}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
   if (telaExibida === 'recuperar-senha') {
     return (
-      <>
+      <TransicaoTelaPublica tela={telaExibida}>
         <Toaster position="top-right" richColors closeButton />
 
         <RecuperarSenha
@@ -340,14 +358,14 @@ function App() {
             setTelaAtual('verificacao-recuperacao')
           }}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
 
   if (telaExibida === 'verificacao-recuperacao') {
     return (
-      <>
+      <TransicaoTelaPublica tela={telaExibida}>
         <Toaster
           position="top-right"
           richColors
@@ -379,7 +397,7 @@ function App() {
 
           </div>
         </main>
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
