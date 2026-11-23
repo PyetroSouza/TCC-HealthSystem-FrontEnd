@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { toast, Toaster } from 'sonner'
 import './App.css'
 import PainelAutenticacao from './components/auth/PainelAutenticacao'
@@ -399,6 +400,15 @@ function App() {
       />
 
       <main className="conteudo">
+        <MotionConfig reducedMotion="user">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={telaExibida}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
         {telaExibida === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
@@ -487,6 +497,9 @@ function App() {
           />
         )}
 
+            </motion.div>
+          </AnimatePresence>
+        </MotionConfig>
       </main>
     </div>
   )
