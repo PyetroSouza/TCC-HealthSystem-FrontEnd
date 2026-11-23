@@ -4,6 +4,12 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { toast, Toaster } from 'sonner'
 import './App.css'
 import Cabecalho from './components/Cabecalho.jsx'
+import { useAuth } from './hooks/useAuth.js'
+import { useAutoRefresh } from './hooks/useAutoRefresh.js'
+import { useAppVersion } from './hooks/useAppVersion.js'
+import { buscarAgendaMedicamentos } from './services/api.js'
+import { buscarMeusPacientes } from './services/vinculoService.js'
+import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
 const PainelAutenticacao = lazy(() => import('./components/auth/PainelAutenticacao'))
 const VerificacaoCodigo = lazy(() => import('./components/auth/VerificacaoCodigo'))
@@ -27,12 +33,6 @@ function CarregandoTela() {
     </div>
   )
 }
-import { useAuth } from './hooks/useAuth.js'
-import { useAutoRefresh } from './hooks/useAutoRefresh.js'
-import { useAppVersion } from './hooks/useAppVersion.js'
-import { buscarAgendaMedicamentos } from './services/api.js'
-import { buscarMeusPacientes } from './services/vinculoService.js'
-import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
 
 function TransicaoTelaPublica({ tela, children }) {
