@@ -888,8 +888,11 @@ function CadastroRemedio({
           </div>
 
           <div className="acoes-formulario">
-            <button
+            <motion.button
               type="submit"
+              whileTap={{ scale: 0.98 }}
+              animate={{ opacity: isSubmitting ? 0.75 : 1 }}
+              transition={{ duration: 0.18 }}
               className="botao-adicionar-medicamento"
               disabled={
                 isSubmitting ||
@@ -904,7 +907,7 @@ function CadastroRemedio({
                   ? 'Salvar alterações'
                   : 'Adicionar medicamento'
               }
-            </button>
+            </motion.button>
           </div>
         </motion.div>
       </form>
