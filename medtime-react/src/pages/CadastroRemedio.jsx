@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'motion/react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import AnexarImagem from '../components/AnexarImagem'
@@ -478,14 +479,14 @@ function CadastroRemedio({
 
       <form className="formulario-cadastro-remedio" onSubmit={handleSubmit(adicionarMedicamento, formularioInvalido)}>
 
-        <div className="header-formulario">
+        <motion.div className="header-formulario" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: 'easeOut' }}>
           <h1>{modoEdicao ? 'Editar Medicamento' : 'Cadastro de Medicamento'}</h1>
           <p>
             {modoEdicao
               ? 'Atualize as informações do medicamento conforme necessário.'
               : 'Preencha as informações do medicamento para adicioná-lo ao tratamento.'}
           </p>
-        </div>
+        </motion.div>
 
         {erroOpcoes && (
           <div className="mensagem-erro" role="alert">
@@ -506,7 +507,7 @@ function CadastroRemedio({
           </p>
         )}
 
-        <div className="cadastrar">
+        <motion.div className="cadastrar" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}>
 
           <AnexarImagem
             aoSelecionarImagem={setImagemMedicamento}
@@ -839,9 +840,9 @@ function CadastroRemedio({
             )}
 
           </div>
-        </div>
+        </motion.div>
 
-        <div className="campos-inferiores">
+        <motion.div className="campos-inferiores" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.16, ease: "easeOut" }}>
           <div className="campo-formulario">
             <label htmlFor="quantidade">
               Quantidade total do tratamento
@@ -905,7 +906,7 @@ function CadastroRemedio({
               }
             </button>
           </div>
-        </div>
+        </motion.div>
       </form>
     </div>
   )
