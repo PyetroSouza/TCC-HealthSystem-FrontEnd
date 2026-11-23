@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MotionConfig, motion } from 'motion/react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth.js'
 import { atualizarPerfilAPI } from '../services/authService.js'
@@ -71,7 +72,8 @@ function MinhaConta({ usuario, aoVoltar, aoSair }) {
   }
 
   return (
-    <section className="minha-conta">
+    <MotionConfig reducedMotion="user">
+    <motion.section className="minha-conta" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: "easeOut" }}>
       <button
         type="button"
         className="minha-conta-voltar"
@@ -81,8 +83,8 @@ function MinhaConta({ usuario, aoVoltar, aoSair }) {
         Voltar
       </button>
 
-      <div className="minha-conta-card">
-        <div className="minha-conta-capa">
+      <motion.div className="minha-conta-card" initial={{ opacity: 0, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, delay: 0.05 }}>
+        <motion.div className="minha-conta-capa" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <div className="minha-conta-avatar">
             {usuario?.foto ? (
               <img src={usuario.foto} alt={`Foto de ${nome}`} />
@@ -139,7 +141,7 @@ function MinhaConta({ usuario, aoVoltar, aoSair }) {
             </div>
           )}
 
-          <div className="minha-conta-grid">
+          <motion.div className="minha-conta-grid" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }}>
             {editando ? (
               <label className="minha-conta-campo">
                 <UserRound size={20} />
@@ -179,22 +181,23 @@ function MinhaConta({ usuario, aoVoltar, aoSair }) {
               titulo="Verificação de e-mail"
               valor={usuario?.email_verificado ? 'Verificado' : 'Não verificado'}
             />
-          </div>
-        </div>
-      </div>
-    </section>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </motion.section>
+    </MotionConfig>
   )
 }
 
 function Campo({ icon: Icone, titulo, valor }) {
   return (
-    <div className="minha-conta-campo">
+    <motion.div className="minha-conta-campo" variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.25 }}>
       <Icone size={20} />
       <div>
         <span>{titulo}</span>
         <strong>{valor}</strong>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
