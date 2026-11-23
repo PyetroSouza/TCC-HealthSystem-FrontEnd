@@ -70,10 +70,31 @@
 }
 
 .carregando-tela {
-  display: grid;
+  display: flex;
   min-height: 180px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   color: #64748B;
   font-size: 14px;
   font-weight: 500;
+}
+
+.carregando-indicador {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #DCEAE4;
+  border-top-color: #009951;
+  border-radius: 50%;
+  animation: medtime-carregando 0.75s linear infinite;
+}
+
+@keyframes medtime-carregando {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carregando-indicador {
+    animation-duration: 1.8s;
+  }
 }
