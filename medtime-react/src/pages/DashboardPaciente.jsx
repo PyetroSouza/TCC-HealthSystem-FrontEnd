@@ -220,31 +220,6 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             </button>
                         </div>
                     </div>
-
-
-                    <div className="dados-pulseira">
-                        <div className="temperatura">
-                            <span>—</span>
-                            <p>Temperatura Corporal</p>
-                        </div>
-
-                        <div className="frequencia-cardiaca">
-                            <span>—</span>
-                            <p>Frequência Cardíaca</p>
-                        </div>
-
-                        <div className="pressao-sanguinea">
-                            <span>—</span>
-                            <p>Pressão Sanguínea</p>
-                        </div>
-                    </div>
-
-                    <p className="aviso-dados-pulseira">
-                        Dados da pulseira indisponíveis
-                    </p>
-
-
-
                 </aside>
 
 
