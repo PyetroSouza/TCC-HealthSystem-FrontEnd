@@ -1,23 +1,32 @@
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { toast, Toaster } from 'sonner'
 import './App.css'
-import PainelAutenticacao from './components/auth/PainelAutenticacao'
-import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
-import CadastroRemedio from './pages/CadastroRemedio.jsx'
-import CadastroUsuario from './pages/CadastroUsuario.jsx'
-import DashboardPaciente from './pages/DashboardPaciente.jsx'
-import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
-import Inicio from './pages/Inicio.jsx'
-import Login from './pages/Login.jsx'
-import MedicamentosPaciente from './pages/MedicamentosPaciente.jsx'
-import Pacientes from './pages/Pacientes.jsx'
-import RecuperarSenha from './pages/RecuperarSenha.jsx'
-import RedefinirSenha from './pages/RedefinirSenha.jsx'
-import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
-import MinhaConta from './pages/MinhaConta.jsx'
+
+const PainelAutenticacao = lazy(() => import('./components/auth/PainelAutenticacao'))
+const VerificacaoCodigo = lazy(() => import('./components/auth/VerificacaoCodigo'))
+const CadastroRemedio = lazy(() => import('./pages/CadastroRemedio.jsx'))
+const CadastroUsuario = lazy(() => import('./pages/CadastroUsuario.jsx'))
+const DashboardPaciente = lazy(() => import('./pages/DashboardPaciente.jsx'))
+const HistoricoMedicamentos = lazy(() => import('./pages/HistoricoMedicamentos.jsx'))
+const Inicio = lazy(() => import('./pages/Inicio.jsx'))
+const Login = lazy(() => import('./pages/Login.jsx'))
+const MedicamentosPaciente = lazy(() => import('./pages/MedicamentosPaciente.jsx'))
+const Pacientes = lazy(() => import('./pages/Pacientes.jsx'))
+const RecuperarSenha = lazy(() => import('./pages/RecuperarSenha.jsx'))
+const RedefinirSenha = lazy(() => import('./pages/RedefinirSenha.jsx'))
+const TodosMedicamentos = lazy(() => import('./pages/TodosMedicamentos.jsx'))
+const MinhaConta = lazy(() => import('./pages/MinhaConta.jsx'))
+
+function CarregandoTela() {
+  return (
+    <div className="carregando-tela" role="status" aria-live="polite">
+      Carregando...
+    </div>
+  )
+}
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoRefresh } from './hooks/useAutoRefresh.js'
 import { useAppVersion } from './hooks/useAppVersion.js'
@@ -37,7 +46,9 @@ function TransicaoTelaPublica({ tela, children }) {
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
         >
-          {children}
+          <Suspense fallback={<CarregandoTela />}>
+            {children}
+          </Suspense>
         </motion.div>
       </AnimatePresence>
     </MotionConfig>
@@ -427,6 +438,7 @@ function App() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
             >
+              <Suspense fallback={<CarregandoTela />}>
         {telaExibida === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
@@ -514,7 +526,7 @@ function App() {
             aoSair={encerrarSessao}
           />
         )}
-
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </MotionConfig>
