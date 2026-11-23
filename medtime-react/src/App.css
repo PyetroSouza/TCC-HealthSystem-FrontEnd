@@ -68,3 +68,12 @@
     padding: 24px;
   }
 }
+
+.carregando-tela {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  color: #64748B;
+  font-size: 14px;
+  font-weight: 500;
+}
