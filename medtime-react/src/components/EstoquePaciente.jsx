@@ -37,14 +37,21 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
     const requisicaoEstoqueRef = useRef(0)
 
     const carregarEstoques = useCallback(async () => {
-        if (!idUsuario || !chaveReceitas || !token) {
+        if (!idUsuario || !token) {
             setEstoques([])
             setCarregando(false)
             setEditandoId(null)
             return
         }
 
-        // Não substitui os dados enquanto o usuário está alterando o estoque.
+        if (!chaveReceitas) {
+            setEstoques([])
+            setErro(null)
+            setCarregando(false)
+            setEditandoId(null)
+            return
+        }
+
         if (editandoId !== null || salvando) return
 
         const requisicaoAtual = ++requisicaoEstoqueRef.current
@@ -112,13 +119,6 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
         refreshKey: `${idUsuario}:${chaveReceitas}:${chaveConfirmacoes}`
     })
 
-    useEffect(() => {
-        if (chaveReceitas || editandoId !== null || salvando) return
-
-        setEstoques([])
-        setErro(null)
-        setCarregando(false)
-    }, [chaveReceitas, editandoId, salvando])
 
     function iniciarEdicao(item) {
         if (salvando || item.id_estoque == null) return

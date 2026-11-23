@@ -14,7 +14,11 @@ export function useAutoRefresh(
   } = {}
 ) {
   const callbackRef = useRef(callback)
-  callbackRef.current = callback
+
+  // Mantém a referência atualizada sem acessá-la durante a renderização.
+  useEffect(() => {
+    callbackRef.current = callback
+  }, [callback])
 
   useEffect(() => {
     if (!enabled) return undefined
