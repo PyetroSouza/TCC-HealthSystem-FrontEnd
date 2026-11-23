@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion } from 'motion/react'
 import { formatarDataHora } from '../utils/formatadorData'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import './Cabecalho.css'
@@ -26,7 +27,7 @@ function Cabecalho({ aoAbrirPerfil, usuario }) {
     'E-mail não disponível'
 
   return (
-    <header className="cabecalho-original">
+    <motion.header className="cabecalho-original" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="logo-app">
         <img src={import.meta.env.BASE_URL + 'assets/logo.png'} alt="Logo MedTime" />
         <h1><span>Med</span>Time</h1>
@@ -38,8 +39,11 @@ function Cabecalho({ aoAbrirPerfil, usuario }) {
       </div>
 
       <div className="acoes-cabecalho">
-        <button
+        <motion.button
           type="button"
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.15 }}
           className="perfil"
           onClick={aoAbrirPerfil}
           aria-label="Abrir minha conta"
@@ -64,9 +68,9 @@ function Cabecalho({ aoAbrirPerfil, usuario }) {
               <p className="email-perfil">{emailUsuario}</p>
             </div>
           </div>
-        </button>
+        </motion.button>
       </div>
-    </header>
+    </motion.header>
   )
 }
 
