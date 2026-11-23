@@ -46,7 +46,6 @@ function App() {
   const [erroPacientes, setErroPacientes] = useState(null)
   const [emailRecuperacao, setEmailRecuperacao] = useState('')
   const [dadosGoogle, setDadosGoogle] = useState(null)
-  const [versaoPacientes, setVersaoPacientes] = useState(0)
 
   const {
     usuario: usuarioAutenticado,
@@ -86,16 +85,23 @@ function App() {
 
 
   const requisicaoDadosRef = useRef(0)
+  const consultaEmAndamentoRef = useRef(false)
+  const dadosCarregadosRef = useRef(false)
   const telasComDadosAtualizaveis = ['inicio', 'pacientes']
 
-  const atualizarDados = useCallback(async ({ inicial = false } = {}) => {
+  const atualizarDados = useCallback(async () => {
+    if (consultaEmAndamentoRef.current) return
+
     const requisicaoAtual = ++requisicaoDadosRef.current
     const telaDaRequisicao = telaAtual
     const token = usuarioAutenticado?.jwt
+    const primeiraCarga = !dadosCarregadosRef.current
 
     if (!token || perfilAutenticado !== 'cuidador') return
 
-    if (inicial) {
+    consultaEmAndamentoRef.current = true
+
+    if (primeiraCarga) {
       setCarregandoPacientes(true)
       setErroPacientes(null)
     }
@@ -107,6 +113,7 @@ function App() {
 
       setPacientes(pacientesRecebidos)
       setErroPacientes(null)
+      dadosCarregadosRef.current = true
 
       if (telaDaRequisicao !== 'inicio') return
 
@@ -149,9 +156,9 @@ function App() {
     } catch (erro) {
       if (requisicaoAtual !== requisicaoDadosRef.current) return
 
-      if (inicial || pacientes.length === 0) {
+      if (primeiraCarga) {
         setErroPacientes(
-          erro.message || 'Não foi possível atualizar os pacientes.'
+          erro.message || 'Não foi possível carregar os pacientes.'
         )
       } else {
         console.warn('Falha na atualização automática dos pacientes:', erro)
@@ -160,20 +167,31 @@ function App() {
       if (requisicaoAtual === requisicaoDadosRef.current) {
         setCarregandoPacientes(false)
       }
+      consultaEmAndamentoRef.current = false
     }
   }, [
     telaAtual,
     usuarioAutenticado?.jwt,
-    perfilAutenticado,
-    pacientes.length
+    perfilAutenticado
   ])
 
-  // Invalida respostas pendentes quando a tela ou a sessão muda.
+  // Uma nova sessão deve carregar os dados do novo usuário.
+  useEffect(() => {
+    dadosCarregadosRef.current = false
+    requisicaoDadosRef.current += 1
+    consultaEmAndamentoRef.current = false
+
+    return () => {
+      requisicaoDadosRef.current += 1
+    }
+  }, [usuarioAutenticado?.jwt])
+
+  // Invalida respostas pendentes quando a tela muda.
   useEffect(() => {
     return () => {
       requisicaoDadosRef.current += 1
     }
-  }, [telaAtual, usuarioAutenticado?.jwt])
+  }, [telaAtual])
 
   useAutoRefresh(atualizarDados, {
     enabled:
@@ -182,7 +200,7 @@ function App() {
       telasComDadosAtualizaveis.includes(telaAtual),
     intervalMs: 60_000,
     minFocusIntervalMs: 10_000,
-    refreshKey: `${telaAtual}:${versaoPacientes}`
+    refreshKey: telaAtual
   })
 
   useAppVersion(telaAtual)
@@ -211,6 +229,7 @@ function App() {
     sair()
 
     setPacientes([])
+    dadosCarregadosRef.current = false
     setPacienteSelecionado(null)
     setMedicamentoEmEdicao(null)
     setAlertasPendentes(0)
@@ -392,7 +411,7 @@ function App() {
           <Inicio
             token={usuarioAutenticado?.jwt}
             nomeUsuario={usuarioAutenticado?.nome}
-            aoAtualizarPacientes={() => setVersaoPacientes(v => v + 1)}
+            aoAtualizarPacientes={() => { void atualizarDados() }}
             pacientes={pacientes}
             carregandoPacientes={carregandoPacientes}
             erroPacientes={erroPacientes}
