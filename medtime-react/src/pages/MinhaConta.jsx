@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth.js'
 import { atualizarPerfilAPI } from '../services/authService.js'
-import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard } from 'lucide-react'
+import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard, LogOut } from 'lucide-react'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { formatarTelefone } from '../utils/formatarTelefone.js'
 import './MinhaConta.css'
@@ -11,7 +11,7 @@ import './MinhaConta.css'
 // Quando o back liberar, basta trocar para true.
 const EDICAO_HABILITADA = false
 
-function MinhaConta({ usuario, aoVoltar }) {
+function MinhaConta({ usuario, aoVoltar, aoSair }) {
   const nome = usuario?.nome || 'Usuário'
   const email = usuario?.email || 'Não informado'
   const telefone = usuario?.telefone
@@ -96,7 +96,13 @@ function MinhaConta({ usuario, aoVoltar }) {
         </div>
 
         <div className="minha-conta-conteudo">
-          <h2>Informações pessoais</h2>
+          <div className="minha-conta-cabecalho-acoes">
+            <h2>Informações pessoais</h2>
+            <button type="button" className="minha-conta-sair" onClick={aoSair}>
+              <LogOut size={17} />
+              Sair da conta
+            </button>
+          </div>
 
           {EDICAO_HABILITADA && (
             <div className="minha-conta-acoes">
