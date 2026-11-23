@@ -32,6 +32,11 @@ function CadastroRemedio({
   const [unidades, setUnidades] = useState([])
   const [tiposDosagem, setTiposDosagem] = useState([])
   const [tiposIntervalo, setTiposIntervalo] = useState([])
+  const [carregandoOpcoes, setCarregandoOpcoes] = useState(true)
+  const [opcoesCarregadas, setOpcoesCarregadas] = useState(false)
+  const [erroOpcoes, setErroOpcoes] = useState(null)
+  const [tentativaCarregarOpcoes, setTentativaCarregarOpcoes] = useState(0)
+  const [carregandoDadosEdicao, setCarregandoDadosEdicao] = useState(false)
   const [idEstoqueAtual, setIdEstoqueAtual] = useState(null)
   const [alterarProgramacao, setAlterarProgramacao] = useState(false)
   const [nomeOriginal, setNomeOriginal] = useState('')
@@ -93,7 +98,23 @@ function CadastroRemedio({
 
 
   useEffect(() => {
+    let ativo = true
+
     async function carregarOpcoes() {
+      if (!token) {
+        setUnidades([])
+        setTiposDosagem([])
+        setTiposIntervalo([])
+        setOpcoesCarregadas(false)
+        setCarregandoOpcoes(false)
+        setErroOpcoes('Sessão não autenticada.')
+        return
+      }
+
+      setCarregandoOpcoes(true)
+      setOpcoesCarregadas(false)
+      setErroOpcoes(null)
+
       try {
         const [unidadesAPI, dosagensAPI, intervalosAPI] =
           await Promise.all([
@@ -102,19 +123,41 @@ function CadastroRemedio({
             buscarTiposIntervalo(token)
           ])
 
+        if (!ativo) return
 
+        if (
+          !Array.isArray(unidadesAPI) ||
+          !Array.isArray(dosagensAPI) ||
+          !Array.isArray(intervalosAPI)
+        ) {
+          throw new Error('O servidor retornou opções em um formato inesperado.')
+        }
 
         setUnidades(unidadesAPI)
         setTiposDosagem(dosagensAPI)
         setTiposIntervalo(intervalosAPI)
+        setOpcoesCarregadas(true)
       } catch (erro) {
-        console.error('Erro ao carregar opções:', erro)
-        toast.error('Não foi possível carregar as opções do formulário')
+        if (!ativo) return
+
+        console.error('Erro ao carregar opções do medicamento:', erro)
+        setErroOpcoes(
+          erro.message || 'Não foi possível carregar as opções do formulário.'
+        )
+        setOpcoesCarregadas(false)
+      } finally {
+        if (ativo) {
+          setCarregandoOpcoes(false)
+        }
       }
     }
 
     carregarOpcoes()
-  }, [token])
+
+    return () => {
+      ativo = false
+    }
+  }, [token, tentativaCarregarOpcoes])
 
 
   useEffect(() => {
@@ -125,13 +168,14 @@ function CadastroRemedio({
         !modoEdicao ||
         !medicamentoEmEdicao?.id_receita_medica ||
         !idPaciente ||
-        !token
+        !token ||
+        !opcoesCarregadas
       ) {
         return
       }
 
       try {
-
+        setCarregandoDadosEdicao(true)
 
         const receitas = await buscarReceitasDoPaciente(
           idPaciente,
@@ -189,7 +233,11 @@ function CadastroRemedio({
         if (!ativo) return
 
         console.error('Erro ao carregar edição:', erro)
-        toast.error(erro.message)
+        toast.error(erro.message || 'Não foi possível carregar os dados para edição.')
+      } finally {
+        if (ativo) {
+          setCarregandoDadosEdicao(false)
+        }
       }
     }
 
@@ -204,7 +252,8 @@ function CadastroRemedio({
     medicamentoEmEdicao?.id_receita_medica,
     idPaciente,
     token,
-    reset
+    reset,
+    opcoesCarregadas
   ])
 
 
@@ -438,6 +487,25 @@ function CadastroRemedio({
           </p>
         </div>
 
+        {erroOpcoes && (
+          <div className="mensagem-erro" role="alert">
+            <p>Não foi possível carregar as opções do formulário: {erroOpcoes}</p>
+            <button
+              type="button"
+              onClick={() => setTentativaCarregarOpcoes(valor => valor + 1)}
+              disabled={carregandoOpcoes}
+            >
+              {carregandoOpcoes ? 'Tentando novamente...' : 'Tentar novamente'}
+            </button>
+          </div>
+        )}
+
+        {modoEdicao && carregandoDadosEdicao && (
+          <p role="status" aria-live="polite">
+            Carregando dados do medicamento...
+          </p>
+        )}
+
         <div className="cadastrar">
 
           <AnexarImagem
@@ -495,13 +563,22 @@ function CadastroRemedio({
 
                 <select
                   id="unidadeDose"
+                  disabled={carregandoOpcoes || !opcoesCarregadas || unidades.length === 0}
                   aria-invalid={!!errors.unidadeDose}
                   aria-describedby={
                     errors.unidadeDose ? 'erro-unidadeDose' : undefined
                   }
                   {...register('unidadeDose')}
                 >
-                  <option value="">Selecione</option>
+                  <option value="">
+                    {carregandoOpcoes
+                      ? 'Carregando unidades...'
+                      : erroOpcoes
+                        ? 'Não foi possível carregar'
+                        : unidades.length === 0
+                          ? 'Nenhuma unidade disponível'
+                          : 'Selecione'}
+                  </option>
 
                   {unidades.map((unidade) => (
                     <option key={unidade.id} value={String(unidade.id)}>
@@ -524,11 +601,20 @@ function CadastroRemedio({
               <div className="campo-formulario">
                 <label htmlFor="tipo-dosagem">Tipo da dosagem</label>
                 <select id="tipo-dosagem"
+                  disabled={carregandoOpcoes || !opcoesCarregadas || tiposDosagem.length === 0}
                   aria-invalid={!!errors.tipoDosagem}
                   aria-describedby={
                     errors.tipoDosagem ? 'erro-tipoDosagem' : undefined
                   }{...register('tipoDosagem')}>
-                  <option value="">Selecione</option>
+                  <option value="">
+                    {carregandoOpcoes
+                      ? 'Carregando tipos...'
+                      : erroOpcoes
+                        ? 'Não foi possível carregar'
+                        : tiposDosagem.length === 0
+                          ? 'Nenhum tipo disponível'
+                          : 'Selecione'}
+                  </option>
 
                   {tiposDosagem.map((tipo) => (
                     <option key={tipo.id} value={String(tipo.id)}>
@@ -573,13 +659,22 @@ function CadastroRemedio({
 
                   <select
                     id="unidade-concentracao"
+                    disabled={carregandoOpcoes || !opcoesCarregadas || unidades.length === 0}
                     aria-invalid={!!errors.unidadeConcentracao}
                     aria-describedby={
                       errors.unidadeConcentracao ? 'erro-unidadeConcentracao' : undefined
                     }
                     {...register('unidadeConcentracao')}
                   >
-                    <option value="">Selecione</option>
+                    <option value="">
+                      {carregandoOpcoes
+                        ? 'Carregando unidades...'
+                        : erroOpcoes
+                          ? 'Não foi possível carregar'
+                          : unidades.length === 0
+                            ? 'Nenhuma unidade disponível'
+                            : 'Selecione'}
+                    </option>
 
                     {unidades.map((unidade) => (
                       <option
@@ -795,7 +890,12 @@ function CadastroRemedio({
             <button
               type="submit"
               className="botao-adicionar-medicamento"
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting ||
+                carregandoOpcoes ||
+                !opcoesCarregadas ||
+                carregandoDadosEdicao
+              }
             >
               {isSubmitting
                 ? 'Salvando...'
