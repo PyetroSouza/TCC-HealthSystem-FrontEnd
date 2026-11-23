@@ -243,13 +243,21 @@ function MedicamentosPaciente({
                 </motion.div>
             )}
 
+            <AnimatePresence>
             {medicamentoParaExcluir && (
-                <motion.div className="modal-exclusao-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div
+                    className="modal-exclusao-overlay"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                >
                     <motion.div
                         className="modal-exclusao"
                         initial={{ opacity: 0, scale: 0.96, y: 8 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.96 }}
+                        exit={{ opacity: 0, scale: 0.97, y: 6 }}
+                        transition={{ duration: 0.18, ease: 'easeInOut' }}
                         role="alertdialog"
                         aria-modal="true"
                         aria-labelledby="titulo-exclusao"
@@ -297,6 +305,7 @@ function MedicamentosPaciente({
                     </motion.div>
                 </motion.div>
             )}
+            </AnimatePresence>
 
         </motion.section>
         </MotionConfig>
