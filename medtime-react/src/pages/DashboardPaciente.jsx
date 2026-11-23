@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { MotionConfig, motion } from 'motion/react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { CalendarCheck2 } from 'lucide-react'
 import { toast } from 'sonner'
 import EstoquePaciente from '../components/EstoquePaciente.jsx'
@@ -312,10 +312,21 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                     </div>
                 </motion.div>
 
-                {medicamentoParaExcluir && (
-                    <div className="modal-exclusao-overlay">
-                        <div
+                <AnimatePresence>
+                    {medicamentoParaExcluir && (
+                    <motion.div
+                        className="modal-exclusao-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                    >
+                        <motion.div
                             className="modal-exclusao"
+                            initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                            transition={{ duration: 0.2, ease: 'easeOut' }}
                             role="alertdialog"
                             aria-modal="true"
                             aria-labelledby="titulo-exclusao"
@@ -354,9 +365,10 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                                         : 'Excluir medicamento'}
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                )}
+                        </motion.div>
+                    </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </MotionConfig>
     )
