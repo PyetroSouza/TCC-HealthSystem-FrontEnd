@@ -112,6 +112,14 @@ function EstoquePaciente({ agenda = [], idUsuario, token }) {
         refreshKey: `${idUsuario}:${chaveReceitas}:${chaveConfirmacoes}`
     })
 
+    useEffect(() => {
+        if (chaveReceitas || editandoId !== null || salvando) return
+
+        setEstoques([])
+        setErro(null)
+        setCarregando(false)
+    }, [chaveReceitas, editandoId, salvando])
+
     function iniciarEdicao(item) {
         if (salvando || item.id_estoque == null) return
         requisicaoEstoqueRef.current += 1
