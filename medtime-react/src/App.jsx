@@ -388,7 +388,6 @@ function App() {
       <Cabecalho
         usuario={usuarioAutenticado}
         aoAbrirPerfil={() => setTelaAtual('minha-conta')}
-        aoSair={encerrarSessao}
       />
 
 
@@ -484,6 +483,7 @@ function App() {
           <MinhaConta
             usuario={usuarioAutenticado}
             aoVoltar={() => setTelaAtual('inicio')}
+            aoSair={encerrarSessao}
           />
         )}
 
