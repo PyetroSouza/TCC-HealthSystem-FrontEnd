@@ -29,7 +29,12 @@ function Cabecalho({ aoAbrirPerfil, usuario }) {
   return (
     <motion.header className="cabecalho-original" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="logo-app">
-        <img src={import.meta.env.BASE_URL + 'assets/logo.png'} alt="Logo MedTime" />
+        <div className="logo-badge">
+          <img
+            src={import.meta.env.BASE_URL + 'assets/logo.png'}
+            alt="Logo MedTime"
+          />
+        </div>
         <h1><span>Med</span>Time</h1>
       </div>
 

@@ -12,11 +12,6 @@ const TELAS_COM_DADOS_NAO_SALVOS = new Set([
   'minha-conta'
 ])
 
-/**
- * Detecta uma nova build publicada consultando version.json.
- * Atualiza automaticamente quando a tela está segura; em formulários,
- * aguarda a saída da tela para não descartar dados digitados.
- */
 export function useAppVersion(telaAtual) {
   const alteracoesPendentes = useRef(false)
   const novaVersao = useRef(null)
@@ -25,11 +20,12 @@ export function useAppVersion(telaAtual) {
   useEffect(() => {
     alteracoesPendentes.current = false
 
-    function registrarAlteracao(evento) {
+function registrarAlteracao(evento) {
+      if (!TELAS_COM_DADOS_NAO_SALVOS.has(telaAtual)) return 
+
       const alvo = evento.target
       const campoDeBusca = alvo?.closest?.('.search, .pacientes-pesquisa')
 
-      // Campos de dados, inclusive edições fora de <form>, protegem o usuário.
       if (!campoDeBusca) {
         alteracoesPendentes.current = true
       }

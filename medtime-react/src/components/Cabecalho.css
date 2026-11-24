@@ -26,11 +26,26 @@
   font-family: "Inter", sans-serif;
 }
 
-.logo-app img {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
+.logo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+  padding: 6px;
+  box-sizing: border-box;
+
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(1, 40, 80, 0.16);
+}
+
+.logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .logo-app h1 {

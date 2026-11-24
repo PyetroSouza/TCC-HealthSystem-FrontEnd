@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import AnexarImagem from '../components/AnexarImagem'
+import { ArrowLeft } from 'lucide-react'
 import { criarMedicamentoSchema } from '../schemas/medicamentoSchema'
 import {
   buscarReceitasDoPaciente,
@@ -327,7 +328,7 @@ function CadastroRemedio({
             descricao: dados.descricao?.trim() ?? ''
           },
           estoque: {
-            quantidade_em_estoque: Number(String(dados.quantidade).replace(',', '.')) 
+            quantidade_em_estoque: Number(String(dados.quantidade).replace(',', '.')) // hoje está Number(dados.quantidade)
           }
         }
 
@@ -471,10 +472,15 @@ function CadastroRemedio({
       })
     }
   }
-  return (
-    <div className="conteudo">
-      <button type="button" className="botao-voltar" onClick={voltarParaDashboard}>
-        &lt; Voltar
+return (
+    <div className="cadastro-remedio-container">
+     <button
+        type="button"
+        className="botao-voltar-cadastro"
+        onClick={voltarParaDashboard}
+      >
+        <ArrowLeft size={18} aria-hidden="true" />
+        {medicamentoEmEdicao ? 'Voltar para medicamentos' : 'Voltar ao Dashboard'}
       </button>
 
       <form className="formulario-cadastro-remedio" onSubmit={handleSubmit(adicionarMedicamento, formularioInvalido)}>
@@ -513,62 +519,142 @@ function CadastroRemedio({
             aoSelecionarImagem={setImagemMedicamento}
             imagemInicial={imagemAtual}
           />
-          <div className="formulario-esquerdo">
+<div className="formulario-esquerdo">
 
-            <div className="campo-formulario">
-              <label htmlFor="nome-medicamento">Nome do medicamento</label>
-              <input
-                type="text"
-                id="nome-medicamento"
-                maxLength={45}
-                placeholder="Ex: Dipirona"
-                aria-invalid={!!errors.nome}
-                aria-describedby={errors.nome ? 'erro-nome' : undefined}
-                className={errors.nome ? 'campo-invalido' : ''}
-                {...register('nome')}
-              />
-              {errors.nome && (
+            {/* 1. Nome + Apresentação */}
+            <div className="linha-campos linha-nome-tipo">
+              <div className="campo-formulario">
+                <label htmlFor="nome-medicamento">Nome do medicamento</label>
+                <input
+                  type="text"
+                  id="nome-medicamento"
+                  maxLength={45}
+                  placeholder="Ex: Dipirona"
+                  aria-invalid={!!errors.nome}
+                  aria-describedby={errors.nome ? 'erro-nome' : undefined}
+                  className={errors.nome ? 'campo-invalido' : ''}
+                  {...register('nome')}
+                />
+                {errors.nome && (
+                  <p id="erro-nome" className="mensagem-erro">
+                    {errors.nome.message}
+                  </p>
+                )}
+              </div>
 
-                <p
-                  id="erro-nome"
-                  className="mensagem-erro">
-                  {errors.nome.message}
-                </p>
-              )}
+              <div className="campo-formulario">
+                <label htmlFor="tipo-dosagem">Tipo da dosagem</label>
+                <select
+                  id="tipo-dosagem"
+                  disabled={carregandoOpcoes || !opcoesCarregadas || tiposDosagem.length === 0}
+                  aria-invalid={!!errors.tipoDosagem}
+                  aria-describedby={errors.tipoDosagem ? 'erro-tipoDosagem' : undefined}
+                  {...register('tipoDosagem')}
+                >
+                  <option value="">
+                    {carregandoOpcoes
+                      ? 'Carregando tipos...'
+                      : erroOpcoes
+                        ? 'Não foi possível carregar'
+                        : tiposDosagem.length === 0
+                          ? 'Nenhum tipo disponível'
+                          : 'Selecione'}
+                  </option>
+                  {tiposDosagem.map((tipo) => (
+                    <option key={tipo.id} value={String(tipo.id)}>
+                      {tipo.tipo_dosagem}
+                    </option>
+                  ))}
+                </select>
+                {errors.tipoDosagem && (
+                  <p id="erro-tipoDosagem" className="mensagem-erro" role="alert">
+                    {errors.tipoDosagem.message}
+                  </p>
+                )}
+              </div>
             </div>
 
+            {/* 2. Concentração + Unidade */}
             <div className="linha-campos">
               <div className="campo-formulario">
-                <label htmlFor="dose">Dose</label>
+                <label htmlFor="concentracao">Concentração</label>
+                <input
+                  type="number"
+                  id="concentracao"
+                  placeholder="Ex: 500"
+                  aria-invalid={!!errors.concentracao}
+                  aria-describedby={errors.concentracao ? 'erro-concentracao' : undefined}
+                  className={errors.concentracao ? 'campo-invalido' : ''}
+                  {...register('concentracao')}
+                />
+                {errors.concentracao && (
+                  <p id="erro-concentracao" className="mensagem-erro">
+                    {errors.concentracao.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="campo-formulario">
+                <label htmlFor="unidade-concentracao">Unidade da concentração</label>
+                <select
+                  id="unidade-concentracao"
+                  disabled={carregandoOpcoes || !opcoesCarregadas || unidades.length === 0}
+                  aria-invalid={!!errors.unidadeConcentracao}
+                  aria-describedby={errors.unidadeConcentracao ? 'erro-unidadeConcentracao' : undefined}
+                  {...register('unidadeConcentracao')}
+                >
+                  <option value="">
+                    {carregandoOpcoes
+                      ? 'Carregando unidades...'
+                      : erroOpcoes
+                        ? 'Não foi possível carregar'
+                        : unidades.length === 0
+                          ? 'Nenhuma unidade disponível'
+                          : 'Selecione'}
+                  </option>
+                  {unidades.map((unidade) => (
+                    <option key={unidade.id} value={String(unidade.id)}>
+                      {unidade.sigla}
+                    </option>
+                  ))}
+                </select>
+                {errors.unidadeConcentracao && (
+                  <p id="erro-unidadeConcentracao" className="mensagem-erro" role="alert">
+                    {errors.unidadeConcentracao.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* 3. Dose por tomada + Unidade da dose */}
+            <div className="linha-campos">
+              <div className="campo-formulario">
+                <label htmlFor="dose">Dose por tomada</label>
                 <input
                   type="number"
                   id="dose"
                   min="0"
                   step="any"
-                  placeholder="Ex: 10"
+                  placeholder="Ex: 1"
                   aria-invalid={!!errors.dose}
                   aria-describedby={errors.dose ? 'erro-dose' : undefined}
                   className={errors.dose ? 'campo-invalido' : ''}
                   {...register('dose')}
                 />
                 {errors.dose && (
-                  <p id="erro-dose"
-                    className="mensagem-erro">
+                  <p id="erro-dose" className="mensagem-erro">
                     {errors.dose.message}
                   </p>
                 )}
-
               </div>
-              <div className="campo-formulario">
-                <label htmlFor="unidade-dose">Unidade da dose</label>
 
+              <div className="campo-formulario">
+                <label htmlFor="unidadeDose">Unidade da dose</label>
                 <select
                   id="unidadeDose"
                   disabled={carregandoOpcoes || !opcoesCarregadas || unidades.length === 0}
                   aria-invalid={!!errors.unidadeDose}
-                  aria-describedby={
-                    errors.unidadeDose ? 'erro-unidadeDose' : undefined
-                  }
+                  aria-describedby={errors.unidadeDose ? 'erro-unidadeDose' : undefined}
                   {...register('unidadeDose')}
                 >
                   <option value="">
@@ -580,139 +666,54 @@ function CadastroRemedio({
                           ? 'Nenhuma unidade disponível'
                           : 'Selecione'}
                   </option>
-
                   {unidades.map((unidade) => (
                     <option key={unidade.id} value={String(unidade.id)}>
                       {unidade.sigla}
                     </option>
                   ))}
                 </select>
-
                 {errors.unidadeDose && (
-                  <p
-                    id="erro-unidadeDose"
-                    className="mensagem-erro"
-                    role="alert"
-                  >
+                  <p id="erro-unidadeDose" className="mensagem-erro" role="alert">
                     {errors.unidadeDose.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="campo-formulario">
-                <label htmlFor="tipo-dosagem">Tipo da dosagem</label>
-                <select id="tipo-dosagem"
-                  disabled={carregandoOpcoes || !opcoesCarregadas || tiposDosagem.length === 0}
-                  aria-invalid={!!errors.tipoDosagem}
-                  aria-describedby={
-                    errors.tipoDosagem ? 'erro-tipoDosagem' : undefined
-                  }{...register('tipoDosagem')}>
-                  <option value="">
-                    {carregandoOpcoes
-                      ? 'Carregando tipos...'
-                      : erroOpcoes
-                        ? 'Não foi possível carregar'
-                        : tiposDosagem.length === 0
-                          ? 'Nenhum tipo disponível'
-                          : 'Selecione'}
-                  </option>
-
-                  {tiposDosagem.map((tipo) => (
-                    <option key={tipo.id} value={String(tipo.id)}>
-                      {tipo.tipo_dosagem}
-                    </option>
-                  ))}
-                </select>
-                {errors.tipoDosagem && (
-                  <p
-                    id="erro-tipoDosagem"
-                    className="mensagem-erro"
-                    role="alert">
-                    {errors.tipoDosagem.message}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="linha-campos">
-              <div className="campo-formulario">
-                <label htmlFor="concentracao">Concentração</label>
-                <input
-                  type="number"
-                  id="concentracao"
-                  aria-invalid={!!errors.concentracao}
-                  aria-describedby={errors.concentracao ? 'erro-concentracao' : undefined}
-                  className={errors.concentracao ? 'campo-invalido' : ''}
-                  {...register('concentracao')}
-                  placeholder="Ex: 50"
-                />
-                {errors.concentracao && (
-                  <p
-                    id="erro-concentracao"
-                    className="mensagem-erro">
-                    {errors.concentracao.message}
-                  </p>
-                )}
+            {unidadesDiferentes && (
+              <p className="aviso-unidades" role="status">
+                Atenção: a unidade da dose é diferente da unidade informada para a concentração/embalagem.
+                Verifique se os dados estão corretos. O cálculo automático do estoque pode exigir uma conversão adicional.
+              </p>
+            )}
+
+            {/* 4. Intervalo primeiro + Frequência ao lado */}
+            {(!modoEdicao || alterarProgramacao) && (
+              <div className="linha-campos">
                 <div className="campo-formulario">
-                  <label htmlFor="unidade-concentracao">
-                    Unidade de medida
-                  </label>
-
+                  <label htmlFor="intervalo">Intervalo de dosagem</label>
                   <select
-                    id="unidade-concentracao"
-                    disabled={carregandoOpcoes || !opcoesCarregadas || unidades.length === 0}
-                    aria-invalid={!!errors.unidadeConcentracao}
-                    aria-describedby={
-                      errors.unidadeConcentracao ? 'erro-unidadeConcentracao' : undefined
-                    }
-                    {...register('unidadeConcentracao')}
+                    id="intervalo"
+                    aria-invalid={!!errors.intervalo}
+                    aria-describedby={errors.intervalo ? 'erro-intervalo' : undefined}
+                    {...register('intervalo')}
                   >
-                    <option value="">
-                      {carregandoOpcoes
-                        ? 'Carregando unidades...'
-                        : erroOpcoes
-                          ? 'Não foi possível carregar'
-                          : unidades.length === 0
-                            ? 'Nenhuma unidade disponível'
-                            : 'Selecione'}
-                    </option>
-
-                    {unidades.map((unidade) => (
-                      <option
-                        key={unidade.id}
-                        value={String(unidade.id)}
-                      >
-                        {unidade.sigla}
+                    <option value="">Selecione</option>
+                    {tiposIntervalo.map((tipo) => (
+                      <option key={tipo.id} value={String(tipo.id)}>
+                        {tipo.tipo_intervalo}
                       </option>
                     ))}
                   </select>
-
-                  {errors.unidadeConcentracao && (
-                    <p
-                      id='erro-unidadeConcentracao'
-                      className="mensagem-erro"
-                      role='alert'>
-                      {errors.unidadeConcentracao.message}
+                  {errors.intervalo && (
+                    <p id="erro-intervalo" className="mensagem-erro" role="alert">
+                      {errors.intervalo.message}
                     </p>
                   )}
                 </div>
-              </div>
 
-              {unidadesDiferentes && (
-                <p className="aviso-unidades" role="status">
-                  Atenção: a unidade da dose é diferente da unidade
-                  informada para a concentração/embalagem.
-
-                  Verifique se os dados estão corretos.
-                  O cálculo automático do estoque pode exigir
-                  uma conversão adicional.
-                </p>
-              )}
-
-              {(!modoEdicao || alterarProgramacao) && (
                 <div className="campo-formulario">
                   <label htmlFor="frequencia">Frequência</label>
-
                   <div className="input-container">
                     <span className="prefix">De</span>
                     <input
@@ -720,104 +721,73 @@ function CadastroRemedio({
                       id="frequencia"
                       min="1"
                       max={intervalo === '1' ? 24 : undefined}
-                      placeholder="5"
+                      placeholder="8"
                       aria-invalid={!!errors.frequencia}
-                      aria-describedby={
-                        errors.frequencia ? 'erro-frequencia' : undefined
-                      }
+                      aria-describedby={errors.frequencia ? 'erro-frequencia' : undefined}
                       className={errors.frequencia ? 'campo-invalido' : ''}
                       {...register('frequencia', { valueAsNumber: true })}
                     />
-
-
                     <span className="suffix">
-                      em {frequencia || '—'} {
-                        intervalo === '1'
-                          ? 'hora(s)'
-                          : intervalo === '2'
-                            ? 'dia(s)'
-                            : '—'
-                      }
+                      em {frequencia || '—'}{' '}
+                      {intervalo === '1'
+                        ? 'hora(s)'
+                        : intervalo === '2'
+                          ? 'dia(s)'
+                          : '—'}
                     </span>
                   </div>
                   {errors.frequencia && (
-                    <p
-                      id="erro-frequencia"
-                      className="mensagem-erro"
-                      role="alert"
-                    >
+                    <p id="erro-frequencia" className="mensagem-erro" role="alert">
                       {errors.frequencia.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {(!modoEdicao || alterarProgramacao) && (
-              <div className="linha-campos">
-                <div className="campo-formulario">
-                  <label htmlFor="intervalo">
-                    Intervalo de dosagem
-                  </label>
-
-                  <select id="intervalo"
-                    aria-invalid={!!errors.intervalo}
-                    aria-describedby={
-                      errors.intervalo ? 'erro-intervalo' : undefined
-                    }
-                    {...register('intervalo')}>
-                    <option value="">Selecione</option>
-
-                    {tiposIntervalo.map((tipo) => (
-                      <option key={tipo.id} value={String(tipo.id)}>
-                        {tipo.tipo_intervalo}
-                      </option>
-                    ))}
-                  </select>
-
-                  {errors.intervalo && (
-                    <p
-                      id="erro-intervalo"
-                      className="mensagem-erro"
-                      role="alert"
-                    >
-                      {errors.intervalo.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="campo-formulario">
-                  <label htmlFor="horario">
-                    {modoEdicao
-                      ? 'Nova data e hora de início'
-                      : 'Horário de tomada inicial'}
-                  </label>
-
-                  <input
-                    type={modoEdicao ? 'datetime-local' : 'time'}
-                    id="horario"
-                    aria-invalid={!!errors.horario}
-                    aria-describedby={
-                      errors.horario ? 'erro-horario' : undefined
-                    }
-                    className={
-                      errors.horario ? 'campo-invalido' : ''
-                    }
-                    {...register('horario')}
-                  />
-
-                  {errors.horario && (
-                    <p
-                      id="erro-horario"
-                      className="mensagem-erro"
-                    >
-                      {errors.horario.message}
                     </p>
                   )}
                 </div>
               </div>
             )}
 
+            {/* 5. Horário inicial + Quantidade total lado a lado */}
+            <div className="linha-campos">
+              {(!modoEdicao || alterarProgramacao) && (
+                <div className="campo-formulario">
+                  <label htmlFor="horario">
+                    {modoEdicao ? 'Nova data e hora de início' : 'Horário de tomada inicial'}
+                  </label>
+                  <input
+                    type={modoEdicao ? 'datetime-local' : 'time'}
+                    id="horario"
+                    aria-invalid={!!errors.horario}
+                    aria-describedby={errors.horario ? 'erro-horario' : undefined}
+                    className={errors.horario ? 'campo-invalido' : ''}
+                    {...register('horario')}
+                  />
+                  {errors.horario && (
+                    <p id="erro-horario" className="mensagem-erro">
+                      {errors.horario.message}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="campo-formulario">
+                <label htmlFor="quantidade">Quantidade total do tratamento</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  id="quantidade"
+                  placeholder="Ex: 30"
+                  aria-invalid={!!errors.quantidade}
+                  aria-describedby={errors.quantidade ? 'erro-quantidade' : undefined}
+                  className={errors.quantidade ? 'campo-invalido' : ''}
+                  {...register('quantidade')}
+                />
+                {errors.quantidade && (
+                  <p id="erro-quantidade" className="mensagem-erro">
+                    {errors.quantidade.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
             {modoEdicao && (
               <div className="aviso-edicao-programacao">
@@ -827,7 +797,7 @@ function CadastroRemedio({
                     checked={alterarProgramacao}
                     onChange={(e) => setAlterarProgramacao(e.target.checked)}
                   />
-                  Alterar programação do medicamento
+                  {' '}Alterar programação do medicamento
                 </label>
 
                 {alterarProgramacao && (
@@ -843,36 +813,7 @@ function CadastroRemedio({
         </motion.div>
 
         <motion.div className="campos-inferiores" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.16, ease: "easeOut" }}>
-          <div className="campo-formulario">
-            <label htmlFor="quantidade">
-              Quantidade total do tratamento
-            </label>
-
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              id="quantidade"
-              aria-invalid={!!errors.quantidade}
-              aria-describedby={
-                errors.quantidade ? 'erro-quantidade' : undefined
-              }
-              className={
-                errors.quantidade ? 'campo-invalido' : ''
-              }
-              {...register('quantidade')}
-              placeholder="Ex: 30"
-            />
-
-            {errors.quantidade && (
-              <p
-                id="erro-quantidade"
-                className="mensagem-erro"
-              >
-                {errors.quantidade.message}
-              </p>
-            )}
-          </div>
+        
 
           <div className="campo-formulario">
             <label htmlFor="descricao">

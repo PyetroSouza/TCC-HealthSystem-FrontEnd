@@ -137,22 +137,17 @@ function App() {
 
 
 
-  const requisicaoDadosRef = useRef(0)
-  const consultaEmAndamentoRef = useRef(false)
+const requisicaoDadosRef = useRef(0)
   const dadosCarregadosRef = useRef(false)
   const telasComDadosAtualizaveis = ['inicio', 'pacientes']
 
   const atualizarDados = useCallback(async () => {
-    if (consultaEmAndamentoRef.current) return
-
     const requisicaoAtual = ++requisicaoDadosRef.current
     const telaDaRequisicao = telaAtual
     const token = usuarioAutenticado?.jwt
     const primeiraCarga = !dadosCarregadosRef.current
 
     if (!token || perfilAutenticado !== 'cuidador') return
-
-    consultaEmAndamentoRef.current = true
 
     if (primeiraCarga) {
       setCarregandoPacientes(true)
@@ -219,7 +214,6 @@ function App() {
     } finally {
       if (requisicaoAtual === requisicaoDadosRef.current) {
         setCarregandoPacientes(false)
-        consultaEmAndamentoRef.current = false
       }
     }
   }, [
@@ -232,7 +226,6 @@ function App() {
   useEffect(() => {
     dadosCarregadosRef.current = false
     requisicaoDadosRef.current += 1
-    consultaEmAndamentoRef.current = false
 
     return () => {
       requisicaoDadosRef.current += 1

@@ -1,5 +1,5 @@
 
-import { HeartPulse, ShieldCheck } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 import { motion } from 'motion/react'
 
 function PainelAutenticacao({
@@ -11,7 +11,12 @@ function PainelAutenticacao({
         <aside className="login-apresentacao">
 
             <motion.div className="login-marca" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.12 }}>
-                <HeartPulse size={30} aria-hidden="true" />
+                <span className="login-marca-badge">
+                    <img
+                        src={import.meta.env.BASE_URL + 'assets/logo.png'}
+                        alt="Logo MedTime"
+                    />
+                </span>
 
                 <span>
                     Med<span className="login-marca-destaque">Time</span>

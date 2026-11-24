@@ -1,34 +1,47 @@
-.botao-voltar {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    color: #8892B0 !important;
-    padding: 0 !important;
-    font-size: 16px;
-    font-weight: 400;
-    font-family: 'Roboto', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    margin-top: 14.32px;
-    margin-left: 24.61px;
+.cadastro-remedio-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto 32px;
 }
 
 
-.botao-voltar:hover {
-    text-decoration: underline;
+.botao-voltar-cadastro {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin: 0 0 14px;
+    padding: 8px 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: #1D6FA4;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botao-voltar-cadastro:hover {
+    background-color: #EAF3F9;
+    color: #155E89;
+}
+
+.botao-voltar-cadastro:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 2px;
 }
 
 
 .formulario-cadastro-remedio {
-    width: 90%;
-    max-width: 1200px;
-    margin: 5px auto 0;
+    width: 100%;
+    margin: 0;
     padding: 32px 40px;
-    border-radius: 14px;
-    box-sizing: border-box;
     border-radius: 15px;
+    box-sizing: border-box;
     background: #F9F9F9;
     box-shadow: 0px 4px 50px 0px #00000040;
 }
@@ -55,17 +68,18 @@
     margin: 0;
 }
 
-
 .cadastrar {
     display: flex;
     align-items: center;
     gap: 32px;
 }
 
-
 .anexar-imagem {
+    position: relative;
     width: 280px;
     height: 280px;
+    flex-shrink: 0;
+    align-self: center;
 }
 
 
@@ -327,8 +341,55 @@
     outline-offset: 3px;
 }
 
+.cadastrar {
+    display: flex;
+    align-items: flex-start; 
+    gap: 32px;
+}
+
+.linha-nome-tipo {
+    grid-template-columns: 1.5fr 1fr;
+}
 
 @media (max-width: 800px) {
+
+    .cadastro-remedio-container {
+        width: calc(100% - 32px);
+    }
+
+    .formulario-cadastro-remedio {
+        width: 100%;
+        margin: 0;
+        padding: 24px 16px;
+    }
+
+    .header-formulario {
+        text-align: center;
+    }
+
+    .cadastrar {
+        flex-direction: column;
+    }
+
+    .formulario-esquerdo {
+        width: 100%;
+    }
+
+    .anexar-imagem {
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .linha-campos,
+    .linha-nome-tipo {
+        grid-template-columns: 1fr;
+    }
+
+    .botao-adicionar-medicamento {
+        width: 100%;
+    }
+
     .formulario-cadastro-remedio {
         width: calc(80vw - 24px);
         max-width: none;
