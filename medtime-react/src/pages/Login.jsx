@@ -59,12 +59,9 @@ function Login({
     }
   })
 
-
-  async function realizarLogin(dados) {
+async function realizarLogin(dados) {
     try {
       const usuario = await entrarUsuarioAPI(dados)
-
-      toast.success('Login realizado com sucesso!')
 
       aoEntrar(usuario)
     } catch (erro) {
@@ -93,8 +90,6 @@ function Login({
       }
 
       aoEntrar(resultado.usuario)
-
-      toast.success('Login com Google realizado!')
     } catch (erro) {
       toast.error(
         erro.message || 'Erro ao entrar com Google.'

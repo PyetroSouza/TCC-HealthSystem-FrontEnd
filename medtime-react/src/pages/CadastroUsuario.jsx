@@ -525,6 +525,12 @@ function CadastroUsuario({
                                         </label>
                                     </div>
 
+                                    {errors.aceitouTermos && (
+                                        <p className="cadastro-usuario-erro" role="alert">
+                                            {errors.aceitouTermos.message}
+                                        </p>
+                                    )}
+
                                     <div className="cadastro-usuario-acoes">
                                         <button
                                             type="button"

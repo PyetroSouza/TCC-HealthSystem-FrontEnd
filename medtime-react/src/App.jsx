@@ -1,7 +1,7 @@
 
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
-import { toast, Toaster } from 'sonner'
+import { toast} from 'sonner'
 import './App.css'
 import Cabecalho from './components/Cabecalho.jsx'
 import { useAuth } from './hooks/useAuth.js'
@@ -328,11 +328,6 @@ function App() {
   if (telaExibida === 'login') {
     return (
       <TransicaoTelaPublica tela={telaExibida}>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
 
         <Login
           aoCadastrar={() => {
@@ -382,11 +377,6 @@ function App() {
   if (telaExibida === 'cadastro-usuario') {
     return (
       <TransicaoTelaPublica tela={telaExibida}>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
         <CadastroUsuario
           perfil={perfilCadastro}
           dadosGoogle={dadosGoogle}
@@ -410,7 +400,7 @@ function App() {
   if (telaExibida === 'redefinir-senha') {
     return (
       <TransicaoTelaPublica tela={telaExibida}>
-        <Toaster position="top-right" richColors closeButton />
+
 
         <RedefinirSenha
           aoVoltarLogin={() => setTelaAtual('login')}
@@ -422,7 +412,6 @@ function App() {
   if (telaExibida === 'recuperar-senha') {
     return (
       <TransicaoTelaPublica tela={telaExibida}>
-        <Toaster position="top-right" richColors closeButton />
 
         <RecuperarSenha
           aoVoltarLogin={() => setTelaAtual('login')}
@@ -439,11 +428,6 @@ function App() {
   if (telaExibida === 'verificacao-recuperacao') {
     return (
       <TransicaoTelaPublica tela={telaExibida}>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
 
         <main className="login-pagina">
           <div className="login-container">
@@ -480,14 +464,6 @@ function App() {
       <Cabecalho
         usuario={usuarioAutenticado}
         aoAbrirPerfil={() => setTelaAtual('minha-conta')}
-      />
-
-
-      <Toaster
-        position="top-right"
-        richColors
-        closeButton
-        duration={4000}
       />
 
       <main className="conteudo">

@@ -322,12 +322,12 @@ function CadastroRemedio({
 
         const payload = {
           receita_medica: {
-            dosagem: Number(dados.dose),
+            dosagem: Number(String(dados.dose).replace(',', '.')), 
             id_unidade_medida: Number(dados.unidadeDose),
             descricao: dados.descricao?.trim() ?? ''
           },
           estoque: {
-            quantidade_em_estoque: Number(dados.quantidade)
+            quantidade_em_estoque: Number(String(dados.quantidade).replace(',', '.')) 
           }
         }
 
