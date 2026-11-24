@@ -1,8 +1,9 @@
 import { useState } from 'react'
+import { MotionConfig, motion } from 'motion/react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth.js'
 import { atualizarPerfilAPI } from '../services/authService.js'
-import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard } from 'lucide-react'
+import { ArrowLeft, UserRound, Mail, Phone, CalendarDays, ShieldCheck, IdCard, LogOut } from 'lucide-react'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import { formatarTelefone } from '../utils/formatarTelefone.js'
 import './MinhaConta.css'
@@ -11,7 +12,7 @@ import './MinhaConta.css'
 // Quando o back liberar, basta trocar para true.
 const EDICAO_HABILITADA = false
 
-function MinhaConta({ usuario, aoVoltar }) {
+function MinhaConta({ usuario, aoVoltar, aoSair }) {
   const nome = usuario?.nome || 'Usuário'
   const email = usuario?.email || 'Não informado'
   const telefone = usuario?.telefone
@@ -71,7 +72,8 @@ function MinhaConta({ usuario, aoVoltar }) {
   }
 
   return (
-    <section className="minha-conta">
+    <MotionConfig reducedMotion="user">
+    <motion.section className="minha-conta" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: "easeOut" }}>
       <button
         type="button"
         className="minha-conta-voltar"
@@ -81,8 +83,8 @@ function MinhaConta({ usuario, aoVoltar }) {
         Voltar
       </button>
 
-      <div className="minha-conta-card">
-        <div className="minha-conta-capa">
+      <motion.div className="minha-conta-card" initial={{ opacity: 0, scale: 0.99 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35, delay: 0.05 }}>
+        <motion.div className="minha-conta-capa" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <div className="minha-conta-avatar">
             {usuario?.foto ? (
               <img src={usuario.foto} alt={`Foto de ${nome}`} />
@@ -93,10 +95,16 @@ function MinhaConta({ usuario, aoVoltar }) {
 
           <h1>{nome}</h1>
           <p>Minha Conta • Cuidador</p>
-        </div>
+        </motion.div>
 
-        <div className="minha-conta-conteudo">
-          <h2>Informações pessoais</h2>
+        <motion.div className="minha-conta-conteudo" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.14 }}>
+          <div className="minha-conta-cabecalho-acoes">
+            <h2>Informações pessoais</h2>
+            <button type="button" className="minha-conta-sair" onClick={aoSair}>
+              <LogOut size={17} />
+              Sair da conta
+            </button>
+          </div>
 
           {EDICAO_HABILITADA && (
             <div className="minha-conta-acoes">
@@ -133,7 +141,7 @@ function MinhaConta({ usuario, aoVoltar }) {
             </div>
           )}
 
-          <div className="minha-conta-grid">
+          <motion.div className="minha-conta-grid" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }}>
             {editando ? (
               <label className="minha-conta-campo">
                 <UserRound size={20} />
@@ -173,22 +181,23 @@ function MinhaConta({ usuario, aoVoltar }) {
               titulo="Verificação de e-mail"
               valor={usuario?.email_verificado ? 'Verificado' : 'Não verificado'}
             />
-          </div>
-        </div>
-      </div>
-    </section>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </motion.section>
+    </MotionConfig>
   )
 }
 
 function Campo({ icon: Icone, titulo, valor }) {
   return (
-    <div className="minha-conta-campo">
+    <motion.div className="minha-conta-campo" variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.25 }}>
       <Icone size={20} />
       <div>
         <span>{titulo}</span>
         <strong>{valor}</strong>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

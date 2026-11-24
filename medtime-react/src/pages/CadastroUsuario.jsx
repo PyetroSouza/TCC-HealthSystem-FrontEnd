@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { motion } from 'motion/react'
 import { toast } from 'sonner'
 
 import VerificacaoCodigo from '../components/auth/VerificacaoCodigo'
@@ -135,7 +136,7 @@ function CadastroUsuario({
 
 
     return (
-        <main className="cadastro-usuario-pagina">
+        <motion.main className="cadastro-usuario-pagina" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28 }}>
             <div className="cadastro-usuario-container">
 
                 <aside className="cadastro-usuario-apresentacao">
@@ -524,6 +525,12 @@ function CadastroUsuario({
                                         </label>
                                     </div>
 
+                                    {errors.aceitouTermos && (
+                                        <p className="cadastro-usuario-erro" role="alert">
+                                            {errors.aceitouTermos.message}
+                                        </p>
+                                    )}
+
                                     <div className="cadastro-usuario-acoes">
                                         <button
                                             type="button"
@@ -538,7 +545,7 @@ function CadastroUsuario({
                                             className="cadastro-usuario-botao"
                                             disabled={isSubmitting}
                                         >
-                                            {isSubmitting ? 'Cadastrando...' : 'Criar conta'}
+                                            {isSubmitting ? <><span className="cadastro-usuario-spinner" aria-hidden="true" />Cadastrando...</> : 'Criar conta'}
                                         </button>
                                     </div>
                                 </>
@@ -571,7 +578,7 @@ function CadastroUsuario({
                 </section>
 
             </div>
-        </main>
+        </motion.main>
     )
 }
 

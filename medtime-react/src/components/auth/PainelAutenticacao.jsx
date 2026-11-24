@@ -1,5 +1,6 @@
 
 import { HeartPulse, ShieldCheck } from 'lucide-react'
+import { motion } from 'motion/react'
 
 function PainelAutenticacao({
     titulo,
@@ -9,31 +10,31 @@ function PainelAutenticacao({
     return (
         <aside className="login-apresentacao">
 
-            <div className="login-marca">
+            <motion.div className="login-marca" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.12 }}>
                 <HeartPulse size={30} aria-hidden="true" />
 
                 <span>
                     Med<span className="login-marca-destaque">Time</span>
                 </span>
-            </div>
+            </motion.div>
 
-            <div className="login-mensagem">
-                <span className="login-etiqueta">
+            <motion.div className="login-mensagem" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } } }}>
+                <motion.span className="login-etiqueta" variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}>
                     {etiqueta}
-                </span>
+                </motion.span>
 
-                <h1>{titulo}</h1>
+                <motion.h1 variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}>{titulo}</motion.h1>
 
-                <p>{descricao}</p>
-            </div>
+                <motion.p variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}>{descricao}</motion.p>
+            </motion.div>
 
-            <div className="login-rodape-painel">
+            <motion.div className="login-rodape-painel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.5 }}>
                 <ShieldCheck size={18} aria-hidden="true" />
 
                 <span>
                     Organização e cuidado em um só lugar
                 </span>
-            </div>
+            </motion.div>
 
         </aside>
     )

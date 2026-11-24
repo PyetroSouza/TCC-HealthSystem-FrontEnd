@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import { motion, MotionConfig } from 'motion/react'
 import { ArrowLeft, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -45,7 +46,8 @@ function RecuperarSenha({
   }
 
   return (
-    <main className="login-pagina">
+    <MotionConfig reducedMotion="user">
+    <motion.main className="login-pagina" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="login-container">
 
         <PainelAutenticacao
@@ -54,27 +56,28 @@ function RecuperarSenha({
           descricao="Recupere o acesso à sua conta e continue acompanhando os medicamentos com tranquilidade."
         />
 
-        <section className="login-area-formulario">
-          <div className="login-formulario-conteudo">
+        <motion.section className="login-area-formulario" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.08, ease: "easeOut" }}>
+          <motion.div className="login-formulario-conteudo" initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.12 } } }}>
 
-            <button
+            <motion.button
               type="button"
+              whileTap={{ scale: 0.98 }}
               className="recuperar-voltar"
               onClick={aoVoltarLogin}
               disabled={enviando}
             >
               <ArrowLeft size={18} aria-hidden="true" />
               Voltar para o login
-            </button>
+            </motion.button>
 
-            <header className="login-cabecalho">
+            <motion.header className="login-cabecalho" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.35 }}>
               <h2>Esqueceu sua senha?</h2>
 
               <p>
                 Informe seu e-mail cadastrado
                 para recuperar o acesso à sua conta.
               </p>
-            </header>
+            </motion.header>
 
             <form
               className="login-formulario"
@@ -103,15 +106,16 @@ function RecuperarSenha({
                 </div>
               </div>
 
-              <button
+              <motion.button
                 type="submit"
+                whileTap={{ scale: 0.985 }}
                 className="login-botao-entrar"
                 disabled={enviando}
               >
                 {enviando
                   ? 'Enviando código...'
                   : 'Enviar código de recuperação'}
-              </button>
+              </motion.button>
 
               <p className="login-aviso-desenvolvimento">
                 Se o e-mail estiver cadastrado,
@@ -120,11 +124,12 @@ function RecuperarSenha({
               </p>
             </form>
 
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
       </div>
-    </main>
+    </motion.main>
+    </MotionConfig>
   )
 }
 

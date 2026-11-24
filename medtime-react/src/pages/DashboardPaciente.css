@@ -1804,3 +1804,15 @@
         width: 100%;
     }
 }
+
+/* Foto do paciente no cabeçalho do dashboard */
+.info-perfil .foto-perfil {
+    overflow: hidden;
+}
+
+.info-perfil .foto-perfil img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

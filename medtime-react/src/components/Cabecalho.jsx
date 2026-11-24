@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react'
+import { motion } from 'motion/react'
 import { formatarDataHora } from '../utils/formatadorData'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
-import { LogOut } from 'lucide-react'
 import './Cabecalho.css'
 
-function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
+function Cabecalho({ aoAbrirPerfil, usuario }) {
   const [tempo, setTempo] = useState(new Date())
 
   useEffect(() => {
@@ -28,28 +27,23 @@ function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
     'E-mail não disponível'
 
   return (
-    <header className="cabecalho-original">
-
-      {/* Coluna 1: logo */}
+    <motion.header className="cabecalho-original" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="logo-app">
         <img src={import.meta.env.BASE_URL + 'assets/logo.png'} alt="Logo MedTime" />
-
-        <h1>
-          <span>Med</span>Time
-        </h1>
+        <h1><span>Med</span>Time</h1>
       </div>
 
-      {/* Coluna 2: data e hora */}
       <div className="data-hora">
         <h2>{data}</h2>
         <h2>{hora}</h2>
       </div>
 
-      {/* Coluna 3: perfil e logout */}
       <div className="acoes-cabecalho">
-
-        <button
+        <motion.button
           type="button"
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.15 }}
           className="perfil"
           onClick={aoAbrirPerfil}
           aria-label="Abrir minha conta"
@@ -74,21 +68,9 @@ function Cabecalho({ aoSair, aoAbrirPerfil, usuario }) {
               <p className="email-perfil">{emailUsuario}</p>
             </div>
           </div>
-        </button>
-        <button
-          type="button"
-          className="botao-logout"
-          onClick={aoSair}
-          aria-label="Encerrar sessão"
-          title="Sair do MedTime"
-        >
-          <LogOut size={18} />
-          <span>Sair</span>
-        </button>
-
+        </motion.button>
       </div>
-
-    </header>
+    </motion.header>
   )
 }
 

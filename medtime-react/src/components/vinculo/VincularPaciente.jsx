@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { AnimatePresence, motion } from 'motion/react'
 import { Check, Copy, RefreshCw, UserPlus, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { gerarCodigoVinculo } from '../../services/vinculoService.js'
@@ -167,16 +168,26 @@ export default function VincularPaciente({ token, aoFechar }) {
         Vincular paciente
       </button>
 
-      {aberto && createPortal(
-        <div
+      {createPortal(
+        <AnimatePresence>
+        {aberto && (
+        <motion.div
           className="vp-fundo"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
           onMouseDown={(evento) => {
             if (evento.target === evento.currentTarget) fechar()
           }}
         >
-          <div
+          <motion.div
             ref={dialogoRef}
             className="vp-modal"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="vp-titulo"
@@ -264,8 +275,10 @@ export default function VincularPaciente({ token, aoFechar }) {
                 </ol>
               </>
             )}
-          </div>
-        </div>,
+          </motion.div>
+        </motion.div>
+        )}
+        </AnimatePresence>,
         document.body
       )}
     </>

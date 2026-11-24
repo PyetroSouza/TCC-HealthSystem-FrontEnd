@@ -1,22 +1,9 @@
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { toast, Toaster } from 'sonner'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { toast} from 'sonner'
 import './App.css'
-import PainelAutenticacao from './components/auth/PainelAutenticacao'
-import VerificacaoCodigo from './components/auth/VerificacaoCodigo'
 import Cabecalho from './components/Cabecalho.jsx'
-import CadastroRemedio from './pages/CadastroRemedio.jsx'
-import CadastroUsuario from './pages/CadastroUsuario.jsx'
-import DashboardPaciente from './pages/DashboardPaciente.jsx'
-import HistoricoMedicamentos from './pages/HistoricoMedicamentos.jsx'
-import Inicio from './pages/Inicio.jsx'
-import Login from './pages/Login.jsx'
-import MedicamentosPaciente from './pages/MedicamentosPaciente.jsx'
-import Pacientes from './pages/Pacientes.jsx'
-import RecuperarSenha from './pages/RecuperarSenha.jsx'
-import RedefinirSenha from './pages/RedefinirSenha.jsx'
-import TodosMedicamentos from './pages/TodosMedicamentos.jsx'
-import MinhaConta from './pages/MinhaConta.jsx'
 import { useAuth } from './hooks/useAuth.js'
 import { useAutoRefresh } from './hooks/useAutoRefresh.js'
 import { useAppVersion } from './hooks/useAppVersion.js'
@@ -24,6 +11,72 @@ import { buscarAgendaMedicamentos } from './services/api.js'
 import { buscarMeusPacientes } from './services/vinculoService.js'
 import { obterPerfilUsuario } from './utils/obterPerfilUsuario'
 
+const carregadoresTelas = {
+  'painel-autenticacao': () => import('./components/auth/PainelAutenticacao'),
+  'verificacao-codigo': () => import('./components/auth/VerificacaoCodigo'),
+  'cadastro-remedio': () => import('./pages/CadastroRemedio.jsx'),
+  'cadastro-usuario': () => import('./pages/CadastroUsuario.jsx'),
+  dashboard: () => import('./pages/DashboardPaciente.jsx'),
+  'historico-medicamentos': () => import('./pages/HistoricoMedicamentos.jsx'),
+  inicio: () => import('./pages/Inicio.jsx'),
+  login: () => import('./pages/Login.jsx'),
+  'medicamentos-paciente': () => import('./pages/MedicamentosPaciente.jsx'),
+  pacientes: () => import('./pages/Pacientes.jsx'),
+  'recuperar-senha': () => import('./pages/RecuperarSenha.jsx'),
+  'redefinir-senha': () => import('./pages/RedefinirSenha.jsx'),
+  'todos-medicamentos': () => import('./pages/TodosMedicamentos.jsx'),
+  'minha-conta': () => import('./pages/MinhaConta.jsx')
+}
+
+const preCarregarTela = (tela) => {
+  const carregar = carregadoresTelas[tela]
+  if (carregar) void carregar().catch(() => {})
+}
+
+const PainelAutenticacao = lazy(carregadoresTelas['painel-autenticacao'])
+const VerificacaoCodigo = lazy(carregadoresTelas['verificacao-codigo'])
+const CadastroRemedio = lazy(carregadoresTelas['cadastro-remedio'])
+const CadastroUsuario = lazy(carregadoresTelas['cadastro-usuario'])
+const DashboardPaciente = lazy(carregadoresTelas.dashboard)
+const HistoricoMedicamentos = lazy(carregadoresTelas['historico-medicamentos'])
+const Inicio = lazy(carregadoresTelas.inicio)
+const Login = lazy(carregadoresTelas.login)
+const MedicamentosPaciente = lazy(carregadoresTelas['medicamentos-paciente'])
+const Pacientes = lazy(carregadoresTelas.pacientes)
+const RecuperarSenha = lazy(carregadoresTelas['recuperar-senha'])
+const RedefinirSenha = lazy(carregadoresTelas['redefinir-senha'])
+const TodosMedicamentos = lazy(carregadoresTelas['todos-medicamentos'])
+const MinhaConta = lazy(carregadoresTelas['minha-conta'])
+
+function CarregandoTela() {
+  return (
+    <div className="carregando-tela" role="status" aria-live="polite" aria-label="Carregando tela">
+      <span className="carregando-indicador" aria-hidden="true" />
+      <span>Preparando sua tela...</span>
+    </div>
+  )
+}
+
+
+function TransicaoTelaPublica({ tela, children }) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tela}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          <Suspense fallback={<CarregandoTela />}>
+            {children}
+          </Suspense>
+        </motion.div>
+      </AnimatePresence>
+    </MotionConfig>
+  )
+}
 
 function App() {
   const [telaAtual, setTelaAtual] = useState(() => {
@@ -198,6 +251,45 @@ function App() {
 
   useAppVersion(telaAtual)
 
+  // Antecipamos somente as próximas telas mais prováveis, em tempo ocioso.
+  useEffect(() => {
+    const conexao = navigator.connection
+    if (conexao?.saveData || ['slow-2g', '2g'].includes(conexao?.effectiveType)) return
+
+    const proximasTelas = telaExibida === 'login'
+      ? ['cadastro-usuario', 'recuperar-senha']
+      : telaExibida === 'inicio'
+        ? ['pacientes', 'dashboard']
+        : telaExibida === 'dashboard'
+          ? ['cadastro-remedio', 'medicamentos-paciente', 'historico-medicamentos', 'todos-medicamentos']
+          : []
+
+    if (proximasTelas.length === 0) return
+
+    let cancelado = false
+    let idleId
+    let timeoutId
+
+    const carregarEmSegundoPlano = () => {
+      if (cancelado) return
+      proximasTelas.forEach(preCarregarTela)
+    }
+
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(carregarEmSegundoPlano, { timeout: 2500 })
+    } else {
+      timeoutId = window.setTimeout(carregarEmSegundoPlano, 1200)
+    }
+
+    return () => {
+      cancelado = true
+      if (idleId !== undefined && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
+  }, [telaExibida])
+
   function voltarParaInicio() {
     setTelaAtual('inicio')
     setPacienteSelecionado(null)
@@ -235,12 +327,7 @@ function App() {
 
   if (telaExibida === 'login') {
     return (
-      <>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
+      <TransicaoTelaPublica tela={telaExibida}>
 
         <Login
           aoCadastrar={() => {
@@ -283,18 +370,13 @@ function App() {
           }}
 
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
   if (telaExibida === 'cadastro-usuario') {
     return (
-      <>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
+      <TransicaoTelaPublica tela={telaExibida}>
         <CadastroUsuario
           perfil={perfilCadastro}
           dadosGoogle={dadosGoogle}
@@ -312,25 +394,24 @@ function App() {
             setTelaAtual('login')
           }}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
   if (telaExibida === 'redefinir-senha') {
     return (
-      <>
-        <Toaster position="top-right" richColors closeButton />
+      <TransicaoTelaPublica tela={telaExibida}>
+
 
         <RedefinirSenha
           aoVoltarLogin={() => setTelaAtual('login')}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
   if (telaExibida === 'recuperar-senha') {
     return (
-      <>
-        <Toaster position="top-right" richColors closeButton />
+      <TransicaoTelaPublica tela={telaExibida}>
 
         <RecuperarSenha
           aoVoltarLogin={() => setTelaAtual('login')}
@@ -339,19 +420,14 @@ function App() {
             setTelaAtual('verificacao-recuperacao')
           }}
         />
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
 
   if (telaExibida === 'verificacao-recuperacao') {
     return (
-      <>
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-        />
+      <TransicaoTelaPublica tela={telaExibida}>
 
         <main className="login-pagina">
           <div className="login-container">
@@ -378,7 +454,7 @@ function App() {
 
           </div>
         </main>
-      </>
+      </TransicaoTelaPublica>
     )
   }
 
@@ -388,18 +464,19 @@ function App() {
       <Cabecalho
         usuario={usuarioAutenticado}
         aoAbrirPerfil={() => setTelaAtual('minha-conta')}
-        aoSair={encerrarSessao}
-      />
-
-
-      <Toaster
-        position="top-right"
-        richColors
-        closeButton
-        duration={4000}
       />
 
       <main className="conteudo">
+        <MotionConfig reducedMotion="user">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={telaExibida}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              <Suspense fallback={<CarregandoTela />}>
         {telaExibida === 'inicio' && (
           <Inicio
             token={usuarioAutenticado?.jwt}
@@ -484,9 +561,13 @@ function App() {
           <MinhaConta
             usuario={usuarioAutenticado}
             aoVoltar={() => setTelaAtual('inicio')}
+            aoSair={encerrarSessao}
           />
         )}
-
+              </Suspense>
+            </motion.div>
+          </AnimatePresence>
+        </MotionConfig>
       </main>
     </div>
   )

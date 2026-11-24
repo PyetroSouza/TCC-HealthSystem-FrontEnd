@@ -74,4 +74,20 @@ body {
     color: var(--color-text);
     background: var(--color-background);
   }
-  
+
+
+/* Feedback visual consistente sem impor movimento a todos os elementos */
+:where(button, a) {
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-primary) 55%, white);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a) {
+    transition: none;
+  }
+}

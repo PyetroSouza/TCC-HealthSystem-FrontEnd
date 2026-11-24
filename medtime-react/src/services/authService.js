@@ -1,6 +1,51 @@
 
 import { API_URL } from '../config.js'
 
+// Padroniza respostas da API e evita erros pouco claros quando o servidor
+// demora, retorna texto inesperado ou a conexão falha.
+async function requisicaoAutenticacao(url, opcoes, mensagemPadrao) {
+  let resposta
+
+  try {
+    resposta = await fetch(url, opcoes)
+  } catch (erro) {
+    if (erro?.name === 'AbortError') {
+      throw new Error('A solicitação foi cancelada.', { cause: erro })
+    }
+
+    throw new Error('Não foi possível conectar ao servidor do MedTime. Verifique sua conexão e tente novamente.', { cause: erro })
+  }
+
+  const texto = await resposta.text()
+  let resultado = null
+
+  if (texto) {
+    try {
+      resultado = JSON.parse(texto)
+    } catch {
+      if (resposta.ok) {
+        throw new Error('O servidor retornou uma resposta inválida.')
+      }
+    }
+  }
+
+  if (!resposta.ok || resultado?.status === false) {
+    const mensagem =
+      resultado?.message ||
+      resultado?.mensagem ||
+      resultado?.error ||
+      mensagemPadrao
+
+    throw new Error(
+      typeof mensagem === 'string'
+        ? mensagem
+        : `${mensagemPadrao} (HTTP ${resposta.status}).`
+    )
+  }
+
+  return resultado
+}
+
 export async function cadastrarUsuarioAPI(dados) {
     let resposta
 
@@ -94,7 +139,7 @@ export async function entrarUsuarioAPI(dados) {
   
 
 export async function solicitarCodigoVerificacao(email) {
-  const response = await fetch(
+  return requisicaoAutenticacao(
     `${API_URL}/codigo_verificacao_email/gerar`,
     {
       method: 'POST',
@@ -104,26 +149,16 @@ export async function solicitarCodigoVerificacao(email) {
       body: JSON.stringify({
         email: email.trim().toLowerCase()
       })
-    }
+    },
+    'Não foi possível enviar o código de verificação.'
   )
-
-  const resultado = await response.json()
-
-  if (!response.ok || resultado.status === false) {
-    throw new Error(
-      resultado.message ||
-        'Não foi possível enviar o código de verificação.'
-    )
-  }
-
-  return resultado
 }
 
 const URL_RECUPERACAO =
   `${API_URL}/codigo_verificacao_email`
 
 export async function solicitarCodigoRecuperacao(email) {
-  const resposta = await fetch(
+  return requisicaoAutenticacao(
     `${URL_RECUPERACAO}/redefinir_senha/gerar`,
     {
       method: 'POST',
@@ -133,19 +168,9 @@ export async function solicitarCodigoRecuperacao(email) {
       body: JSON.stringify({
         email: email.trim().toLowerCase()
       })
-    }
+    },
+    'Não foi possível solicitar a recuperação de senha.'
   )
-
-  const resultado = await resposta.json()
-
-  if (!resposta.ok || resultado.status === false) {
-    throw new Error(
-      resultado.message ||
-      'Não foi possível solicitar a recuperação de senha.'
-    )
-  }
-
-  return resultado
 }
 
 export async function redefinirSenhaAPI({
@@ -153,7 +178,7 @@ export async function redefinirSenhaAPI({
   codigo,
   novaSenha
 }) {
-  const resposta = await fetch(
+  return requisicaoAutenticacao(
     `${URL_RECUPERACAO}/redefinir_senha`,
     {
       method: 'POST',
@@ -165,19 +190,9 @@ export async function redefinirSenhaAPI({
         codigo,
         nova_senha: novaSenha
       })
-    }
+    },
+    'Não foi possível redefinir a senha.'
   )
-
-  const resultado = await resposta.json()
-
-  if (!resposta.ok || resultado.status === false) {
-    throw new Error(
-      resultado.message ||
-      'Não foi possível redefinir a senha.'
-    )
-  }
-
-  return resultado
 }
 
 export async function entrarComGoogleAPI(tokenGoogle) {
