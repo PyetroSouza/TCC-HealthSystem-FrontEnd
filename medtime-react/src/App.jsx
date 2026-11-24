@@ -61,7 +61,7 @@ function CarregandoTela() {
 function TransicaoTelaPublica({ tela, children }) {
   return (
     <MotionConfig reducedMotion="user">
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode="wait">
         <motion.div
           key={tela}
           initial={{ opacity: 0, y: 8 }}
