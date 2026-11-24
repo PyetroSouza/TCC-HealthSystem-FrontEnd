@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { MailCheck, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
+import { motion } from 'motion/react'
 
 import {
     cadastrarUsuarioAPI,
@@ -184,7 +185,7 @@ function VerificacaoCodigo({
     }
 
     return (
-        <section className="verificacao-codigo">
+        <motion.section className="verificacao-codigo" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.24 }}>
             <div className="verificacao-codigo-icone">
                 <MailCheck size={34} aria-hidden="true" />
             </div>
@@ -327,7 +328,7 @@ function VerificacaoCodigo({
                     {reenviando ? 'Enviando...' : 'Reenviar código'}
                 </button>
             )}
-        </section>
+        </motion.section>
     )
 }
 
