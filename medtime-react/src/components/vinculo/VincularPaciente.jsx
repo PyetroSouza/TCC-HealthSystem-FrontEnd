@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { Check, Copy, RefreshCw, UserPlus, X } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'sonner'
 import { gerarCodigoVinculo } from '../../services/vinculoService.js'
 import './VincularPaciente.css'
@@ -170,114 +171,129 @@ export default function VincularPaciente({ token, aoFechar }) {
 
       {createPortal(
         <AnimatePresence>
-        {aberto && (
-        <motion.div
-          className="vp-fundo"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
-          onMouseDown={(evento) => {
-            if (evento.target === evento.currentTarget) fechar()
-          }}
-        >
-          <motion.div
-            ref={dialogoRef}
-            className="vp-modal"
-            initial={{ opacity: 0, y: 12, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="vp-titulo"
-            tabIndex={-1}
-          >
-            <button
-              type="button"
-              className="vp-fechar"
-              onClick={fechar}
-              aria-label="Fechar"
+          {aberto && (
+            <motion.div
+              className="vp-fundo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onMouseDown={(evento) => {
+                if (evento.target === evento.currentTarget) fechar()
+              }}
             >
-              <X size={20} aria-hidden="true" />
-            </button>
-
-            <h2 id="vp-titulo">Vincular paciente</h2>
-            <p className="vp-subtitulo">
-              Compartilhe este código com a pessoa que você quer acompanhar.
-            </p>
-
-            {carregando && (
-              <p className="vp-status" role="status">Gerando código...</p>
-            )}
-
-            {!carregando && erro && (
-              <div className="vp-erro" role="alert">
-                <p>{erro}</p>
-                <button type="button" className="vp-botao-secundario" onClick={gerar}>
-                  Tentar novamente
-                </button>
-              </div>
-            )}
-
-            {!carregando && !erro && codigo && (
-              <>
-                <div
-                  className={`vp-codigo ${expirado ? 'vp-codigo-expirado' : ''}`}
-                  role="group"
-                  aria-label={`Código de vínculo: ${codigo.split('').join(' ')}`}
+              <motion.div
+                ref={dialogoRef}
+                className="vp-modal"
+                initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="vp-titulo"
+                tabIndex={-1}
+              >
+                <button
+                  type="button"
+                  className="vp-fechar"
+                  onClick={fechar}
+                  aria-label="Fechar"
                 >
-                  {codigo.split('').map((digito, indice) => (
-                    <span key={indice} className="vp-digito" aria-hidden="true">
-                      {digito}
-                    </span>
-                  ))}
-                </div>
+                  <X size={20} aria-hidden="true" />
+                </button>
 
-                {restante !== null && (
-                  <p
-                    className={`vp-validade ${urgente || expirado ? 'vp-validade-alerta' : ''}`}
-                    role="timer"
-                  >
-                    {expirado
-                      ? 'Código expirado. Gere um novo para continuar.'
-                      : `Expira em ${formatarTempo(restante)}`}
-                  </p>
+                <h2 id="vp-titulo">Vincular paciente</h2>
+                <p className="vp-subtitulo">
+                  Compartilhe este código com a pessoa que você quer acompanhar.
+                </p>
+
+                {carregando && (
+                  <p className="vp-status" role="status">Gerando código...</p>
                 )}
 
-                <div className="vp-acoes">
-                  {expirado ? (
-                    <button type="button" className="vp-botao-principal" onClick={gerar}>
-                      <RefreshCw size={18} aria-hidden="true" />
-                      Gerar novo código
+                {!carregando && erro && (
+                  <div className="vp-erro" role="alert">
+                    <p>{erro}</p>
+                    <button type="button" className="vp-botao-secundario" onClick={gerar}>
+                      Tentar novamente
                     </button>
-                  ) : (
-                    <>
-                      <button type="button" className="vp-botao-principal" onClick={copiar}>
-                        {copiado
-                          ? <Check size={18} aria-hidden="true" />
-                          : <Copy size={18} aria-hidden="true" />}
-                        {copiado ? 'Copiado!' : 'Copiar código'}
-                      </button>
+                  </div>
+                )}
 
-                      <button type="button" className="vp-botao-secundario" onClick={gerar}>
-                        <RefreshCw size={18} aria-hidden="true" />
-                        Gerar outro
-                      </button>
-                    </>
-                  )}
-                </div>
+                {!carregando && !erro && codigo && (
+                  <>
+                    <div
+                      className={`vp-qrcode-container ${expirado ? 'vp-qrcode-expirado' : ''}`}
+                      aria-label="QR Code para vincular paciente"
+                    >
+                      <QRCodeSVG
+                        value={codigo}
+                        size={176}
+                        bgColor="#FFFFFF"
+                        fgColor="#20344A"
+                        level="M"
+                      />
+                    </div>
 
-                <ol className="vp-passos">
-                  <li>O paciente abre o app MedTime e entra na conta dele.</li>
-                  <li>Na opção “Vincular meu cuidador”, informa o código acima.</li>
-                  <li>Ao fechar esta janela, ele aparece em “Pacientes acompanhados”.</li>
-                </ol>
-              </>
-            )}
-          </motion.div>
-        </motion.div>
-        )}
+                    <p className="vp-codigo-legenda">Ou informe o código manualmente:</p>
+
+                    <div
+                      className={`vp-codigo ${expirado ? 'vp-codigo-expirado' : ''}`}
+                      role="group"
+                      aria-label={`Código de vínculo: ${codigo.split('').join(' ')}`}
+                    >
+                      {codigo.split('').map((digito, indice) => (
+                        <span key={indice} className="vp-digito" aria-hidden="true">
+                          {digito}
+                        </span>
+                      ))}
+                    </div>
+
+                    {restante !== null && (
+                      <p
+                        className={`vp-validade ${urgente || expirado ? 'vp-validade-alerta' : ''}`}
+                        role="timer"
+                      >
+                        {expirado
+                          ? 'Código expirado. Gere um novo para continuar.'
+                          : `Expira em ${formatarTempo(restante)}`}
+                      </p>
+                    )}
+
+                    <div className="vp-acoes">
+                      {expirado ? (
+                        <button type="button" className="vp-botao-principal" onClick={gerar}>
+                          <RefreshCw size={18} aria-hidden="true" />
+                          Gerar novo código
+                        </button>
+                      ) : (
+                        <>
+                          <button type="button" className="vp-botao-principal" onClick={copiar}>
+                            {copiado
+                              ? <Check size={18} aria-hidden="true" />
+                              : <Copy size={18} aria-hidden="true" />}
+                            {copiado ? 'Copiado!' : 'Copiar código'}
+                          </button>
+
+                          <button type="button" className="vp-botao-secundario" onClick={gerar}>
+                            <RefreshCw size={18} aria-hidden="true" />
+                            Gerar outro
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    <ol className="vp-passos">
+                      <li>O paciente abre o app MedTime e entra na conta dele.</li>
+                      <li>Na opção “Vincular meu cuidador”, escaneia o QR Code ou digita o código acima.</li>
+                      <li>Ao fechar esta janela, ele aparece em “Pacientes acompanhados”.</li>
+                    </ol>
+                  </>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
         </AnimatePresence>,
         document.body
       )}

@@ -257,6 +257,37 @@
     margin-top: 8px;
 }
 
+/* QR Code */
+.vp-qrcode-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    margin-bottom: 14px;
+    border: 1px solid #D9D9D9;
+    border-radius: 14px;
+    background-color: #FFFFFF;
+    transition: opacity 0.2s ease;
+}
+
+.vp-qrcode-expirado {
+    opacity: 0.25;
+    filter: grayscale(1);
+}
+
+.vp-codigo-legenda {
+    margin: 0 0 8px;
+    color: #6B7280;
+    font-size: 13px;
+}
+
+/* Ajuste nas caixas dos 6 dígitos para harmonizar com o QR Code */
+.vp-digito {
+    width: 44px;
+    height: 52px;
+    font-size: 24px;
+}
+
 @media (max-width: 600px) {
     .acoes-pacientes-inicio {
         width: 100%;
