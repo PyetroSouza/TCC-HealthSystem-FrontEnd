@@ -10,10 +10,10 @@ async function requisicaoAutenticacao(url, opcoes, mensagemPadrao) {
     resposta = await fetch(url, opcoes)
   } catch (erro) {
     if (erro?.name === 'AbortError') {
-      throw new Error('A solicitação foi cancelada.')
+      throw new Error('A solicitação foi cancelada.', { cause: erro })
     }
 
-    throw new Error('Não foi possível conectar ao servidor do MedTime. Verifique sua conexão e tente novamente.')
+    throw new Error('Não foi possível conectar ao servidor do MedTime. Verifique sua conexão e tente novamente.', { cause: erro })
   }
 
   const texto = await resposta.text()
