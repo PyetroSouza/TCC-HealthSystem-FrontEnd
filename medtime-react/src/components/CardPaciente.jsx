@@ -6,6 +6,28 @@ import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
 import { calcularIdade } from '../utils/calcularIdade.js'
 import { useAutoRefresh } from '../hooks/useAutoRefresh.js'
 
+function formatarProximoHorario(horarioProgramado) {
+    if (!horarioProgramado) return ''
+
+    const data = new Date(
+        String(horarioProgramado).replace(' ', 'T')
+    )
+
+    if (Number.isNaN(data.getTime())) return ''
+
+    const diaMes = data.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit'
+    })
+
+    const hora = data.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+
+    return `${diaMes} às ${hora}`
+}
+
 function CardPaciente({ paciente, aoClicar, token }) {
     const corAvatar = gerarCorAvatar(paciente.nome)
     const idade = calcularIdade(paciente.data_nascimento)
@@ -124,7 +146,7 @@ function CardPaciente({ paciente, aoClicar, token }) {
                             : erro
                                 ? 'Indisponível'
                                 : proximoMedicamento
-                                    ? `${proximoMedicamento.nome_medicamento} - ${proximoMedicamento.horario_programado.slice(8, 10)}/${proximoMedicamento.horario_programado.slice(5, 7)} às ${proximoMedicamento.horario_programado.slice(11, 16)}`
+                                    ? `${proximoMedicamento.nome_medicamento} - ${formatarProximoHorario(proximoMedicamento.horario_programado)}`
                                     : 'Nenhuma dose nos próximos 7 dias'
                     }
                 </p>

@@ -36,9 +36,8 @@ export async function buscarProximoMedicamento(idUsuario, token) {
                 )
             })
             .sort((a, b) =>
-                a.horario_programado.localeCompare(
-                    b.horario_programado
-                )
+                new Date(a.horario_programado.replace(' ', 'T')) -
+                new Date(b.horario_programado.replace(' ', 'T'))
             )
 
         if (proximasDoses.length > 0) {
