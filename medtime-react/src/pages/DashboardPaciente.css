@@ -786,6 +786,52 @@
     color: #009951;
 }
 
+.acoes-cabecalho-paciente {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.botao-ver-perfil {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background-color: #FFFFFF;
+    color: #1D6FA4;
+    border: 1.5px solid #1D6FA4;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botao-ver-perfil:hover {
+    background-color: #EAF3F9;
+    color: #155E89;
+}
+
+.botao-ver-perfil:focus-visible {
+    outline: 3px solid #1D6FA4;
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .acoes-cabecalho-paciente {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .botao-ver-perfil,
+    .acoes-cabecalho-paciente .botao-medicamento {
+        width: 100%;
+    }
+}
+
 @media (max-width: 1024px) {
     .dashboard-inferior-grid {
         flex-direction: column;

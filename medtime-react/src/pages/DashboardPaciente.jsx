@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
-import { CalendarCheck2 } from 'lucide-react'
+import { CalendarCheck2, User } from 'lucide-react'
 import { toast } from 'sonner'
 import EstoquePaciente from '../components/EstoquePaciente.jsx'
 import ListaMedicamentos from '../components/ListaMedicamentos.jsx'
@@ -10,7 +10,16 @@ import { gerarCorAvatar } from '../utils/gerarCorAvatar.js'
 import { gerarIniciais } from '../utils/gerarIniciais.js'
 import './DashboardPaciente.css'
 
-function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCadastrarRemedio, aoVerTodosMedicamentos, aoVerHistorico, aoVerAgenda, token }) {
+function DashboardPaciente({
+    pacienteSelecionado,
+    voltarParaInicio,
+    aoClicarCadastrarRemedio,
+    aoVerTodosMedicamentos,
+    aoVerHistorico,
+    aoVerAgenda,
+    aoVerPerfilPaciente,
+    token
+}) {
     const corAvatar = gerarCorAvatar(pacienteSelecionado?.nome)
     const fotoPaciente = pacienteSelecionado?.foto
 
@@ -185,14 +194,25 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            className="botao-medicamento"
-                            onClick={aoClicarCadastrarRemedio}
-                        >
-                            <img src={import.meta.env.BASE_URL + 'assets/cadastrar.svg'} alt="adicionar medicamento" />
-                            Adicionar Medicamento
-                        </button>
+                        <div className="acoes-cabecalho-paciente">
+                            <button
+                                type="button"
+                                className="botao-ver-perfil"
+                                onClick={aoVerPerfilPaciente}
+                            >
+                                <User size={18} aria-hidden="true" />
+                                Ver perfil
+                            </button>
+
+                            <button
+                                type="button"
+                                className="botao-medicamento"
+                                onClick={aoClicarCadastrarRemedio}
+                            >
+                                <img src={import.meta.env.BASE_URL + 'assets/cadastrar.svg'} alt="adicionar medicamento" />
+                                Adicionar Medicamento
+                            </button>
+                        </div>
                     </div>
                 </motion.section>
 
@@ -314,59 +334,59 @@ function DashboardPaciente({ pacienteSelecionado, voltarParaInicio, aoClicarCada
 
                 <AnimatePresence>
                     {medicamentoParaExcluir && (
-                    <motion.div
-                        className="modal-exclusao-overlay"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.18, ease: 'easeOut' }}
-                    >
                         <motion.div
-                            className="modal-exclusao"
-                            initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                            transition={{ duration: 0.2, ease: 'easeOut' }}
-                            role="alertdialog"
-                            aria-modal="true"
-                            aria-labelledby="titulo-exclusao"
-                            aria-describedby="descricao-exclusao"
+                            className="modal-exclusao-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.18, ease: 'easeOut' }}
                         >
-                            <h2 id="titulo-exclusao">
-                                Excluir medicamento?
-                            </h2>
+                            <motion.div
+                                className="modal-exclusao"
+                                initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                                transition={{ duration: 0.2, ease: 'easeOut' }}
+                                role="alertdialog"
+                                aria-modal="true"
+                                aria-labelledby="titulo-exclusao"
+                                aria-describedby="descricao-exclusao"
+                            >
+                                <h2 id="titulo-exclusao">
+                                    Excluir medicamento?
+                                </h2>
 
-                            <p id="descricao-exclusao">
-                                Você está prestes a excluir
-                                <strong> {medicamentoParaExcluir.nome}</strong>
-                                {' '}e todas as suas programações.
-                                O histórico de tomadas será preservado.
-                            </p>
+                                <p id="descricao-exclusao">
+                                    Você está prestes a excluir
+                                    <strong> {medicamentoParaExcluir.nome}</strong>
+                                    {' '}e todas as suas programações.
+                                    O histórico de tomadas será preservado.
+                                </p>
 
-                            <div className="modal-exclusao-acoes">
-                                <button
-                                    ref={botaoCancelarRef}
-                                    type="button"
-                                    className="modal-botao-cancelar"
-                                    disabled={excluindo}
-                                    onClick={() => setMedicamentoParaExcluir(null)}
-                                >
-                                    Cancelar
-                                </button>
+                                <div className="modal-exclusao-acoes">
+                                    <button
+                                        ref={botaoCancelarRef}
+                                        type="button"
+                                        className="modal-botao-cancelar"
+                                        disabled={excluindo}
+                                        onClick={() => setMedicamentoParaExcluir(null)}
+                                    >
+                                        Cancelar
+                                    </button>
 
-                                <button
-                                    type="button"
-                                    className="modal-botao-excluir"
-                                    disabled={excluindo}
-                                    onClick={executarExclusao}
-                                >
-                                    {excluindo
-                                        ? 'Excluindo...'
-                                        : 'Excluir medicamento'}
-                                </button>
-                            </div>
+                                    <button
+                                        type="button"
+                                        className="modal-botao-excluir"
+                                        disabled={excluindo}
+                                        onClick={executarExclusao}
+                                    >
+                                        {excluindo
+                                            ? 'Excluindo...'
+                                            : 'Excluir medicamento'}
+                                    </button>
+                                </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
                     )}
                 </AnimatePresence>
             </div>

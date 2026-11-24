@@ -461,3 +461,38 @@ export async function buscarReceitasDoPaciente(idPaciente, token) {
 
   return resultado.response?.receita_medica ?? []
 }
+
+export async function desvincularPaciente(idPaciente, token) {
+  if (!token) {
+    throw new Error('Sessão não autenticada.')
+  }
+
+  if (!Number.isSafeInteger(Number(idPaciente)) || Number(idPaciente) <= 0) {
+    throw new Error('Paciente inválido.')
+  }
+
+  const resposta = await fetch(
+    `${API_URL}/vinculo_paciente/paciente/${idPaciente}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+
+  if (resposta.status === 204) {
+    return true
+  }
+
+  const resultado = await resposta.json().catch(() => null)
+
+  if (!resposta.ok || resultado?.status === false) {
+    throw new Error(
+      resultado?.message ||
+      `Não foi possível desvincular o paciente (${resposta.status}).`
+    )
+  }
+
+  return true
+}

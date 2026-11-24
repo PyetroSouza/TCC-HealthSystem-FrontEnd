@@ -1,7 +1,7 @@
 
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
-import { toast} from 'sonner'
+import { toast } from 'sonner'
 import './App.css'
 import Cabecalho from './components/Cabecalho.jsx'
 import { useAuth } from './hooks/useAuth.js'
@@ -25,12 +25,13 @@ const carregadoresTelas = {
   'recuperar-senha': () => import('./pages/RecuperarSenha.jsx'),
   'redefinir-senha': () => import('./pages/RedefinirSenha.jsx'),
   'todos-medicamentos': () => import('./pages/TodosMedicamentos.jsx'),
-  'minha-conta': () => import('./pages/MinhaConta.jsx')
+  'minha-conta': () => import('./pages/MinhaConta.jsx'),
+  'perfil-paciente': () => import('./pages/PerfilPaciente.jsx'),
 }
 
 const preCarregarTela = (tela) => {
   const carregar = carregadoresTelas[tela]
-  if (carregar) void carregar().catch(() => {})
+  if (carregar) void carregar().catch(() => { })
 }
 
 const PainelAutenticacao = lazy(carregadoresTelas['painel-autenticacao'])
@@ -47,6 +48,7 @@ const RecuperarSenha = lazy(carregadoresTelas['recuperar-senha'])
 const RedefinirSenha = lazy(carregadoresTelas['redefinir-senha'])
 const TodosMedicamentos = lazy(carregadoresTelas['todos-medicamentos'])
 const MinhaConta = lazy(carregadoresTelas['minha-conta'])
+const PerfilPaciente = lazy(carregadoresTelas['perfil-paciente'])
 
 function CarregandoTela() {
   return (
@@ -137,7 +139,7 @@ function App() {
 
 
 
-const requisicaoDadosRef = useRef(0)
+  const requisicaoDadosRef = useRef(0)
   const dadosCarregadosRef = useRef(false)
   const telasComDadosAtualizaveis = ['inicio', 'pacientes']
 
@@ -470,93 +472,111 @@ const requisicaoDadosRef = useRef(0)
               transition={{ duration: 0.18, ease: 'easeOut' }}
             >
               <Suspense fallback={<CarregandoTela />}>
-        {telaExibida === 'inicio' && (
-          <Inicio
-            token={usuarioAutenticado?.jwt}
-            nomeUsuario={usuarioAutenticado?.nome}
-            aoAtualizarPacientes={() => { void atualizarDados() }}
-            pacientes={pacientes}
-            carregandoPacientes={carregandoPacientes}
-            erroPacientes={erroPacientes}
-            alertasPendentes={alertasVisiveis}
-            abrirDashboard={(paciente) => {
-              setPacienteSelecionado(paciente)
-              setTelaAtual('dashboard')
-            }}
-            aoVerPacientes={() => setTelaAtual('pacientes')}
-          />)}
+                {telaExibida === 'inicio' && (
+                  <Inicio
+                    token={usuarioAutenticado?.jwt}
+                    nomeUsuario={usuarioAutenticado?.nome}
+                    aoAtualizarPacientes={() => { void atualizarDados() }}
+                    pacientes={pacientes}
+                    carregandoPacientes={carregandoPacientes}
+                    erroPacientes={erroPacientes}
+                    alertasPendentes={alertasVisiveis}
+                    abrirDashboard={(paciente) => {
+                      setPacienteSelecionado(paciente)
+                      setTelaAtual('dashboard')
+                    }}
+                    aoVerPacientes={() => setTelaAtual('pacientes')}
+                  />)}
 
 
-        {telaExibida === 'pacientes' && (
-          <Pacientes
-            pacientes={pacientes}
-            token={usuarioAutenticado?.jwt}
-            aoVoltar={() => setTelaAtual('inicio')}
-            abrirDashboard={(paciente) => {
-              setPacienteSelecionado(paciente)
-              setTelaAtual('dashboard')
-            }}
-          />
-        )}
+                {telaExibida === 'pacientes' && (
+                  <Pacientes
+                    pacientes={pacientes}
+                    token={usuarioAutenticado?.jwt}
+                    aoVoltar={() => setTelaAtual('inicio')}
+                    abrirDashboard={(paciente) => {
+                      setPacienteSelecionado(paciente)
+                      setTelaAtual('dashboard')
+                    }}
+                  />
+                )}
 
 
-        {telaExibida === 'dashboard' && (<DashboardPaciente
-          pacienteSelecionado={pacienteSelecionado}
-          setPacienteSelecionado={setPacienteSelecionado}
-          voltarParaInicio={voltarParaInicio}
-          aoVerAgenda={() => setTelaAtual('todos-medicamentos')}
-          aoClicarCadastrarRemedio={irParaCadastroRemedio}
-          aoEditarMedicamento={iniciarEdicaoMedicamento}
-          token={usuarioAutenticado?.jwt}
-          aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
-          aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
-        />)}
-        {telaExibida === 'cadastro-remedio' && (
-          <CadastroRemedio
-            voltarParaDashboard={() => {
-              if (medicamentoEmEdicao) {
-                setTelaAtual('medicamentos-paciente')
-              } else {
-                setTelaAtual('dashboard')
-              }
-            }}
-            medicamentoEmEdicao={medicamentoEmEdicao}
-            pacienteSelecionado={pacienteSelecionado}
-            token={usuarioAutenticado?.jwt} />
-        )}
+                {telaExibida === 'dashboard' && (<DashboardPaciente
+                  pacienteSelecionado={pacienteSelecionado}
+                  setPacienteSelecionado={setPacienteSelecionado}
+                  voltarParaInicio={voltarParaInicio}
+                  aoVerAgenda={() => setTelaAtual('todos-medicamentos')}
+                  aoClicarCadastrarRemedio={irParaCadastroRemedio}
+                  aoEditarMedicamento={iniciarEdicaoMedicamento}
+                  token={usuarioAutenticado?.jwt}
+                  aoVerTodosMedicamentos={() => setTelaAtual('medicamentos-paciente')}
+                  aoVerHistorico={() => setTelaAtual('historico-medicamentos')}
+                  aoVerPerfilPaciente={() => setTelaAtual('perfil-paciente')}
+                />)}
+                {telaExibida === 'cadastro-remedio' && (
+                  <CadastroRemedio
+                    voltarParaDashboard={() => {
+                      if (medicamentoEmEdicao) {
+                        setTelaAtual('medicamentos-paciente')
+                      } else {
+                        setTelaAtual('dashboard')
+                      }
+                    }}
+                    medicamentoEmEdicao={medicamentoEmEdicao}
+                    pacienteSelecionado={pacienteSelecionado}
+                    token={usuarioAutenticado?.jwt} />
+                )}
 
-        {telaExibida === 'todos-medicamentos' && (
-          <TodosMedicamentos
-            pacienteSelecionado={pacienteSelecionado}
-            aoVoltar={voltarParaDashboard}
-            token={usuarioAutenticado?.jwt}
-          />
-        )}
+                {telaExibida === 'todos-medicamentos' && (
+                  <TodosMedicamentos
+                    pacienteSelecionado={pacienteSelecionado}
+                    aoVoltar={voltarParaDashboard}
+                    token={usuarioAutenticado?.jwt}
+                  />
+                )}
 
-        {telaExibida === 'historico-medicamentos' && (
-          <HistoricoMedicamentos
-            pacienteSelecionado={pacienteSelecionado}
-            aoVoltar={voltarParaDashboard}
-            token={usuarioAutenticado?.jwt}
-          />
-        )}
+                {telaExibida === 'historico-medicamentos' && (
+                  <HistoricoMedicamentos
+                    pacienteSelecionado={pacienteSelecionado}
+                    aoVoltar={voltarParaDashboard}
+                    token={usuarioAutenticado?.jwt}
+                  />
+                )}
 
-        {telaExibida === 'medicamentos-paciente' && (
-          <MedicamentosPaciente
-            pacienteSelecionado={pacienteSelecionado}
-            aoVoltar={voltarParaDashboard}
-            aoEditar={iniciarEdicaoMedicamento}
-            token={usuarioAutenticado?.jwt}
-          />
-        )}
+                {telaExibida === 'medicamentos-paciente' && (
+                  <MedicamentosPaciente
+                    pacienteSelecionado={pacienteSelecionado}
+                    aoVoltar={voltarParaDashboard}
+                    aoEditar={iniciarEdicaoMedicamento}
+                    token={usuarioAutenticado?.jwt}
+                  />
+                )}
 
-        {telaExibida === 'minha-conta' && usuarioAutenticado?.jwt && (
-          <MinhaConta
-            usuario={usuarioAutenticado}
-            aoVoltar={() => setTelaAtual('inicio')}
-            aoSair={encerrarSessao}
-          />
-        )}
+                {telaExibida === 'minha-conta' && usuarioAutenticado?.jwt && (
+                  <MinhaConta
+                    usuario={usuarioAutenticado}
+                    aoVoltar={() => setTelaAtual('inicio')}
+                    aoSair={encerrarSessao}
+                  />
+                )}
+
+                {telaExibida === 'perfil-paciente' && (
+                  <PerfilPaciente
+                    paciente={pacienteSelecionado}
+                    token={usuarioAutenticado?.jwt}
+                    aoVoltar={voltarParaDashboard}
+                    aoPacienteDesvinculado={(idDesvinculado) => {
+                      setPacientes(anteriores =>
+                        anteriores.filter(
+                          item => Number(item.id_paciente ?? item.id) !== Number(idDesvinculado)
+                        )
+                      )
+                      voltarParaInicio()
+                      void atualizarDados()
+                    }}
+                  />
+                )}
               </Suspense>
             </motion.div>
           </AnimatePresence>
